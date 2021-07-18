@@ -1,6 +1,6 @@
 //缓存装饰器就是缓存一个promise
 const cacheMap = new Map();
-export function EnableCache(target: any, name: string, desciptor: PropertyDecorator) {
+export function EnableCache(target: any, name: string, desciptor: PropertyDescriptor) {
     //拿到原有值
     const val = desciptor.value;
     desciptor.value = async function (...args: any) {
