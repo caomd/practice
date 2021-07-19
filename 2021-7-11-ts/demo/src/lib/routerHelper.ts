@@ -1,39 +1,36 @@
-import { Dictionary } from 'vue-router/types/router';
+//路由跳转ts约束参数
+import { Dictionary } from '_vue-router@3.0.1@vue-router/types/router';
 import Router, { RoutePath } from '../router';
-
-export type BaseRouteType = Dictionary<string>;
-
+export type BaseRouteType = Dictionary<string>;//{string:string}
 export interface IndexParam extends BaseRouteType {
     name: string;
 }
-
-export interface AboutPageParam extends BaseRouteType {
-    testName: string;
+export interface AboutParam extends BaseRouteType {
+    testName: string
 }
 
-export interface UserPageParam extends BaseRouteType {
-    userId: string;
+export interface UserParam extends BaseRouteType {
+    userId: string
 }
 
-export interface ParamsMap {
+export interface ParamMap {
     [RoutePath.Index]: IndexParam;
-    [RoutePath.About]: AboutPageParam;
-    [RoutePath.User]: UserPageParam;
+    [RoutePath.About]: AboutParam;
+    [RoutePath.User]: UserParam;
 }
-
 
 export class RouterHelper {
-    public static replace<T extends RoutePath>(routePath: T, params: ParamsMap[T]) {
+    //routePath 一定是在RoutePath枚举里边的
+    public static replace<T extends RoutePath>(routePath: T, params: ParamMap[T]) {
         Router.replace({
             path: routePath,
-            query: params,
-        });
+            query: params
+        })
     }
-
-    public static push<T extends RoutePath>(routePath: T, params: ParamsMap[T]) {
+    public static push<T extends RoutePath>(routePath: T, params: ParamMap[T]) {
         Router.push({
             path: routePath,
-            query: params,
-        });
+            query: params
+        })
     }
 }

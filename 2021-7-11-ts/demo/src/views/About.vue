@@ -5,7 +5,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { RouterHelper, AboutPageParam } from '../lib/routerHelper';
+import { RouterHelper, AboutPageParam } from '../lib/routerHelper_1';
 import { RoutePath } from '../router';
 import { Route } from 'vue-router';
 
