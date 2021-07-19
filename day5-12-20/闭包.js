@@ -10,11 +10,12 @@
 function outer() {
     var person = 'bibao'
     function inner() {
-        console.log('person', person)
+        console.log('person', person + '7')
     }
     return inner
 }
 var inner = outer()
+inner()
 inner()
 //用法 1.私有作用域
 function Person() {
