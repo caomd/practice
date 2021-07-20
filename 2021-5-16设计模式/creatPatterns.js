@@ -79,6 +79,7 @@ console.log(shop2);
 class PlayStation {
     constructor() {
         this.state = 'off';
+        this.instance = null;
     }
     play() {
         if (this.state === 'on') {
@@ -97,34 +98,34 @@ class PlayStation {
         console.log('已经关机请放心')
     }
     // 不建议也不对，因为看不到可能会直接创建实例对象，拿到外面
-    // static getInstance = function () {
-    //     //判断当前有无实例
-    //     console.log(this)
-    //     let instance;
-    //     console.log('888',instance)
-    //     return function () {
-    //         console.log(this)
-    //         if (!instance) {
-    //             console.log('00')
-    //             instance = new PlayStation();
-    //             console.log('ppp', instance)
-    //         }
-    //         return instance;
-    //     }()//自动执行
-    // }
-}
-PlayStation.getInstance = (function () {
-    let instance;
-    //为保证创建一次使用闭包，把instance作为私有变量
-    console.log(instance, '999')
-    return function () {
-        if (!instance) {
-            console.log('00')
-            instance = new PlayStation();
-        }
-        return instance;
+    static getInstance = function () {
+        //判断当前有无实例
+        console.log(this)
+        // let instance;
+        console.log('888',this.instance)
+        return function () {
+            console.log(this)
+            if (!this.instance) {
+                console.log('00')
+                this.instance = new PlayStation();
+                console.log('ppp', this.instance)
+            }
+            return this.instance;
+        }()//自动执行
     }
-})()
+}
+// PlayStation.getInstance = (function () {
+//     let instance;
+//     //为保证创建一次使用闭包，把instance作为私有变量
+//     console.log(instance, '999')
+//     return function () {
+//         if (!instance) {
+//             console.log('00')
+//             instance = new PlayStation();
+//         }
+//         return instance;
+//     }
+// })()
 const ps = PlayStation.getInstance()
 console.log(ps)
 ps.play()

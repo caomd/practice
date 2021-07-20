@@ -1,0 +1,14 @@
+* { margin: 0; padding: 0; border: 0; }
+
+html, body { height: 100%; box-sizing: border-box; }
+
+a { text-decoration: none; }
+
+ul, li { list-style-type: none; }
+
+.content_item { margin: 0 20px; padding: 10px 0; border-bottom: 1px solid rgba(211, 211, 211, 0.6); }
+
+.content_item .title { font-size: 20px; overflow: hidden; text-overflow: ellipsis; }
+
+.image_list::after { content: ''; display: block; height: 0; clear: both; visibility: hidden; }
+/*# sourceMappingURL=main.min.css.map */
