@@ -81,11 +81,64 @@ function listDataManager() {
                 //返回Promise对象
                 return Promise.resolve(localData)
             }
-            return fetch('xxx').then(data => localData = data.json())
+            // return fetch('xxx').then(data => localData = data.json())
         }
     }
 }
-var exeFunciton = listDataManager()
-exeFunciton.getData().then(data => {
-    console.log('得到data', data)
-})
+// var exeFunciton = listDataManager()
+// exeFunciton.getData().then(data => {
+//     console.log('得到data', data)
+// })
+//3.访问当前函数之外的变量
+function outerFunction() {
+    var date = '719';
+    function getDate(str) {//外部传进来的
+        console.log(str + date);//访问外部的date
+    }
+    return getDate('今天是：')//执行
+}
+outerFunction();//今天是719
+
+function outerFunction2() {
+    var date = 719;
+    function getDate(str) {
+        console.log(str + date++)
+    }
+    return getDate;
+}
+const today = outerFunction2()
+today('今天还是是：')//719
+today('今天不是')//720
+today('今天也不是')//721
+
+//修改外部变量的值
+function outerFunction3() {
+    var date = 719;
+    function getDate(str) {
+        date = str;
+        console.log(date++)
+    }
+    return getDate;
+}
+const today3 = outerFunction3()
+today3(600);
+
+//闭包作用私有化
+function Person() {
+    var name = 'cxk';
+    this.getName = function () {
+        return name;
+    }
+    this.setName = function (value) {
+        name = value;
+    }
+}
+
+const cxk = new Person()
+
+console.log(cxk.getName()) //cxk
+cxk.setName('jntm')
+console.log(cxk.getName()) //jntm
+console.log(name) //name is not defined
+console.log(this.name) //undefined
+
