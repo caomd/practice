@@ -8,5 +8,6 @@ function Player(color) {
 
 const whitePlayer = new Player('white')
 const blockPlayer = new Player('block')
+const blockPlayer1 = new Player('block')
 
-console.log(Player.total)//2
+console.log(Player.total)//3

@@ -7,6 +7,8 @@
 // 4.2构造函数有显示返回值且为基本数据类型，比如number, string, 那么返回this
 // 4.3构造函数有显示返回值且为对象类型，比如{ a: 1 }, 那么返回这个对象
 
+const { type } = require("os")
+
 // function Test(name) {
 //     this.name = name
 //     // return 1
@@ -38,3 +40,29 @@ function Player(color) {
 }
 const a = objectFactory(Player, 'white')
 console.log(a)
+
+function newFun() {
+    // const obj = Object.create(Object.prototype);
+    const obj = new Object();
+    console.log(obj);
+    const constructor = [].shift.call(arguments);
+    obj.__proto__ = constructor.prototype;
+    const ret = constructor.apply(obj, arguments);
+    return typeof ret === 'object' ? ret : obj;
+}
+const b = newFun(Player, 'black');
+console.log(b)
+// const c = Object.create(Object.prototype);
+// const d = new Object()
+// console.log(c, d)//{}{}
+
+// var _a = 0;
+// Object.defineProperty(window, 'a', {
+//     get: function () {
+//         return ++_a;
+//     }
+// });
+// console.log(a === 1 && a === 2 && a === 3);
+
+
+
