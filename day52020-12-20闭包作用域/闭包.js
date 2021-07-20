@@ -114,14 +114,17 @@ today('今天也不是')//721
 //修改外部变量的值
 function outerFunction3() {
     var date = 719;
-    function getDate(str) {
-        date = str;
+    function getDate() {
+        // date = str;
+        console.log(date+'00000')
         console.log(date++)
     }
     return getDate;
 }
 const today3 = outerFunction3()
-today3(600);
+today3();
+today3();
+today3()
 
 //闭包作用私有化
 function Person() {
