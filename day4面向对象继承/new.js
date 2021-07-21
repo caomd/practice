@@ -44,7 +44,6 @@ console.log(a)
 function newFun() {
     // const obj = Object.create(Object.prototype);
     const obj = new Object();
-    console.log(obj);
     const constructor = [].shift.call(arguments);
     obj.__proto__ = constructor.prototype;
     const ret = constructor.apply(obj, arguments);
@@ -63,6 +62,16 @@ console.log(b)
 //     }
 // });
 // console.log(a === 1 && a === 2 && a === 3);
+const myNew = function () {
+    let obj = {};
+    let Constructor = Array.prototype.shift.call(arguments);
+    obj.__proto__ = Constructor.prototype;
+    let res = Constructor.apply(obj, arguments);
+    return res instanceof Object ? res : obj;
+}
+
+const c = myNew(Player, 'black');
+console.log('myNew', c)
 
 
 

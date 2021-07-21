@@ -1,3 +1,5 @@
+const { threadId } = require("worker_threads");
+
 //助力js更加面向对象
 class Course {
     constructor(teacher, name) {
@@ -153,3 +155,25 @@ chiod.send();//sending
 Child.call();//calling
 console.log(chiod === chiod2)//false
 console.log(chiod.send === chiod2.send)//true
+
+class Test {
+    // _name = '';
+    constructor(name) {
+        this._name = name;
+    }
+    get name() {
+        return this._name;
+    }
+    // set name(val) {
+    //     console.log('检测赋值');
+    //     this._name = val;
+    // }
+    static getName() {
+        return `${this.name}` + 'haha'
+    }
+}
+const test = new Test('test')
+console.log(test.name)
+test.name = 'test2'
+console.log(test.name)
+console.log(Test.getName())
