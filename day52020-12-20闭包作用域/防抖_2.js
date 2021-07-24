@@ -24,3 +24,13 @@ let p = new Person();
 console.log(p)
 p.getName()
 console.log(Person)
+//防抖
+function debounce2(fn, delay) {
+    let timer = null;
+    return (arguments) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, arguments)
+        }, delay)
+    })
+}
