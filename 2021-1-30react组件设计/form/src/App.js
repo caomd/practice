@@ -26,7 +26,11 @@ function App({ form }) {
       <div>{form.getFieldError('input1').children}</div>
       <input
         // onInput={(e) => { setValue(e.target.value) }}
-        {...form.getFieldProp('input2')} />
+        {...form.getFieldProp('input2', {
+          disabled(data) {
+            return data.input1 === '123'
+          }
+        })} />
       <div>{form.getFieldError('input2').children}</div>
       <button
         onClick={(e) => { console.log({ ...form.getFieldValues() }) }}>

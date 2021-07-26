@@ -4,15 +4,13 @@ export default function FormCreate(WrappedCom) {
     const store = {}
     return class Form extends Component {
         getFieldProps = (fieldKey, options = {}) => {
-            // console.log(options)
             return {
                 key: fieldKey,
+                disabled: options.disabled ? options.disabled(this.getFieldValues()) : undefined,
                 onInput: e => {
                     const value = e.target.value;
                     store[fieldKey] = store[fieldKey] || {};
                     store[fieldKey].value = value;
-                    // console.log(options.validator, '/')
-                    // console.log(value)
                     if (options.validator) {
                         const validator = new AsyncValidator({ [fieldKey]: options.validator })
                         validator.validate({ [fieldKey]: value })
@@ -32,18 +30,15 @@ export default function FormCreate(WrappedCom) {
             }
         }
         getFieldValues = () => {
-            // console.log(store)
             return Object.keys(store).reduce((memo, current) => {
                 return {
                     ...memo,
                     [current]: store[current].value
                 }
             }, {})
-            // return store
         }
         getFieldError = (fieldKey) => {
             const err = store[fieldKey] && store[fieldKey].error
-            // console.log(err)
             return {
                 children: err
             }
