@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import AsyncValidator from 'async-validator'
 export default function FormCreate(WrappedCom) {
     const store = {}
-    return function Form() {
-        const getFieldProps = (fieldKey, options) => {
+    return class Form extends Component {
+        getFieldProps = (fieldKey, options = {}) => {
             // console.log(options)
             return {
                 key: fieldKey,
@@ -12,36 +12,49 @@ export default function FormCreate(WrappedCom) {
                     store[fieldKey] = store[fieldKey] || {};
                     store[fieldKey].value = value;
                     // console.log(options.validator, '/')
-                    console.log(value)
-                    const validator = new AsyncValidator({ [fieldKey]: options.validator })
-                    validator.validate({ [fieldKey]: value })
-                        .then(() => {
-                            store[fieldKey].errors = null
-                        }).catch((error) => {
-                            const { errors } = error;
-                            console.log(errors)
-                            store[fieldKey].errors = errors.map(error => error.message).join(',')
-                        })
-                        .then(() => {
+                    // console.log(value)
+                    if (options.validator) {
+                        const validator = new AsyncValidator({ [fieldKey]: options.validator })
+                        validator.validate({ [fieldKey]: value })
+                            .then(() => {
+                                store[fieldKey].error = null
+                            }).catch((error) => {
+                                const { errors } = error;
+                                console.log(errors)
+                                store[fieldKey].error = errors.map(error => error.message).join(',')
+                            })
+                            .then(() => {
+                                this.forceUpdate()
+                            })
+                    }
 
-                        })
                 }
             }
         }
-        const getFieldValues = () => {
-            return store
+        getFieldValues = () => {
+            // console.log(store)
+            return Object.keys(store).reduce((memo, current) => {
+                return {
+                    ...memo,
+                    [current]: store[current].value
+                }
+            }, {})
+            // return store
         }
-        const getFieldError = (fieldKey) => {
-            const err = store[fieldKey] && store[fieldKey].errors
+        getFieldError = (fieldKey) => {
+            const err = store[fieldKey] && store[fieldKey].error
+            // console.log(err)
             return {
                 children: err
             }
         }
-        const form = {
-            getFieldProp: getFieldProps,
-            getFieldValues,
-            getFieldError
+        render() {
+            const form = {
+                getFieldProp: this.getFieldProps,
+                getFieldValues: this.getFieldValues,
+                getFieldError: this.getFieldError
+            }
+            return <WrappedCom form={form} />
         }
-        return <WrappedCom form={form} />
     }
 }
