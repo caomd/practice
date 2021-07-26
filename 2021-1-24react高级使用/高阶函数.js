@@ -48,3 +48,12 @@ console.log(arr2);
 // [1, 2, 3, 5, 4]
 console.log(arr1);
 // [1, 2, 1, 2, 3, 5, 4, 5, 3, 4, 4, 4, 4]
+const aStr = 'ABCDEFGHG'
+const arrStr = Array.from(aStr)
+const temp = []
+while (arrStr.length >= 4) {
+    temp.push(arrStr.splice(0, 4).join(''))
+}
+temp.push(arrStr)
+String.prototype.sort = temp.join(',');
+console.log(aStr.sort)
