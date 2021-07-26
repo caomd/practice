@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "antd": "^4.16.8",
     "async-validator": "^3.5.2"
   }
 }

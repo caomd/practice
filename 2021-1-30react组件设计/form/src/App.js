@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Button, Calendar } from 'antd';
+import 'antd/dist/antd.css'
 import FormCreate from './Form';
 function App({ form }) {
-  console.log({ ...form })
+  // console.log({ ...form })
   // const [value, setValue] = useState('')
   // console.log(value)
   return (
@@ -36,6 +38,8 @@ function App({ form }) {
         onClick={(e) => { console.log({ ...form.getFieldValues() }) }}>
         提交一下
       </button>
+      <Button>antdButon</Button>
+      <Calendar></Calendar>
     </div>
   );
 }
