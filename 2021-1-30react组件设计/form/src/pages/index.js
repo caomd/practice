@@ -1,5 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
+// import { connect } from 'react-redux'
+import {connect} from '../provider.js'
 import { Button } from 'antd';
 import 'antd/dist/antd.css'
 // import { store } from '../App.js'

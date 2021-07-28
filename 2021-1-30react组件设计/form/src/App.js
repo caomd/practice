@@ -1,7 +1,8 @@
 import React from 'react'
-import { Provider } from 'react-redux'
+// import { Provider } from 'react-redux'
 // import { createStore } from 'redux'
 import { createStore } from './createStore.js'
+import { Provider } from './provider.js'
 import { Button, Calendar } from 'antd';
 import 'antd/dist/antd.css'
 import FormCreate from './Form';
