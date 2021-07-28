@@ -1,5 +1,5 @@
 import React from 'react'
-// import { createStore } from 'react-redux'
+import { Provider } from 'react-redux'
 // import { createStore } from 'redux'
 import { createStore } from './createStore.js'
 import { Button, Calendar } from 'antd';
@@ -7,7 +7,8 @@ import 'antd/dist/antd.css'
 import FormCreate from './Form';
 import Index from './pages/index.js'
 const initState = {
-  count: 10
+  count: 10,
+  color: 'black'
 }
 function reducer(state = initState, action) {
   switch (action.type) {
@@ -15,6 +16,8 @@ function reducer(state = initState, action) {
       return { ...state, count: state.count + 1 }
     case 'decrement':
       return { ...state, count: state.count - 1 }
+    case 'changeColor':
+      return { ...state, color: action.color }
     default:
       return state
   }
@@ -57,8 +60,10 @@ function App({ form }) {
         提交一下
       </button>
       <Button>antdButon</Button>
-      <Calendar></Calendar>
-      <Index />
+      {/* <Calendar></Calendar> */}
+      <Provider store={store}>
+        <Index />
+      </Provider>
     </div>
   );
 }
