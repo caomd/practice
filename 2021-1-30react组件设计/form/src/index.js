@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 // import App from './App';
-import Mobx from './App_mobx';
+import Mobx from './mobx/App_mobx';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
