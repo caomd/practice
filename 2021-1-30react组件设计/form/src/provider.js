@@ -4,7 +4,7 @@ import { MyContext } from './context.js'
 export class Provider extends Component {
     render() {
         let { children, store } = this.props
-        console.log(children, 'children')
+        // console.log(children, 'children')
         return (
             <MyContext.Provider value={store}>{children}</MyContext.Provider>
         )
