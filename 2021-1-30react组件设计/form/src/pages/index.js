@@ -1,6 +1,6 @@
 import React from 'react'
 // import { connect } from 'react-redux'
-import {connect} from '../provider.js'
+import { connect } from '../provider.js'
 import { Button } from 'antd';
 import 'antd/dist/antd.css'
 // import { store } from '../App.js'
@@ -34,8 +34,8 @@ class Index extends React.Component {
     }
     render() {
         // const state = store.getState()
-        // console.log(this.props)
-        const { count, color } = this.props;
+        console.log(this.props)
+        const { count, color } = this.props.countReducer;
         return (
             <div>
                 {/* {state.count} */}
@@ -50,5 +50,9 @@ class Index extends React.Component {
     }
 }
 export default connect(state => {
+    // return {
+    //     colorReducer: state.colorReducer,
+    //     countsReducer: state.countReducer
+    // }
     return state
 }, dispatch => { return { dispatch } })(Index);

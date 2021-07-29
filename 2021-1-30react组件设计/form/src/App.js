@@ -1,29 +1,12 @@
 import React from 'react'
 // import { Provider } from 'react-redux'
 // import { createStore } from 'redux'
-import { createStore } from './createStore.js'
 import { Provider } from './provider.js'
+import { store } from './store.js'
 import { Button, Calendar } from 'antd';
 import 'antd/dist/antd.css'
 import FormCreate from './Form';
 import Index from './pages/index.js'
-const initState = {
-  count: 10,
-  color: 'black'
-}
-function reducer(state = initState, action) {
-  switch (action.type) {
-    case 'incement':
-      return { ...state, count: state.count + 1 }
-    case 'decrement':
-      return { ...state, count: state.count - 1 }
-    case 'changeColor':
-      return { ...state, color: action.color }
-    default:
-      return state
-  }
-}
-export const store = createStore(reducer)
 function App({ form }) {
   // console.log({ ...form })
   // const [value, setValue] = useState('')
