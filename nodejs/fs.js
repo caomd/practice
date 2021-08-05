@@ -32,3 +32,4 @@ promiseFile(pathToFile, 'utf-8')
     .then(result => {
         console.log('promiseFile', result)
     }).catch(e => console.log(e))
+
