@@ -1,0 +1,68 @@
+meom和pureComponent做的是一样的事情。props没有变化的情况下，不会重新渲染。
+Fragment 不是节点，只是一个标志Symbol，没有特殊含义。react里是有多个兄弟节点的,返回一个节点，不会生成多余的div节点。
+StrickMode也是一个Symbol,和conCurrentMode类似，这个节点上的子树都要按照某一种模式进行渲染。会对过时的Api的提醒。
+cloneElement和createElement差不多，只不过cloneElement是传入一个element,然后进行克隆
+createFactory 几乎用不到是对createElement的封装，绑定一个type
+第三章 react更新流程
+创建更新方式
+ReactDom.render|| hydrate 
+更新setState forceUpdate
+ReactDom对象下render方法:
+创建ReactRoot
+创建FiberRoot和RootFiber
+创建更新
+什么是Fiber？
+每一个ReactElement都会对应一个Fiber对象
+记录节点的各种状态 
+串联整个应用形成树结构
+单链表树结构
+什么是Update?ReactUpdateQueue.js中
+用于记录组件状态的改变的一个对象 
+存放于UpdateQueue中（类似单向链表），可能存在多个Update
+多个Update可以同时存在
+
+
+expirationTime 公式
+React 中有两种类型的ExpirationTime，一个是Interactive的，另一种是普通的异步。Interactive的比如说是由事件触发的，那么他的响应优先级会比较高因为涉及到交互。
+
+在整个计算公式中只有currentTime是变量，也就是当前的时间戳。我们拿computeAsyncExpiration举例，在computeExpirationBucket中接收的就是currentTime、5000和250
+
+最终的公式就是酱紫的：((((currentTime - 2 + 5000 / 10) / 25) | 0) + 1) * 25
+
+其中25是250 / 10，| 0的作用是取整数
+翻译一下就是：当前时间加上498然后处以25取整再加1再乘以 5，需要注意的是这里的currentTime是经过msToExpirationTime处理的，也就是((now / 10) | 0) + 2，所以这里的减去2可以无视，而除以 10 取整应该是要抹平 10 毫秒内的误差，当然最终要用来计算时间差的时候会调用expirationTimeToMs恢复回去，但是被取整去掉的 10 毫秒误差肯定是回不去的。
+
+现在应该很明白了吧？再解释一下吧：简单来说在这里，最终结果是以25为单位向上增加的，比如说我们输入10002 - 10026之间，最终得到的结果都是10525，但是到了10027的到的结果就是10550，这就是除以25取整的效果。
+
+React 这么设计抹相当于抹平了25ms内计算过期时间的误差，那他为什么要这么做呢？我思考了很久都没有得到答案，直到有一天我盯着代码发呆，看到LOW_PRIORITY_BATCH_SIZE这个字样，bacth，是不是就对应batchedUpdates？再细想了一下，这么做也许是为了让非常相近的两次更新得到相同的expirationTime，然后在一次更新中完成，相当于一个自动的batchedUpdates。
+
+只有处于concurrentMode组件当中才是异步更新，不然就是同步更新
+
+第四章
+查找更新对应的FiberRoot节点
+如果符合条件重置stack
+如果符合条件就请求工作制度
+ReactFiberScheduler.js
+scheduleWork(fiber,expirationTime )。。。
+resetStack(){}
+如果新的任务优先级高，打断之前的更新，只执行了一半的异步任务，会将之前的更新操作 
+状态退回到没有更新过的状态，再去执行优先级更高的任务。 
+isCommitting阶段是不可打断阶段，更新到dom上的过程，只有在commitRoot的时候才会设置为true,其他为false 
+
+4-3 requestWork
+加入到root调度队列
+判断是否批量更新
+根据expirationTime判断调度类型
+
+4-4batchUpdate
+batchUpdate让在一个方法内的setstate 一次性更新
+所有的setState执行之后进行更新perfomSyncWork
+而放到setTimeout里会打进更新后的结果是因为，执行上下文发生了变化。变成了window,所以不会有isBatchingUpdates为true,直接向下执行。所以setState每次都会进行更新。也会导致整个应用的性能变得很低。
+
+4-5reactScheduler（为了保证在浏览器运行的每一帧不超过特定的时限，希望浏览器去刷新动画，或者响应动画每一帧有足够的时间）
+源码在Scheduler文件夹下
+维护时间片
+模拟requestldleCallback 等浏览器把优先级高的执行完之后再回来调用这个方法，
+所以优先级低 
+调度列表和超时判断
+时间片的概念 平均每30毫秒刷新一次保证流畅  1秒30帧
