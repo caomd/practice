@@ -142,3 +142,23 @@ react提供给我们的原生组件 都调用updateMode 通过reconcileChildren�
 5-13 Memo组件的更新
 类似于pureComponent特性的functionComponent
 调用updateMemoComponent 同样判断current是否等于null,来判断是否是第一次渲染
+
+6-1completeUnitOfWork的整体流程和意义
+知识点：
+根据是否中断调用不同的处理方法
+判断是否有兄弟节点执行不同的操作
+完成节点之后赋值effect链 commitWork操作
+
+6-2 重设childExpirationTime
+对于一个react app的节点可能存在多个子树，每棵子树创建的任务的expirationTime都是不一样的
+在当前workInProgress所有的子节点中的expiratonTime和childexpiration优先值最高的那个
+child.expirationTime是自身所创建的expirationTime
+child.childExpirationTime 子树里里面任何几个节点所创建的优先级最高的expirationTime
+
+6-3 completWork具体做了什么 ReactFiberCompleteWork.js
+知识点：
+pop各种context相关内容 beginwork是一个正向的流程，completWork是反向流程，再清空的过程
+对于HostComponent执行初始化
+初始化监听事件
+
+6-4 初次渲染中completeWork对于DOM节点的创建和appendAllChild算法
