@@ -63,6 +63,82 @@ batchUpdate让在一个方法内的setstate 一次性更新
 源码在Scheduler文件夹下
 维护时间片
 模拟requestldleCallback 等浏览器把优先级高的执行完之后再回来调用这个方法，
-所以优先级低 
+所以优先级低，把更新任务放到队列中，等浏览器执行完然后去调用任务队列，这个时间总共加起来是33毫秒 
 调度列表和超时判断
-时间片的概念 平均每30毫秒刷新一次保证流畅  1秒30帧
+时间片的概念，把更多优先权交给浏览器，让它去执行动画或者用户反馈的更新，然后再有空闲的时间去执行react的异步更新操作 
+平均每30毫秒刷新一次保证流畅  1秒30帧
+如果浏览器执行时间超过33秒，判断异步任务是否过期，如果过期要强行更新
+if（frameDeadline-currentTime<=0)//表示浏览器执行时间超过33毫秒，把这一帧
+的时间已经用完了，对于react已经没有时间去执行，此时要判断prevTime是否已经过期，
+如果小于当前时间表示过期了，要强行更新   
+
+4-9performWork
+是否有deadline的区分 判断一帧的渲染时间内留给react渲染的时间还有没有
+循环渲染Root的条件
+超过时间片的处理 
+查看三个方法ReactFiberScheduler.js
+performAsyncWork,performWork
+
+4-10reactRoot 正常的执行每个单元的更新，捕获到任何错误进行处理，最终把整颗树遍历
+完之后，根据不同的情况再进行处理,然后commitRoot
+调用workLoop进行循环单元更新，把整颗FiberRoot遍历一遍
+捕获错误并进行处理
+走完流程之后进行善后
+function workLoop(isYieldly)是否可以被中断
+如果不可以，执行performUnitOfWork,遍历进行每个单元的更新
+如果可以，判断当前时间片是否有足够的时间
+performUnitOfWork方法中有beginWork,对每个节点的更新，更新完一个节点返回下一个节点 next=beginWork()
+
+4-11 补充
+currentTime
+在一次渲染中产生的更新需要使用相同的时间
+在一次批处理的更新应该得到相同的时间
+挂起任务用于记录的时候应该相同
+
+5-1入口和优化
+判断组件更新是否可以优化
+根据节点类型分发处理
+根据expirationTime等信息判断是否可以跳过
+performUnitOfWork方法中有beginWork,执行对整个树每个节点进行更新的操作
+beginWorker来自ReactFiberBeginWork.js,整个文档只有一个beginWork方法，
+更新的对象永远是RootFiber,而不是FiberRoot(这是整个应用)
+只有reactDom.render调用的时候,RootFiber上的expirationTime才会有值createFiberFromFragment
+
+reconcilerChildren
+根据props.children生成Fiber子树
+1.先判断element.type类型，如果是Fragment则传elment.props.children
+
+判断Fiber对象是否可以复用
+尽量复用可复用的Fiber节点减少对象的声明和内存回收的过程
+列表根据key优化
+
+5-5ClassComponent 
+ReactFiberBeginWork.js UpdateClassComponent
+第一次渲染没有instanse，会创建constructClassInstance，然后mountClassInstance,instance = workInProgress.stateNode,
+然后当有instance时表示不是第一次渲染,会调用updateClassInstance，会调用不同的生命周期方法
+计算出新的state并赋值给workInProgress
+调用那些生命周期方法
+如果没有写shouldComponentUpdate
+判断是否是PureComponentUpdate然后判断方法浅比较，isShallowEqual(oldProps,newProps) || isShallowEqual(oldState,newState)
+最终都会调用finishClassComponent去做错误判断的处理，以及是否要跳过一些更新的过程
+还有调和他的子节点
+
+5-7 IndeterminateComponent组件类型和其更新过程
+IndeterminateComponent还没有指定类型的组件，如果一个functionComponent中返回一个render函数，那就认为他是ClassComponent
+
+5-8HostRoot
+特殊的节点一个react应用中只会有一个HostRoot
+5-9HostComponent和HostText的更新
+HostComponent小写字母开始的节点都认为是HostComponent，调用updateHostComponent
+HostText 单纯的文本节点
+ 
+5-10 Poratl组件的更新
+
+5-12 Mode组件的更新
+react提供给我们的原生组件 都调用updateMode 通过reconcileChildren创建children
+1.conCurrentmode
+2.strickMoe
+
+5-13 Memo组件的更新
+类似于pureComponent特性的functionComponent
+调用updateMemoComponent 同样判断current是否等于null,来判断是否是第一次渲染
