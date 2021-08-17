@@ -162,3 +162,30 @@ pop各种context相关内容 beginwork是一个正向的流程，completWork是�
 初始化监听事件
 
 6-4 初次渲染中completeWork对于DOM节点的创建和appendAllChild算法
+1.diffProperties计算要更新的内容
+2.不同的dom property处理方式不同
+
+HostComponent ==>
+1.createInstance创建dom
+2.createElement ReactDomCompnent.js
+3.precacheFiberNode ReactDomComponentTree.js
+不会遍历嵌套子节点，只会遍历第一层的节点
+
+6-5 初次渲染中如何进行DOM节点属性初始化操作
+finalizeInitialChildren 将props应该在dom节点上展现的attributes value 或者children 如何去挂载的一个过程
+setInitialProperties 根据tag类型绑定事件,props attributes属性设置进去
+initWrapperState(element,props)
+有初始值且不需要绑定事件defaultValue
+
+6-6 更新DOM时进行的diff判断
+updateHostComponent
+
+6-7 completeWork阶段对于HostText的更新
+updateHostText
+
+6-8 renderRoot中对于错误的处理
+给报错的节点添加Incomplete副作用
+给父链上具有error boundary的节点增加副作用 搜集错误进行一定的处理
+创建错误相关的更新
+
+6-9 unwindWork以及React中的错误处理
