@@ -189,3 +189,30 @@ updateHostText
 创建错误相关的更新
 
 6-9 unwindWork以及React中的错误处理 ReactFiberUnwindWork.js
+
+7-1commitRoot 
+不可以被中断
+三个循环1.commitBeforeMutationLifecycles 2.commitAllHostEffects 对dom节点需要做的内容 3.committedExpirationTime 所有生命周期方法都在这里被调用，这三个方法调用结束之后，commitRoot的阶段完成
+
+7-2 invokeGuardedCallback开发时的捕获错误帮助方法 shared/ReactErrorUtils
+
+7-3第一个操作-获取快照 
+commitBeforeMutationLifecycles用于componentDidUpdate
+
+7-4 commitAllHostEffects总体做了哪些事情
+
+7-5 commitPlacement插入新的子节点的操作
+挂载到dom树的过程
+getHostParentFiber
+
+7-6 commitWork更新节点属性的过程
+ReactDomComponent.js updateDOMProperties
+CssPropertyOperations.setValueForStyles(domElement,propValue)拿到一个对象如何将css设置到属性上过程
+
+7-7 commitWork删除节点的操作过程 ReactFiberCommitWork.js commitDeletion
+核心知识点
+遍历子树
+卸载ref
+如果有组件调用componentWillUnmount
+
+7-8 commitLifecycles调用生命周期方法
