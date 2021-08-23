@@ -216,3 +216,15 @@ CssPropertyOperations.setValueForStyles(domElement,propValue)拿到一个对象�
 如果有组件调用componentWillUnmount
 
 7-8 commitLifecycles调用生命周期方法
+
+8-1 context-stack
+stack
+更新节点时相关信息的入栈
+完成节点时相关信息出栈
+用不同的cursor记录不同的信息
+
+8-2 遗留context-api的实现过程（1）
+legacyContext
+会影响整个子树
+嵌套的context提供者需要进行合并，后者覆盖前者，就近
+对性能影响大
