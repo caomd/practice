@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "axios": "^0.21.1",
+    "node-fetch": "^3.0.0"
+  }
+}
