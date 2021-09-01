@@ -228,3 +228,50 @@ legacyContext
 会影响整个子树
 嵌套的context提供者需要进行合并，后者覆盖前者，就近
 对性能影响大
+
+8-4 新context
+组件化的使用方式
+context提供方和订阅方都是独立的
+没有什么附带的性能影响
+
+8-5 ref的实现过程
+创建Fiber的时候处理ref coerceRef方法
+commit开始之前先detach commitDetchRef
+
+8-6 hydrate-是否需要hydrate的判断
+进入第一次渲染的时候，如果本身dom树上面已经有一个dom结构存在，我们是否可以利用这部分已经存在的dom 去避免第一次渲染时候要去创建很多dom节点的过程，可以大大提升第一次渲染的性能
+和render 一样调用legacyRenderSubTreeIntoContainer 
+只不过传入的参数不一样
+
+8-9 event事件系统初始化-注入平台事件插件 ReactDOMClientinjection.js事件注入
+8-11 event-事件触发的过程 EventPluginUtils.js
+
+9-1 优先级和任务挂起的含义
+suspend 挂起 某次更新的任务暂时不提交
+执行更新的时候RootFiber 会创建一个workInprogress的对象，rootFiber的alternate会指向workInprogress,是两个不同的对象，只不过有些属性是一样的，然后通过workInprogress 创建childFiberprogress,更新是通过workInprogress 两个对象不会相互影响，更新完成之后会把root.current指向workInprogress,这时已经将workprogress上的所有更新提交到dom上了，此时的rootFiber已经是一个过时的版本了
+
+markSuspendedPriorityLevel(root,expirationTime)
+
+三种Suspend方式
+把提交放到低优先级的任务上
+直接发起一个新的同步更新
+设置timeout 然后提交
+
+pendingTime 等待渲染的更新 新创建的任务
+suspendingTime 
+
+9-3 两个expirationTime的不同作用 ReactFiberScheduler.js
+expirationTime 作用再渲染之前 确认是否使用时间片的更新方式
+nextexpirationTimeToWorkOn作用再渲染时 这次任务的优先级和每个节点自身更新的优先级，判读这个节点是否要在这次更新流程中需要被更新和被执行
+
+9-4 Suspense组件同步模式下的更新 ReactFiberBeginWork.js updateSuspenseComponent
+同步渲染
+先直接渲染子节点为null
+commit的时候设置state
+再发起一次同步更新渲染fallback
+
+9-6 Suspense组件异步模式下的更新
+异步渲染
+设置shouldCapture
+unwindWork设置state
+渲染fallback
