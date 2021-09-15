@@ -21,37 +21,42 @@
 const inquirer = require('inquirer')
 const commander = require('commander')
 
-const {runImage} = require('./image.handler.js')
+const { runImage } = require('./image.handler.js')
 
 const initQuestions = [
     {
-        type:'checkbox',
+        type: 'checkbox',
         name: 'channels',
-        message:'请选择想要搜索的渠道',
-        choices:[
+        message: '请选择想要搜索的渠道',
+        choices: [
             {
-                name:'百度图片',
-                value:'images'
+                name: '百度图片',
+                value: 'images'
             },
-             {
-                name:'百度视频',
-                value:'vedio '
+            {
+                name: '百度视频',
+                value: 'vedio '
             }
         ]
     },
     {
-        type:'input',
-        name:'keyword',
-        message:'请输入想要搜索的关键词'
+        type: 'input',
+        name: 'keyword',
+        message: '请输入想要搜索的关键词'
+    },
+    {
+        type: 'number',
+        name: 'counts',
+        message: '请输入要下载的图片的数量x,最小30'
     }
 ]
 
 inquirer.prompt(initQuestions).then(result => {
-    const { keyword, channels} = result;
-    for(let channel of channels){
+    const { keyword, channels, counts } = result;
+    for (let channel of channels) {
         switch (channel) {
             case 'images':
-                runImage(keyword)
+                runImage(keyword,counts)
                 break;
         }
     }

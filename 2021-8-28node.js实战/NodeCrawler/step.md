@@ -473,3 +473,30 @@ https://image.baidu.com/search/acjson?tn=resultjson_com&logid=148498006324593850
 
 精简后：
 https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord=%E7%8C%AB%E5%92%AA&ie=utf-8&oe=utf-8&word=%E7%8C%AB%E5%92%AA&pn=300&rn=30&1631671103576=
+
+封装request
+function request(url) {
+    return new Promise((resolve, reject) => {
+        superagent
+            .get(url)
+            .set('Accept', headers['Accept'])
+            .set('Accept-Encoding', headers['Accept-Encoding'])
+            .set('Accept-Language', headers['Accept-Language'])
+            .set('Cache-Control', headers['Cache-Control'])
+            .set('Connection', headers['Connection'])
+            .set('User-Agent', headers['User-Agent'])
+            .set('sec-ch-ua', headers['sec-ch-ua'])
+            //修改下载为Promise 这里为异步async await
+            .end(async (err, res) => {
+                if (err) {
+                    // console.log(`访问失败-${err}`)
+                    reject(`访问失败-${err}`)
+                } else {
+                    resolve()
+                }
+            })
+    })
+}
+
+## 报错UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'text' of undefined 大断点 执行 runImage('猫咪',30)
+错误点：resolve() ===》 resolve(res)
