@@ -281,3 +281,195 @@ function getValueListByReg(str, key) {
 ## 使用replace          
 const titleList = getValueListByReg(htmlText, 'fromPageTitle')
 .map(item => item.replace('<strong>', '').replace('<\\/strong>', ''))
+
+## 8.创建image目录存储图片
+function mkImageDir(pathname) {
+    const fullPath = path.resolve(__dirname, pathname);
+    //判断当前路径是否存在
+    if (fs.existsSync(fullPath)) {
+        console.log(`${pathname} 目录已存在，跳过此步骤`)
+        return
+    }
+    //创建目录
+    fs.mkdirSync(fullPath);
+    console.log(`创建目录${pathname} 成功`)
+}
+
+## 9.下载图片到images目录
+//下载图片到images index防止百度爬到有重名的现象
+function downloadImage(url, name, index) {
+    const fullPath = path.join(__dirname, 'images', `${index}-${name}.png`)
+    //判断是否存在
+    if (fs.existsSync(fullPath)) {
+        console.log(`文件已存在，跳过此步骤：${name}`)
+        return
+    }
+    superagent.get(url).end((err, res) => {
+        if (err) {
+            console.log(err);
+            return
+        }
+        //异步的,binary 二进制的
+        fs.writeFile(fullPath, res.body, 'binary', (err) => {
+            if (err) {
+                console.log(err)
+                return
+            }
+            console.log(`下载成功 ${url}`);
+        })
+    })
+}
+
+## 10.加个进度条 cli-progress
+安装 cnpm i cli-progress -D 
+修改函数为promise的，确认返回的成功图片个数，succeed++ 进度条更新
+//图片目录
+function mkImageDir(pathname) {
+
+    ##  //返回Promise  
+    return new Promise((resolve,reject) => {
+    const fullPath = path.resolve(__dirname, pathname);
+    //判断当前路径是否存在
+    if (fs.existsSync(fullPath)) {
+        // console.log(`${pathname} 目录已存在，跳过此步骤`)
+        // return
+        return reject(`${pathname} 目录已存在，跳过此步骤`)
+    }
+    //创建目录
+    fs.mkdirSync(fullPath);
+    console.log(`创建目录${pathname} 成功`)
+    return resolve()
+    })
+}
+
+//下载图片到images index防止百度爬到有重名的现象
+function downloadImage(url, name, index) {
+    
+   ## //返回Promise
+    return new Promise((resolve,reject) => {
+     const fullPath = path.join(__dirname, 'images', `${index}-${name}.png`)
+    //判断是否存在
+    if (fs.existsSync(fullPath)) {
+        return reject(`文件已存在，跳过此步骤：${name}`)
+    }
+    superagent.get(url).end((err, res) => {
+        if (err) {
+            return reject(err);
+        }
+        //异步的,binary 二进制的
+        fs.writeFile(fullPath, res.body, 'binary', (err) => {
+            if (err) {
+                return reject(err)
+            }
+            // console.log(`下载成功 ${url}`);
+            return resolve();
+        })
+    })
+    })
+}
+
+superagent
+    .get(`http://image.baidu.com/search/index?tn=baiduimage&ie=utf-8&word=${encodeURIComponent(word)}`)
+    .set('Accept', headers['Accept'])
+    .set('Accept-Encoding', headers['Accept-Encoding'])
+    .set('Accept-Language', headers['Accept-Language'])
+    .set('Cache-Control', headers['Cache-Control'])
+    .set('Connection', headers['Connection'])
+    .set('User-Agent', headers['User-Agent'])
+    .set('sec-ch-ua', headers['sec-ch-ua'])
+    //修改下载为Promise 这里为异步async await
+    .end(async (err, res) => {
+        if (err) {
+            console.log(`访问失败-${err}`)
+        } else {
+            // console.log(res.text)
+            const htmlText = res.text;
+            const $ = cheerio.load(htmlText)
+            //使用公共函数
+            const imageList = getValueListByReg(htmlText, 'objURL')
+            const titleList = getValueListByReg(htmlText, 'fromPageTitle').map(item => item.replace('<strong>', '').replace('<\\/strong>', ''))
+            total = titleList.length;
+            try {
+              //创建images目录 await
+              
+              ## 异步
+             await mkImageDir('images')
+            bar1.start(total,0);
+            //下载图片到目录
+            imageList.forEach((url, index) => {
+                //titleList 一一对应的 
+                downloadImage(url, titleList[index], index)
+                .then(()=>{
+                    succeed++;
+                    bar1.update(succeed)
+                }).then(()=>{
+                    if(succeed===total){
+                        bar1.stop();
+                        console.log('恭喜，图片下载完成！！！')
+                    }
+                })
+            })  
+            } catch (error) {
+            }
+        }
+    })
+
+## 11.已存在images 先删除再创建
+创建删除函数 removeDir
+//删除images文件夹
+function removeDir(pathname){
+    const fullPath = path.resolve(__dirname,pathname);
+    const process = require('child_process');
+    console.log(`${pathname}目录已存在，准备执行删除`)
+    process.execSync(`rm -rf ${fullPath}`)
+    console.log(`历史目录${pathname}删除完成`)
+
+}
+
+## 12.使用cli 输入关键词 以上是写死的猫咪  需引入两个库 commander 和 inquirer
+安装 commander inquirer
+## inquirer 配置各种选项拿到用户的答案 commander 提供给程序各种各样的指令
+const inquirer = require('inquirer')
+const commander = require('commander')
+
+const {runImage} = require('./image.handler.js')
+
+const initQuestions = [
+    {
+        type:'checkbox',
+        name: 'channels',
+        message:'请选择想要搜索的渠道',
+        choices:[
+            {
+                name:'百度图片',
+                value:'images'
+            },
+             {
+                name:'百度视频',
+                value:'vedio '
+            }
+        ]
+    },
+    {
+        type:'input',
+        name:'keyword',
+        message:'请输入想要搜索的关键词'
+    }
+]
+
+inquirer.prompt(initQuestions).then(result => {
+    const { keyword, channels} = result;
+    for(let channel of channels){
+        switch (channel) {
+            case 'images':
+                runImage(keyword)
+                break;
+        }
+    }
+})
+
+## 14.自定义爬取图片的数量?
+https://image.baidu.com/search/acjson?tn=resultjson_com&logid=14849800632459385078&ipn=rj&ct=201326592&is=&fp=result&queryWord=%E7%8C%AB%E5%92%AA&cl=2&lm=-1&ie=utf-8&oe=utf-8&adpicid=&st=&z=&ic=&hd=&latest=&copyright=&word=%E7%8C%AB%E5%92%AA&s=&se=&tab=&width=&height=&face=&istype=&qc=&nc=1&fr=&expermode=&nojc=&pn=300&rn=30&gsm=12c&1631671103576=
+
+精简后：
+https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord=%E7%8C%AB%E5%92%AA&ie=utf-8&oe=utf-8&word=%E7%8C%AB%E5%92%AA&pn=300&rn=30&1631671103576=
