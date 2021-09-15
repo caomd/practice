@@ -10,6 +10,7 @@ let succeed = 0; //下载成功了多少张图片
 const word = '猫咪'//要encodeURIComponent(word)
 const headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept2': 'text/plain, */*; q=0.01',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
     'Cache-Control': 'no-cache',
@@ -49,9 +50,9 @@ function mkImageDir(pathname) {
 }
 
 //下载图片到images index防止百度爬到有重名的现象
-function downloadImage(url, name, index) {
+function downloadImage(url, name, index, assetDir) {
     return new Promise((resolve, reject) => {
-        const fullPath = path.join(__dirname, 'images', `${index}-${name}.png`)
+        const fullPath = path.join(__dirname, assetDir, `${index}-${name}.png`)
         //判断是否存在
         if (fs.existsSync(fullPath)) {
             return reject(`文件已存在，跳过此步骤：${name}`)
@@ -83,11 +84,11 @@ function removeDir(pathname) {
 
 }
 
-function request(url) {
+function request(url, AcceptKey = 'Accept') {
     return new Promise((resolve, reject) => {
         superagent
             .get(url)
-            .set('Accept', headers['Accept'])
+            .set('Accept', headers[AcceptKey])
             .set('Accept-Encoding', headers['Accept-Encoding'])
             .set('Accept-Language', headers['Accept-Language'])
             .set('Cache-Control', headers['Cache-Control'])
@@ -110,8 +111,8 @@ async function getImageByPage(start, total, keyword) {
     let allImages = []
     while (start < total) {//当前远远没有拿到数量，百度最多请求60张
         const size = Math.min(60, total - start)//最多60张，现在是51张，还要请求9张
-        const res = await request(`https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord=${encodeURIComponent(keyword)}&ie=utf-8&oe=utf-8&word=${encodeURIComponent(keyword)}&pn=${start}&rn=${size}&${Date.now()}=`)
-        allImages = allImages.concat(res.data)
+        const res = await request(`https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord=${encodeURIComponent(keyword)}&ie=utf-8&oe=utf-8&word=${encodeURIComponent(keyword)}&pn=${start}&rn=${size}&${Date.now()}=`, 'Accept2')
+        allImages = allImages.concat(JSON.parse(res.text).data)
         start = start + size
 
     }
@@ -169,7 +170,7 @@ function runImageInit(word) {
                     //下载图片到目录
                     imageList.forEach((url, index) => {
                         //titleList 一一对应的 
-                        downloadImage(url, titleList[index], index)
+                        downloadImage(url, titleList[index], index, assetDir)
                             .then(() => {
                                 succeed++;
                                 bar1.update(succeed)
@@ -202,10 +203,11 @@ function runImage(word, counts) {
                     title: titleList[index]
                 }
             ))
-            const firstPageCount = allImageUrls.length;
+            const firstPageCount = allImageUrls.length
+            const assetDir = `images-${word}`
             //处理counts数据
             if (counts > firstPageCount) {
-                const restImageUrls = await getImageByPage(firstPageCount, counts, keyword)
+                const restImageUrls = await getImageByPage(firstPageCount, counts, word)
                 //处理返回数据中含有的strong标签 先过滤一下是否含有middleURL
                 //                 {
                 //                     adPicId: "0"
@@ -270,15 +272,15 @@ function runImage(word, counts) {
                 //拼起来
                 allImageUrls = allImageUrls.concat(formateImageUrls)
             }
-            total = titleList.length;
+            total = allImageUrls.length;
             try {
                 //创建images目录 await
-                await mkImageDir('images')
+                await mkImageDir(assetDir)
                 bar1.start(total, 0);
                 //下载图片到目录
-                imageList.forEach((url, index) => {
+                allImageUrls.forEach((item, index) => {
                     //titleList 一一对应的 
-                    downloadImage(url, titleList[index], index)
+                    downloadImage(item.imageUrl, item.title, index, assetDir)
                         .then(() => {
                             succeed++;
                             bar1.update(succeed)
@@ -294,7 +296,7 @@ function runImage(word, counts) {
         })
 }
 //调试
-// runImage('猫咪', 30)
+// runImage('猫咪', 60)
 
 module.exports = {
     runImage

@@ -500,3 +500,45 @@ function request(url) {
 
 ## 报错UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'text' of undefined 大断点 执行 runImage('猫咪',30)
 错误点：resolve() ===》 resolve(res)
+
+## 报错  触发了百度反爬策略 因为请求头和浏览器不一样
+text:'{"antiFlag":1,"message":"Forbid spider access","bfe_log_id":"9995102082592882184"}'
+
+百度的请求头Accept: text/plain, */*; q=0.01
+而本地是'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+## 修改请求头，默认是Accept
+function request(url, AcceptKey = 'Accept') {
+    return new Promise((resolve, reject) => {
+        superagent
+            .get(url)
+            .set('Accept', headers[AcceptKey])
+            .set('Accept-Encoding', headers['Accept-Encoding'])
+            .set('Accept-Language', headers['Accept-Language'])
+            .set('Cache-Control', headers['Cache-Control'])
+            .set('Connection', headers['Connection'])
+            .set('User-Agent', headers['User-Agent'])
+            .set('sec-ch-ua', headers['sec-ch-ua'])
+            //修改下载为Promise 这里为异步async await
+            .end(async (err, res) => {
+                if (err) {
+                    // console.log(`访问失败-${err}`)
+                    reject(`访问失败-${err}`)
+                } else {
+                    resolve(res)
+                }
+            })
+    })
+}
+
+async function getImageByPage(start, total, keyword) {
+    let allImages = []
+    while (start < total) {//当前远远没有拿到数量，百度最多请求60张
+        const size = Math.min(60, total - start)//最多60张，现在是51张，还要请求9张
+        const res = await request(`https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord=${encodeURIComponent(keyword)}&ie=utf-8&oe=utf-8&word=${encodeURIComponent(keyword)}&pn=${start}&rn=${size}&${Date.now()}=`, 'Accept2')
+        allImages = allImages.concat(res.data)
+        start = start + size
+    }
+    return allImages
+}
+
+## 有时候慢是网路问题
