@@ -85,7 +85,36 @@ function tranversArray(children,parent){
    }
    return tranversNode(ast,null)
 }
-
-function parser(ast){
-
+//ast ===> 代码
+function generate(ast){
+  switch(ast.type){
+      case:'Program':
+      return ast.body.map(subAst => generate(subAst)).join('\n');
+      case: 'ExpressionStatement':return generate(ast.expression)+';';
+      case: 'CallExpression': return generate(ast.callee)+"("+arguments.map(arg=>generate(arg))+")";
+      case:'Indentifier': return ast.name;
+      case:'NumberLiteral': return ast.value;
+  }
 }
+
+function parser(input){
+//四个步骤
+const tokens = generatorTokens(input)
+const ast = generatorAst(tokens)
+const newAst = transformer(ast)
+const code = generate(newAst)//不能是ast 字段不一样了，后边处理也要修改
+ <!-- return JSON.stringify(newAst) -->
+ return code;
+}
+
+## 针对不同的工具，最终也会有不同效果
+@babel/parser:转化为AST抽象语法树
+@babel/tranverse:对AST节点进行递归遍历
+@babel/types:对具体的AST节点进行修改
+@babel/generator:AST抽象语法树生成新的代码
+
+Babel插件
+三个主要处理步骤分别是：解析(parse),转换(transform),生成(generate)
+词法分析阶段把字符串形式的代码转换为令牌流（tokens）扁平的语法片数组
+
+通过.babelrc中plugins插件配置指定插件的位置，写对应的插件，其实是一个函数，会传一些types之类的参数，可以通过identifier 对结果对替换，MemberExpression  
