@@ -21,14 +21,14 @@ const { type } = require("os")
 
 //手写是实现new
 function objectFactory() {
-    let obj = new Object()
+    // let obj = new Object()
+    let obj = {}
     const constructor = [].shift.call(arguments)//获取第一参数(构造函数),arguments为伪数组
     //也可以用扩展运算符和Array.from(arguments)不会改变原数组
     // const constructor = [...arguments].shift()
     // const constructor = Array.from(arguments).shift();
     obj.__proto__ = constructor.prototype
-    //改变this的指向，参数传给obj
-    console.log(arguments)
+    //改变this的指向，参数传给objconsole.log(arguments)
     let ret = constructor.apply(obj, arguments)
     //第四项返回新对象，看返回值是否为对象，是的话返回返回的对象，否则返回新对象
     return typeof ret === 'object' ? ret : obj
@@ -73,5 +73,16 @@ const myNew = function () {
 const c = myNew(Player, 'black');
 console.log('myNew', c)
 
+
+
+Window.name = 'globalName';
+var myObject = {
+   Name:'sven',
+   getName:function(){
+       return this.name
+   }
+};
+var getName = myObject.getName;
+Console.log(getName())
 
 
