@@ -63,29 +63,29 @@ B.prototype.getName = function () {
     return this.name;
 }
 var b = new B('sven');
-console.log(b.getName())//输出：sven
+console.log(b.getName());//输出：sven
 
-    //借用Array.prototype对象上的方法
-    (
-        function () {
-            Array.prototype.push.call(arguments, 9)
-            console.log(arguments)//[Arguments] { '0': 1, '1': 2, '2': 9 }
-        }
-    )(1, 2)
+//借用Array.prototype对象上的方法
+(
+    function () {
+        Array.prototype.push.call(arguments, 9)
+        console.log(arguments)//[Arguments] { '0': 1, '1': 2, '2': 9 }
+    }
+)(1, 2);
 
 //把arguments转成真正的数组使用Array.prototype.slice
 function func() {
     Array.prototype.slice.call(arguments);
     console.log(arguments)
 }
-func(3, 5, 2)
-    (
-        function () {
-            var a = Array.prototype.slice.call(arguments)
-            console.log(a, a.push(9))//[ 3, 5, 2, 9 ] 4
-            console.log(arguments)//[Arguments] { '0': 1, '1': 2, '2': 9 }
-        }
-    )(3, 5, 2)
+func(3, 5, 2);
+(
+    function () {
+        var a = Array.prototype.slice.call(arguments)
+        console.log(a, a.push(9))//[ 3, 5, 2, 9 ] 4
+        console.log(arguments)//[Arguments] { '0': 1, '1': 2, '2': 9 }
+    }
+)(3, 5, 2);
 
 //可以借用Array.prototype对象上的方法的只有对象
 var func = function () { }
@@ -109,17 +109,15 @@ var n = 9
 console.log(typeof word)
 console.log(Object.prototype.toString.call(word))
 console.log(Object.prototype.toString.call(n))
-Array.prototype.push.call(word, 'push');
-console.log(word, word.length)
-
-//Cannot assign to read only property 'length' of object '[object String]'
+// Array.prototype.push.call(word, 'push');
+// console.log(word, word.length);//Cannot assign to read only property 'length' of object '[object String]'
 
 //高阶函数
 var isType = function (type) {
     return function (obj) {
         return Object.prototype.toString.call(obj) === '[object ' + type + ']';
     }
-}
+};
 var isString = isType('String')
 var isArray = isType('Array')
 var isNumber = isType('Number')
@@ -135,14 +133,14 @@ Function.prototype.before = function (beforefn) {
     return function () {
         console.log(this, 'this....')//Object [globl]
         beforefn.apply(this, arguments);
-        console.log(_self.apply(this, arguments), '0')//undefined
-        return _self.apply(this, arguments)
+        // console.log(_self.apply(this, arguments), '0')//undefined
+        return _self.apply(this, arguments)//返回了undefined
     }
 }
 Function.prototype.after = function (afterfn) {
-    var _self = this;
+    var _self = this;//before方法返回到匿名函数
     return function () {
-        var ret = _self.apply(this, arguments);
+        var ret = _self.apply(this, arguments);//undefined
         afterfn.apply(this, arguments);
         console.log('ret...', ret)//undefined
         return ret
@@ -150,12 +148,53 @@ Function.prototype.after = function (afterfn) {
 }
 var func = function () {
     console.log(1)
+    //返回undefined
 }
 func = func.before(function () {
     console.log(2)
 }).after(function () {
     console.log(3)
 })
-func()
+func();
 
-//
+//单例模式
+var Singleton = function (name) {
+    this.name = name
+}
+Singleton.prototype.getName = function () {
+    return this.name
+}
+Singleton.getInstance = (function () {
+    var instance;
+    return function (name) {
+        if (!instance) {
+            instance = new Singleton(name)
+        }
+        return instance
+    }
+})();
+
+var s1 = Singleton.getInstance('single1');
+var s2 = Singleton.getInstance('single2');
+console.log(s1 === s2)//true
+
+//透明单例模式 通过new 创建实例对象
+//利用自执行匿名函数和闭包
+var CreateSingleton = (
+    function () {
+        var instance;
+        //构造函数
+        var Singleton = function (name) {
+            if (instance) {
+                return instance
+            }
+            this.name = name;
+            return instance = this
+        }
+        return Singleton
+    }
+)()
+
+var news1 = new CreateSingleton('newsingle1')
+var news2 = new CreateSingleton('newsingle2')
+console.log(news1 === news2)//true

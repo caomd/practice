@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>设计模式</div>
+        <script>
+            var throttle = function (fn, interval) {
+                var timer,
+                    __self = fn,//保存需要延迟到函数引用
+                    firstTime = true;
+                return function () {
+                    var __me = this;
+                    //第一次请求不需要延迟
+                    if (firstTime) {
+                        console.log(this, 'this')
+                        __self.apply(__me, arguments)
+                        return firstTime = false //不再继续向下执行
+                    }
+                    //延迟执行中
+                    if (timer) {
+                        return false
+                    }
+                    timer = setTimeout(function () {
+                        clearTimeout(timer)
+                        timer = null
+                        __self.apply(__me, arguments)
+                    }, interval || 8000)
+                }
+            }
+            window.onresize = throttle(function () { console.log(1) }, 8000)
+        </script>
+    </body>
+
+</html>
