@@ -5,12 +5,21 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>设计模式实操</title>
     </head>
 
     <body>
         <div>设计模式</div>
+        <div>
+            <form action="http://xxx.baidu.com" id="registerForm">
+                用户名：<input type="text" name="username"><label id='usernameError'></label><br />
+                密码：<input type="text" name="password"><label id='passwordError'></label><br />
+                手机号：<input type="text" name="phoneNumber"><label id='phoneNumberError'></label><br />
+                <button>submit</button>
+            </form>
+        </div>
         <script>
+            // 函数节流
             var throttle = function (fn, interval) {
                 var timer,
                     __self = fn,//保存需要延迟到函数引用
@@ -19,8 +28,8 @@
                     var __me = this;
                     //第一次请求不需要延迟
                     if (firstTime) {
-                        console.log(this, 'this')
-                        __self.apply(__me, arguments)
+                        // console.log(this, 'this')
+                        // __self.apply(__me, arguments)
                         return firstTime = false //不再继续向下执行
                     }
                     //延迟执行中
@@ -34,7 +43,184 @@
                     }, interval || 8000)
                 }
             }
-            window.onresize = throttle(function () { console.log(1) }, 8000)
+            //window.onresize等于throttle返回的函数，所以每次触发都执行返回的匿名函数
+            // window.onresize = throttle(function () { console.log(1) }, 8000)
+            //策略模式 表单验证第一版
+            //策略模式表单验证 校验规则和返回对应的错误信息
+            var errCss = {
+                color: 'red'
+            }
+            var strategies = {
+                isNonEmpty: function (val, errorMsg) {
+                    // console.log(arguments)
+                    //转为数组,取出对应的dom
+                    var dom = [].slice.call(arguments).pop()
+                    if (val === '') {
+                        return { dom, errorMsg }
+                    }
+                },
+                isMobile: function (val, errorMsg) {
+                    var dom = [].slice.call(arguments).pop()
+                    if (!/(^1[3|5|8][0-9]{9}$)/.test(val)) {
+                        return { dom, errorMsg }
+                    }
+                },
+                minLength: function (val, length, errorMsg) {
+                    var dom = [].slice.call(arguments).pop()
+                    if (val.length < length) {
+                        return { dom, errorMsg }
+                    }
+                },
+            }
+            var registerForm = document.getElementById('registerForm')
+            var showError = function (domAry, errorMsgAry) {
+                for (var i = 0; domAry[i]; domAry[i++]) {
+                    document.getElementById(domAry[i] + 'Error').innerHTML = errorMsgAry[domAry[i]]
+                    document.getElementById(domAry[i] + 'Error').style.color = errCss.color
+                }
+            }
+            registerForm.onsubmit = function (event) {
+                //阻止默认提交行为
+                event.preventDefault()
+                //请求校验规则
+                var errorMsgAry = validatorFun()
+                if (errorMsgAry.length !== 0) {
+                    showError(['username', 'password', 'phoneNumber'], errorMsgAry)
+                }
+            }
+            //第一版
+            // var validatorFun = function () {
+            //     //创建校验对象
+            //     var validator = new Validator()
+            //     //添加校验规则
+            //     validator.add(registerForm.username, 'isNonEmpty', '用户名不能为空', 'username')
+            //     validator.add(registerForm.password, 'minLength:6', '最小长度为6', 'password')
+            //     validator.add(registerForm.phoneNumber, 'isMobile', '手机号格式不正确', 'phoneNumber')
+            //     return validator.start()
+            // }
+            //重构输入框多种校验规则
+            var validatorFun = function () {
+                //创建校验对象
+                var validator = new Validator()
+                //添加校验规则
+                validator.add(registerForm.username, [
+                    {
+                        strategy: 'isNonEmpty',
+                        errorMsg: '用户名不能为空'
+                    },
+                    {
+                        strategy: 'minLength:10',
+                        errorMsg: '长度最小为10'
+                    },
+                ], 'username')
+                validator.add(registerForm.password, [
+                    {
+                        strategy: 'minLength:6',
+                        errorMsg: '长度最小为6'
+                    },
+                ], 'password')
+                validator.add(registerForm.phoneNumber,
+                    [
+                        {
+                            strategy: 'isMobile',
+                            errorMsg: '手机号格式不正确'
+                        },
+                    ], 'phoneNumber'
+                )
+                return validator.start()
+            }
+
+            //创建validator构造函数
+            var Validator = function () {
+                this.cache = []//保存校验规则
+            }
+            //添加add方法第一版
+            // Validator.prototype.add = function (dom, rule, errorMsg, domItem) {
+            //     this.cache.push(
+            //         function () {
+            //             var arg = rule.split(':')
+            //             var strategy = arg.shift()
+            //             var val = dom.value
+            //             arg.unshift(val)
+            //             arg.push(errorMsg)
+            //             arg.push(domItem)
+            //             //这里出错，传参数为一个数组，而接收为两个参数，第二个会是undefined,所以绑定dom随便绑定什么对象都可以
+            //             // console.log(strategies[strategy](arg))
+            //             //修改后
+            //             // console.log(strategies[strategy].apply(this, arg))
+            //             return strategies[strategy].apply(this, arg)
+            //         }
+            //     )
+            // }
+            // 添加方法第二版
+            Validator.prototype.add = function (dom, rules, domItem) {
+                //不能pushfor循环，把push放里边
+                //for作用域下this 是window,不是Validator对象了，保存当前对象
+                var self = this
+                for (var i = 0, rule; rule = rules[i++];) {
+                    (function (rule) {
+                        self.cache.push(function () {
+                            //此时执行rule获取到的是undefined,因为for循环已经执行完了，最后的值是undefined，应使用闭包保存rule,作为局部变量
+                            // console.log(rule.strategy)
+                            // console.log(dom)
+                            var arg = rule.strategy.split(':')
+                            var strategy = arg.shift()
+                            arg.unshift(dom.value)
+                            arg.push(rule.errorMsg)
+                            arg.push(domItem)
+                            return strategies[strategy].apply(this, arg)
+                        })
+                    })(rule)
+                }
+            }
+            Validator.prototype.start = function () {
+                // for (var i = 0; this.cache; this.cache[i++]) {
+                //     return this.cache[i]()
+                // }
+                //修改后
+                var errorMsgAry = {}
+                for (var i = 0, validatorFun; validatorFun = this.cache[i++];) {
+                    var msg = validatorFun()
+                    if (msg) {
+                        // console.log([].slice.call(errorMsgAry).push(msg));返回1，不会修改errorMsgAry,如何是字符串的话
+                        //msg={dom:'',errorMsg:''}
+                        errorMsgAry[msg['dom']] = errorMsgAry[msg['dom']] ? errorMsgAry[msg['dom']] + ', ' + msg['errorMsg'] : msg['errorMsg']
+                    }
+                }
+                return errorMsgAry
+            }
+            var sf = []
+            function aff(af) {
+                // var af = 'fst'
+                for (var i = 0; i < 5; i++) {
+                    // (
+                    //     function () {
+                    //         console.log(i, '二')
+                    //     }
+                    // )()
+                    //相当于回调函数，此时for循环已经执行完啦
+                    // sf.push(function a() {
+                    //     console.log(af, i)//i一直是5
+                    // })
+                    //使用闭包结构
+                    (function a(i) {
+                        sf.push(function a() {
+                            console.log(i)//0,1,2,3,4
+                        })
+                    })(i)
+                    console.log(sf, i)
+                    // {a: '2'} 5
+                    // {a: '2'} 5
+                    // {a: '2'} 5
+                    // {a: '2'} 5
+                    // {a: '2'} 5
+                }
+            }
+            aff({ a: '2' })
+            for (var j = 0, fun; fun = sf[j++];) {
+                fun()
+            }
+
         </script>
     </body>
 

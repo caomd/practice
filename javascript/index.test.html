@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>设计模式测试版</title>
+    </head>
+
+    <body>
+        <div>设计模式</div>
+    </body>
+    <script>
+        //函数节流
+        var throttle = function (fn, interval) {
+            var timer,
+                __self = fn,//保存原函数引用
+                firstTime = true;
+            console.log(1)//只在第一次调用时执行
+            return function () {
+                console.log(2)
+                if (firstTime) {
+                    fn.apply(this, arguments)
+                    return firstTime = false
+                }
+                if (timer) {
+                    return false
+                }
+                timer = setTimeout(function () {
+                    clearTimeout(timer)
+                    console.log(3)
+                    timer = null
+                    fn.apply(this, arguments)
+                }, interval || 500)
+            }
+        }
+        console.log(throttle)//只在第一次调用时执行
+        //window.onresize等于返回的匿名函数所以每次触发都执行返回函数
+        window.onresize = throttle(function () {
+            console.log(111)
+        }, 8000)
+    </script>
+
+</html>

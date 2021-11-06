@@ -198,3 +198,26 @@ var CreateSingleton = (
 var news1 = new CreateSingleton('newsingle1')
 var news2 = new CreateSingleton('newsingle2')
 console.log(news1 === news2)//true
+
+//函数节流
+var throttle = function (fn, interval) {
+    var timer,
+        firstTime = true;
+    return function () {
+        if (firstTime) {
+            fn.apply(this, arguments)
+            return firstTime = false
+        }
+        if (timer) {
+            return false
+        }
+        timer = setTimeout(function () {
+            clearTimeout(timer)
+            timer = null
+            fn.apply(this, arguments)
+        }, interval || 500)
+    }
+}
+window.onresize = throttle(function () {
+    console.log(111)
+}, 8000)
