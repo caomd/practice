@@ -59,3 +59,34 @@ const person = getPerson();
 (<Student>person).learn();
 // (<Teacher>person).teach();
 
+//P61 课后题 1
+let a: string = 'string'
+let b: number = 1
+let c: boolean = true
+let d: undefined = undefined
+let e: null = null
+let f: object = { a: 'a' }
+
+//修改成其他类型
+//a = 1 //==> 不能将类型“number”分配给类型“string”
+//b = 'b'//同上报类型错误
+//c = 1//同上
+
+//2
+let aany: any = 1
+aany = 'string'
+console.log(aany);
+
+//3题
+function fun<T>(a: string): number {
+    console.log(a, typeof a);
+    return 1
+}
+fun<string>('1')
+fun<number>('1')
+
+function hello<T>(a: T[]): T[] {
+    console.log(a.length);
+    return []
+}
+hello<string>(['3'])
