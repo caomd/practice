@@ -40,6 +40,67 @@
         window.onresize = throttle(function () {
             console.log(111)
         }, 8000)
+        var sf = []
+        function aff(af) {
+            // var af = 'fst'
+            for (var i = 0; i < 5; i++) {
+                // (
+                //     function () {
+                //         console.log(i, '二')
+                //     }
+                // )()
+                //相当于回调函数，此时for循环已经执行完啦
+                // sf.push(function a() {
+                //     console.log(af, i)//i一直是5
+                // })
+                //使用闭包结构
+                (function a(i) {
+                    sf.push(function a() {
+                        console.log(i)//0,1,2,3,4
+                    })
+                })(i)
+                console.log(sf, i)
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+            }
+        }
+        aff({ a: '2' })
+        for (var j = 0, fun; fun = sf[j++];) {
+            fun()
+        }
+        //图片预加载
+        var myImage = (function () {
+            var img = document.createElement('img');
+            document.body.appendChild(img)
+            return function (src) {
+                img.src = src
+            }
+        })()
+        // var proxyImageFun = function (src) {
+        //     var imgProxy = new Image()
+        //     imgProxy.src = src
+        //     myImage('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第4章/荷花.jpg')
+        //     imgProxy.onload = function () {
+        //         console.log(this)
+        //         myImage(this.src)
+        //     }
+        // }
+        //为保持一致性 和myImage结构一样的写法
+        var proxyImageFun = (function () {
+            var imgProxy = new Image()
+            imgProxy.onload = function () {
+                console.log(this)
+                myImage(this.src)
+            }
+            return function (src) {
+                imgProxy.src = src
+                myImage('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第4章/荷花.jpg')
+            }
+        })()
+        proxyImageFun('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
     </script>
 
 </html>
