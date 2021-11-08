@@ -101,6 +101,29 @@
             }
         })()
         proxyImageFun('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
+        var Dog = function (name) {
+            this.name = name
+        }
+        var dog1 = new Dog('dog1')
+        var dog2 = new Dog('dog1')
+        var dog3 = new Dog('dog3')
+        console.log(dog1 === dog1)
+        console.log(dog1 === dog3)
+
+        //手写new
+        var createFactory = function () {
+            var obj = {}
+            const Contructor = [].shift.call(arguments)
+            obj.__proto__ = Contructor.prototype
+            var ret = Contructor.apply(obj, arguments)
+            return typeof ret === 'object' ? ret : obj
+        }
+        //测试
+        var Teacher = function (name) {
+            this.name = name
+        }
+        var teacher = createFactory(Teacher, 'Jason')
+        console.log(teacher)
     </script>
 
 </html>

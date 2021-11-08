@@ -1,3 +1,4 @@
+//单例模式 全局访问 唯一实例
 var Singleton = function (name) {
     this.name = name;
     this.instance = null;
@@ -111,7 +112,7 @@ CreateDiv.prototype.init = function () {
     div.innerHTML = this.html;
     document.body.appendChild(div)
 }
-//引入代理类ProxySingletonCreateDiv 最终new的实例对象
+//引入代理类ProxySingletonCreateDiv 最终new的实例对象 返回一个构造函数
 var ProxySingletonCreateDiv = (
     function () {
         var instance;

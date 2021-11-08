@@ -369,6 +369,232 @@
             MacroCommand.add(closePCCommand)
             MacroCommand.add(closeQQCommand)
             MacroCommand.excute()
+
+            /*********组合模式**********/
+            /*********扫描文件夹**********/
+            //文件夹----文件夹----文件
+            var Folder = function (name) {
+                this.name = name;
+                this.files = []
+            }
+            // Folder.prototype.add = function (file) {
+            //     this.files.push(file)
+            // }
+            //引用父对象，当删除某个文件时，要从所在文件夹删除，如果不在某个文件夹下，代表游离文件，直接返回return
+            //1.给Folder,File添加this.parent属性在add方法中
+            Folder.prototype.add = function (file) {
+                this.files.push(file)
+                file.parent = this
+            }
+            Folder.prototype.scan = function () {
+                console.log('开始扫描文件夹', this.name)
+                for (var i = 0, file, files = this.files; file = files[i++];) {
+                    console.log(file, 'file************')
+                    file.scan()
+                }
+            }
+            var File = function (name) {
+                this.name = name
+            }
+            File.prototype.add = function () {
+                throw new Error('文件下面不能再添加文件')
+            }
+            File.prototype.scan = function () {
+                console.log('开始扫描文件', this.name)
+            }
+            //删除某个文件
+            File.prototype.remove = function () {
+                //如果没有返回return
+                if (!this.parent) {
+                    return
+                }
+                //如果有this.parent 从parent.files中删除
+                for (var files = this.parent.files, l = files.length - 1; l >= 0; l--) {
+                    var file = files[l]
+                    if (file === this) {
+                        files.splice(l, 1)
+                    }
+                }
+            }
+            var folder = new Folder('学习资料')
+            var folder1 = new Folder('JavaScript')
+            var folder2 = new Folder('Java')
+
+            var file1 = new File('JavaScript设计模式与开发实践')
+            var file2 = new File('Java实战')
+            var file3 = new File('重构与模式')
+
+            folder1.add(file1)
+            folder2.add(file2)
+
+            folder.add(folder1)
+            folder.add(folder2)
+            folder.add(file3)
+
+            //将以下文件夹移到上面树中
+            var folder3 = new Folder('Nodejs')
+            var file4 = new File('深入浅出Node.js')
+            folder3.add(file4)
+
+            var file5 = new File('JavaScript语言精髓与编程实践')
+            folder.add(folder3)
+            folder.add(file5)
+
+
+            file5.remove()
+            folder.scan()
+            console.log(folder.files)
+
+            //模板方法模式 Coffee Tea例子
+            var Beverage = function () { }
+            Beverage.prototype.boilWater = function () {
+                console.log('把水煮沸')
+            }
+            Beverage.prototype.brew = function () { throw new Error('子类必须重写brew方法') }
+            Beverage.prototype.pourInCup = function () { throw new Error('子类必须重写pourInCup方法') }
+            Beverage.prototype.addCondiments = function () { throw new Error('子类必须重写addCondiments方法') }
+            //一些咖啡不要加糖和牛奶
+            Beverage.prototype.customerWantsCondiments = function () {
+                return true //默认要加
+            }
+            Beverage.prototype.init = function () {
+                console.log(this)
+                this.boilWater()
+                this.brew()
+                this.pourInCup()
+                if (this.customerWantsCondiments()) {
+                    this.addCondiments()
+                }
+            }
+            var Coffee = function () { }
+            console.log(new Beverage().__proto__)
+            //这样写修改了Beverage的原型
+            // Coffee.prototype = new Beverage().__proto__，Tea=new Beverage的时候会继承Coffee上的方法
+            Coffee.prototype = new Beverage()
+            Coffee.prototype.brew = function () {
+                console.log('用沸水冲泡咖啡')
+            }
+            Coffee.prototype.pourInCup = function () {
+                console.log('把咖啡倒进杯子')
+            }
+            Coffee.prototype.customerWantsCondiments = function () {
+                return window.confirm('要加调料吗')//询问是否要加调料
+            }
+            Coffee.prototype.addCondiments = function () {
+                console.log('加糖和牛奶')
+            }
+            var Tea = function () { }
+            Tea.prototype = new Beverage()
+            Tea.prototype.brew = function () {
+                console.log('用沸水浸泡茶叶')
+            }
+            Tea.prototype.pourInCup = function () {
+                console.log('把茶倒进杯子')
+            }
+            Tea.prototype.addCondiments = function () {
+                console.log('加柠檬')
+            }
+            var coffee = new Coffee()
+            coffee.init()
+            var tea = new Tea()
+            tea.init()
+            /********************享元模式************************
+             * 上传文件*/
+            //1.内部状态 不因环境变化的uploadType  plgin flash 此处举例
+            //2.外部状态 受外部环境影响 文件名称 文件大小 
+            //剥离外部状态 上传功能add setExternalState 放到uploadManger 统一管理
+            var uploadManager = (function () {
+                var uploadDataBase = {}
+                return {
+                    add: function (id, uploadType, filename, filesize) {
+                        //如果已有uploadType不创建新的Uplod对象
+                        var flyWeightObj = createUploadFactory(uploadType)
+                        var dom = document.createElement('div')
+                        dom.innerHTML = '<span>文件名称：' + filename + '， 文件大小：' + filesize + '</span>' +
+                            '<button class="del">删除</button>'
+                        document.body.appendChild(dom)
+                        //创建class id是唯一的
+                        dom.querySelector('.del').onclick = function () {
+                            flyWeightObj.delFile(id)
+                        }
+                        uploadDataBase[id] = {
+                            fileName: filename,
+                            fileSize: filesize,
+                            dom: dom
+                        }
+                        return flyWeightObj
+                    },
+                    setExternalState: function (id, flyWeightObj) {
+                        var uploadData = uploadDataBase[id]
+                        //flyWeightObj 没有这些属性
+                        for (var i in uploadData) {
+                            flyWeightObj[i] = uploadData[i]
+                        }
+                    }
+                }
+            })()
+            var Upload = function (uploadtype) {
+                this.uploadtype = uploadtype
+            }
+            Upload.prototype.delFile = function (id) {
+                uploadManager.setExternalState(id, this)
+                if (this.fileSize < 3000) {
+                    console.log('删除文件')
+                    return this.dom.parentNode.removeChild(this.dom)
+                }
+                if (window.confirm('are you sure delete this file' + this.fileName + 'now?')) {
+                    console.log('sure delete this file ' + this.fileName)
+                    this.dom.parentNode.removeChild(this.dom)
+                }
+            }
+            //工厂实例化对象
+            var createUploadFactory = (function () {
+                var createFlyWeightObj = {}
+                return function (uploadType) {
+                    if (createFlyWeightObj[uploadType]) {
+                        console.log('已存在不需创建')
+                        return createFlyWeightObj[uploadType]
+                    }
+                    return createFlyWeightObj[uploadType] = new Upload(uploadType)
+                }
+            })()
+            var id = 0
+            //开始触发上传的动作startUpload函数
+            window.startUpload = function (uploadType, files) {
+                for (var f = 0, file; file = files[f++];) {
+                    var uploadObj = uploadManager.add(++id, uploadType, file.fileName, file.fileSize)
+                    console.log(uploadObj, 'uploadObj')
+                }
+            }
+            //测试
+            startUpload('plugin', [
+                {
+                    fileName: '1.txt',
+                    fileSize: 1000
+                },
+                {
+                    fileName: '12.txt',
+                    fileSize: 3000
+                },
+                {
+                    fileName: '3.txt',
+                    fileSize: 3000
+                }
+            ])
+            startUpload('flash', [
+                {
+                    fileName: '4.txt',
+                    fileSize: 4000
+                },
+                {
+                    fileName: '5.txt',
+                    fileSize: 5000
+                },
+                {
+                    fileName: '6.txt',
+                    fileSize: 6000
+                }
+            ])
         </script>
     </body>
 

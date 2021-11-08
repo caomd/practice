@@ -1,3 +1,4 @@
+//高阶函数作为返回值的应用 因为事件的频繁触发的优化
 var throttle = function (fn, interval) {
     var timer,
         __self = fn,//保存需要延迟到函数引用,可以不写

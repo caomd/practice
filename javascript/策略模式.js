@@ -1,4 +1,4 @@
-//javascript版本策略模式
+//javascript版本策略模式 将变化与不变分离开 算法封装起来 避免了太多条件判断
 // strategy可以使函数
 var strategies = {
     "S": function (salary) {
