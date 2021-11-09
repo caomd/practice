@@ -124,6 +124,120 @@
         }
         var teacher = createFactory(Teacher, 'Jason')
         console.log(teacher)
+        //4单例模式
+        //5.策略模式 封装算法 奖金计算 表单验证
+        //6代理模式 图片预加载
+        //缓存代理计算乘积
+        //7迭代器模式
+        //8章发布-订阅模式 观察者模式 购房通知
+        //9章命令模式 订单 按钮
+        //宏命令
+        //10章组合模式 文件夹扫描 树结构 统一处理方式
+        //11章模板方法模式 实现继承
+        //享元模式 上传文件 删除文件
+
+        //享元模式 创建对象的优化模式 分为内部状态和外部状态 内部状态不因环境变化，如上传方式，外部状态因环境而变化 如文件名称，文件大小 dom
+        //step1 Upload对象只有一个属性 即上传方式
+        var Upload = function (uploadType) {
+            this.uploadType = uploadType
+        }
+        //添加删除文件到方法
+        Upload.prototype.delFile = function (id) {
+            //给当前对象设置其他属性
+            uploadManager.setExternalState(id, this)
+            if (this.fileSize < 3000) {
+                console.log('文件大小小于3000直接删除文件')
+                return this.dom.parentNode.removeChild(this.dom)
+            }
+            //确认是否删除文件
+            if (window.confirm('are you sure delete this file' + this.fileName)) {
+                console.log('confirm delete this file' + this.fileName)
+                this.dom.parentNode.removeChild(this.dom)
+            }
+        }
+        var uploadManager = (
+            function () {
+                //存储信息 作为局部变量放到闭包结构中
+                var uploadDataBase = {}
+                return {
+                    //根据uploadType判断是否已经创建过对象，是返回之前的，否创建新的
+                    add: function (id, uploadType, fileName, fileSize) {
+                        //创建dom
+                        var dom = document.createElement('div')
+                        dom.innerHTML = '<span>文件名称：' + fileName + ',文件大小：' + fileSize + '</span><button class="delFile">删除</button>'
+                        document.body.appendChild(dom)
+
+                        var upload = createUploadFactory(uploadType)
+                        uploadDataBase[id] = {
+                            fileName: fileName,
+                            fileSize: fileSize,
+                            dom: dom
+                        }
+                        dom.querySelector('.delFile').onclick = function () {
+                            upload.delFile(id)
+                        }
+                    },
+                    setExternalState: function (id, flyWeightObj) {
+                        //匹配对应的flyWeightObj
+                        var uploadData = uploadDataBase[id]
+                        for (i in uploadData) {
+                            flyWeightObj[i] = uploadData[i]
+                        }
+                    }
+                }
+            }
+        )()
+        //创建享元模式工厂对象
+        var createUploadFactory = (
+            function () {
+                //将创建过的对象保存起来
+                var flyWeightObj = {}
+                return function (uploadType) {
+                    //判断是否创建过upload对象
+                    if (flyWeightObj[uploadType]) {
+                        console.log('已经创建过' + uploadType + '类型的上传方式')
+                        return flyWeightObj[uploadType]
+                    }
+                    return flyWeightObj[uploadType] = new Upload(uploadType)
+                }
+            }
+        )()
+        //执行
+        var id = 0
+        window.startloadFun = function (uploadType, files) {
+            for (var i = 0, file; file = files[i++];) {
+                console.log(file, 'file')
+                uploadManager.add(++id, uploadType, file.fileName, file.fileSize)
+            }
+        }
+        startloadFun('plugin', [
+            {
+                fileName: '1.txt',
+                fileSize: 1000
+            },
+            {
+                fileName: '12.txt',
+                fileSize: 3000
+            },
+            {
+                fileName: '3.txt',
+                fileSize: 3000
+            }
+        ])
+        startloadFun('flash', [
+            {
+                fileName: '4.txt',
+                fileSize: 4000
+            },
+            {
+                fileName: '5.txt',
+                fileSize: 5000
+            },
+            {
+                fileName: '6.txt',
+                fileSize: 6000
+            }
+        ])
     </script>
 
 </html>
