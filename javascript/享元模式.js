@@ -95,3 +95,12 @@ startUpload('flash', [
         fileSize: 6000
     }
 ])
+
+//Java代码 对象池 并不是享元模式
+        // public class Test {
+        //     public static void main(String args[]){
+        //         String a1 = new String('a').intern()
+        //         String a2 = new String('a').intern()
+        //         System.out.println(a1 === a1);//true
+        //     }
+        // }

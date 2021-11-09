@@ -202,6 +202,16 @@
                 }
             }
         )()
+        //单一共享对象的工厂
+        var createUploadFactorySingle = (function () {
+            var uploadObj;
+            return function () {
+                if (uploadObj) {
+                    return uploadObj
+                }
+                return uploadObj = new Upload()
+            }
+        })()
         //执行
         var id = 0
         window.startloadFun = function (uploadType, files) {
@@ -238,6 +248,62 @@
                 fileSize: 6000
             }
         ])
+        //职责链模式 弱化请求发送者和一组接收者之间的联系
+        //变化的量的定金 支付 库存
+        //不变的判断条件 if 500 true 得到100元优惠券 false 执行下一个fn
+        // 200 true 50元优惠券
+        // 没有定金 普通购买 
+        var order500 = function (orderType, pay, stock) {
+            if (orderType === 1 && pay) {
+                console.log('500元定金，得到100元优惠券')
+            } else {
+                return 'nextSuccessor'
+            }
+        }
+        var order200 = function (orderType, pay, stock) {
+            if (orderType === 2 && pay) {
+                console.log('200元定金，得到50元优惠券')
+            } else {
+                return 'nextSuccessor'
+            }
+        }
+        var orderNormal = function (orderType, pay, stock) {
+            if (stock > 0) {
+                console.log('普通购买，没有优惠券')
+            } else {
+                console.log('库存不足')
+            }
+        }
+        var Chain = function (fn) {
+            this.fn = fn
+            this.next = null
+        }
+        Chain.prototype.passRequest = function (orderType, pay, stock) {
+            var ret = this.fn.apply(this, arguments)
+            if (ret === 'nextSuccessor') {
+                return this.next && this.next.passRequest.apply(this.next, arguments)
+            }
+        }
+        Chain.prototype.setNextSuccessor = function (next) {
+            return this.next = next
+        }
+        var order500Chain = new Chain(order500)
+        var order200Chain = new Chain(order200)
+        var orderNormalChain = new Chain(orderNormal)
+
+        //下一个节点
+        order500Chain.setNextSuccessor(order200Chain)
+        order200Chain.setNextSuccessor(orderNormalChain)
+
+        //发送请求给第一个节点 必须加类型判断，不然不会走到第二步
+        order500Chain.passRequest(1, true, 500)
+        order500Chain.passRequest(2, true, 500)
+        order500Chain.passRequest(3, true, 500)
+        order500Chain.passRequest(1, false, 0)
+        //500元定金，得到100元优惠券
+        // 200元定金，得到50元优惠券
+        // 普通购买，没有优惠券
+        // 库存不足
     </script>
 
 </html>

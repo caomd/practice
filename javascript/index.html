@@ -595,6 +595,118 @@
                     fileSize: 6000
                 }
             ])
+
+            //对象池的实现 搜索附近地图，出现两个小气泡，搜索兰州拉面时出现6个小气泡，第二次搜索不会删除第一次创建的小气泡，第二次只需创建4个，不是6个
+            //先定义一获取小气泡节点的工厂，作为对象池的数组成为私有属性被包含在工厂闭包里，这个工厂有两个暴露对外的方法，create表示获取一个div节点，recover表示回收一个div节点
+            var toolTipFactory = (function () {
+                var toolTipPool = []
+                return {
+                    create: function () {
+                        if (toolTipPool.length === 0) {
+                            var div = document.createElement('div')
+                            document.body.appendChild(div)
+                            return div
+                        } else {
+                            return toolTipPool.shift()//则从对象池中取出一个dom
+                        }
+                    },
+                    recover: function (tooltipDom) {
+                        return toolTipPool.push(tooltipDom)
+                    }
+                }
+            })()
+            //目前第一次搜索，需要创建2个小气泡，为了方便回收，用一个数组ary来记录
+            var ary = []
+            for (var i = 0, str; str = ['A', 'B'][i++];) {
+                var toolTip = toolTipFactory.create()
+                toolTip.innerHTML = str
+                ary.push(toolTip)
+            }
+            //地图重新绘制
+            for (var i = 0, toolTip; toolTip = ary[i++];) {
+                toolTipFactory.recover(toolTip)
+            }
+            //再创建6个小气泡
+            for (var i = 0, str; str = ['A', 'B', 'C', 'D', 'E', 'F'][i++];) {
+                var toolTip = toolTipFactory.create()
+                toolTip.innerHTML = str
+            }
+
+            //职责链模式 3种购买模式 是否支付 库存
+            // 订金500元 得到100元优惠券
+            //职责链模式 订金200元 得到50元优惠券
+            //没有订金按普通购买模式
+            var order500 = function (orderType, pay, stock) {
+                if (orderType === 1 && pay === true) {
+                    console.log('500元定金预购，得到100优惠券')
+                } else {
+                    return 'nexSuccessor'
+                }
+            }
+            var order200 = function (orderType, pay, stock) {
+                if (orderType === 2 && pay === true) {
+                    console.log('200元定金预购，得到50优惠券')
+                } else {
+                    return 'nexSuccessor'
+                }
+            }
+            var orderNormal = function (orderType, pay, stock) {
+                if (stock > 0) {
+                    console.log('普通购买，无优惠券')
+                } else {
+                    console.log('手机库存不足')
+                }
+            }
+            var Chain = function (fn) {
+                this.fn = fn
+                this.successor = null
+            }
+            Chain.prototype.setNextSuccessor = function (successor) {
+                return this.successor = successor
+            }
+            Chain.prototype.passRequest = function () {
+                var ret = this.fn.apply(this, arguments)
+                if (ret === 'nexSuccessor') {
+                    return this.successor && this.successor.passRequest.apply(this.successor, arguments)
+                }
+                return ret;
+            }
+            var order500Chain = new Chain(order500)
+            var order200Chain = new Chain(order200)
+            var orderNormalChain = new Chain(orderNormal)
+            //指定节点在职责链中的顺序
+            order500Chain.setNextSuccessor(order200Chain)
+            order200Chain.setNextSuccessor(orderNormalChain)
+            //把请求传递给第一个节点
+            order500Chain.passRequest(1, true, 500)
+            order500Chain.passRequest(2, true, 500)
+            order500Chain.passRequest(3, true, 500)
+            order500Chain.passRequest(1, false, 0)
+
+            //AOP实现职责链模式
+            Function.prototype.next = function (fn) {
+                var self = this
+                return function () {
+                    var ret = self.apply(this, arguments)
+                    console.log(ret, 'ret')
+                    if (ret) {
+                        return fn.apply(this, arguments)
+                    }
+                }
+            }
+            var order = function () {
+                console.log(1)
+                return 'next1'
+            }
+            var order2 = function () {
+                console.log(2)
+                return 'next2'
+            }
+            var order3 = function () {
+                console.log(3)
+            }
+            var order = order.next(order2).next(order3)
+            order()
         </script>
     </body>
 
