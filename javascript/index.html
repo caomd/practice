@@ -707,6 +707,113 @@
             }
             var order = order.next(order2).next(order3)
             order()
+
+            /**************中介者模式*******************/
+            //泡泡机游戏
+            //1.定义Player构造器和原型方法
+            function Player(name, teamColor) {
+                this.name = name
+                this.teamColor = teamColor
+                this.state = 'alive'
+            }
+            Player.prototype.win = function () {
+                console.log(this.name + 'won')
+            }
+            Player.prototype.lose = function () {
+                console.log(this.name + 'lose')
+            }
+            //玩家死亡
+            Player.prototype.die = function () {
+                this.state = 'dead'
+                console.log(this.name + 'is dead')
+                playDirector.reciveMessage('playerDead', this)
+            }
+            //移除玩家
+            Player.prototype.remove = function () {
+                playDirector.reciveMessage('removePlayer', this)
+            }
+            //玩家换队
+            Player.prototype.changeTeam = function (color) {
+                playDirector.reciveMessage('changeTeam', this, color)
+            }
+            //创建玩家对象
+            var playFactory = function (name, teamColor) {
+                var newPlayer = new Player(name, teamColor)
+                playDirector.reciveMessage('addPlayer', newPlayer)
+                return newPlayer
+            }
+            //中介者playerDirector对象
+            var playDirector = (function () {
+                var players = {}//save all players
+                var operations = {}//can do thing
+                /*********新增一个玩家*********/
+                operations.addPlayer = function (player) {
+                    var teamColor = player.teamColor
+                    players[teamColor] = players[teamColor] || []//没有玩家成立一个新队伍
+                    players[teamColor].push(player)
+                };
+                operations.removePlayer = function (player) {
+                    var teamColor = player.teamColor
+                    teamPlayers = players[teamColor] || [] //该队伍所有成员
+                    //遍历删除
+                    for (var p = teamPlayers.length; p >= 0; p--) {
+                        if (teamPlayers[p] === player) {
+                            teamPlayers.splice(p, 1)
+                        }
+                    }
+                };
+                operations.changeTeam = function (player, newTeamColor) {
+                    operations.removePlayer(player)//remove from before team
+                    player.teamColor = newTeamColor
+                    operations.addPlayer(player)//add to new team
+                };
+                operations.playerDead = function (player) {
+                    var teamColor = player.teamColor
+                    var teamPlayers = players[teamColor]//all players
+                    var all_dead = true
+                    for (var i = 0, player; player = teamPlayers[i++];) {
+                        if (player.state !== 'dead') {
+                            all_dead = false
+                            break
+                        }
+                    }
+                    if (all_dead) {//all dead
+                        for (var i = 0, player; player = teamPlayers[i++];) {
+                            player.lose()//本队所有玩家lose
+                        }
+                        //other team win
+                        for (var color in players) {
+                            var teamPlayers = players[teamColor]
+                            for (var i = 0, player; player = teamPlayers[i++];) {
+                                player.win()
+                            }
+                        }
+                    }
+                };
+                var reciveMessage = function () {
+                    var message = Array.prototype.shift.call(arguments)//first param is message
+                    operations[message].apply(this, arguments)
+                }
+                return {
+                    reciveMessage: reciveMessage
+                }
+            })()
+            //test
+            //红队
+            var player1 = playFactory('皮蛋', 'red')
+            var player2 = playFactory('小鬼', 'red')
+            var player3 = playFactory('宝宝', 'red')
+            var player4 = playFactory('小强', 'red')
+            //蓝队
+            var player5 = playFactory('黑妞', 'blue')
+            var player6 = playFactory('葱头', 'blue')
+            var player7 = playFactory('胖墩', 'blue')
+            var player8 = playFactory('海盗', 'blue')
+
+            player1.die()
+            player2.die()
+            player3.die()
+            player4.die()
         </script>
     </body>
 
