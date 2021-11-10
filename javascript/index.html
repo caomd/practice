@@ -783,9 +783,11 @@
                         }
                         //other team win
                         for (var color in players) {
-                            var teamPlayers = players[teamColor]
-                            for (var i = 0, player; player = teamPlayers[i++];) {
-                                player.win()
+                            if (color !== teamColor) {
+                                var teamPlayers = players[color]
+                                for (var i = 0, player; player = teamPlayers[i++];) {
+                                    player.win()
+                                }
                             }
                         }
                     }
@@ -814,6 +816,9 @@
             player2.die()
             player3.die()
             player4.die()
+
+            //手机购买例子 中介者模式
+            
         </script>
     </body>
 

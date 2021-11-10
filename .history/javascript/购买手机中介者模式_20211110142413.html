@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>购买手机</title>
+    </head>
+
+    <body>
+        选择颜色：<select id="colorSelect">
+            <option value="">请选择：</option>
+            <option value="red">红色</option>
+            <option value="blue">蓝色</option>
+        </select>
+        输入购买数量：<input type="text" id="numberInput" /><br>
+        您选择了颜色：<div id="colorInfo"></div></br>
+        您输入了数量：<div id="numberInfo"></div></br>
+        <button id="nextBtn" disabled="true">请选择手机颜色和数量</button>
+    </body>
+    <script>
+        var goods = {
+            "red": 3,
+            "blue": 6
+        }
+        var colorSelect = document.getElementById('colorSelect')
+        var numberInput = document.getElementById('numberInput')
+        var colorInfo = document.getElementById('colorInfo')
+        var numbeInfo = document.getElementById('numberInfo')
+        var nextBtn = document.getElementById('nextBtn')
+        colorSelect.onchange = function () {
+            var color = this.value
+            colorInfo.innerHTML = value
+        }
+        numberInput.oninput = function () {
+            numbeInfo.innerHTML = this.value
+        }
+        var color = colorSelect.value
+        var number = numberInput.value
+        window.addEventListener('change', function () {
+            if (!color) {
+                nextBtn.innerHTML = '请输入手机颜色'
+                return
+            }
+            if (!number || ) {
+                nextBtn.innerHTML = '请输'
+                return
+            }
+        }, false)
+
+
+    </script>
+
+</html>

@@ -90,3 +90,41 @@ function hello<T>(a: T[]): T[] {
     return []
 }
 hello<string>(['3'])
+
+//泛型函数
+function helloTitle<T>(arg: string): number {
+    return 1
+}
+console.log(helloTitle('ok'));
+console.log(helloTitle<string>('heoo'));
+
+//枚举 定义一些名字有意义的常量 
+//1.数字枚举 后面的枚举变量递增
+enum OrderStatus {
+    Start = 1,
+    Unpaid,
+    Shipping,
+    Shipped,
+    Complete,
+}
+//枚举类型中的值必须是确定的
+//2.字符串枚举 没有递增 只能手动初始化
+enum OrderStatusStr {
+    Start = 'Start',
+    Unpaid = 'Unpaid',
+    Shipping = 'Shipping',
+    Shipped = 'Shipped',
+    Complete = 'Complete'
+}
+//反向映射 数字枚举的一个技巧
+enum EnumY {
+    A
+}
+//编译器会编译到javascript 如下
+(
+    function (EnumY) {
+        EnumY[EnumY["A"] = 0] = "A"
+    }
+)(EnumY || {})
+
+//字符串中没有反向映射

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>表单验证装饰者</title>
+    </head>
+
+    <body>
+        <form action="" id="formText">
+            用户名：<input type="text" name="username" />
+            密码：<input type="password" name="password" />
+            <button id="submit">submit</button>
+        </form>
+    </body>
+    <script>
+        var validator = function () {
+            var formData = document.getElementById('formText')
+            var username = formData.username
+            var password = formData.password
+            if (!username) {
+                console.log('用户名不能为空')
+                return false
+            }
+            if (!password) {
+                console.log('密码不能为空')
+                return false
+            }
+            return true
+        }
+        Function.prototype.before = function (fun) {
+            var self = this
+            return function () {
+                var ret = fun.apply(this, arguments)
+                if(ret){
+
+                }
+                
+            }
+        }
+        var submitForm = function () {
+            ajax('http://xxx.com/login',param)
+        }
+        var submitBtn = document.getElementById('submit')
+        submitBtn.onclick = func
+    </script>
+
+</html>
