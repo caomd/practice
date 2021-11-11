@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>设计模式测试版</title>
+    </head>
+
+    <body>
+        <div>设计模式</div>
+    </body>
+    <script>
+        //函数节流
+        var throttle = function (fn, interval) {
+            var timer,
+                __self = fn,//保存原函数引用
+                firstTime = true;
+            console.log(1)//只在第一次调用时执行
+            return function () {
+                console.log(2)
+                if (firstTime) {
+                    fn.apply(this, arguments)
+                    return firstTime = false
+                }
+                if (timer) {
+                    return false
+                }
+                timer = setTimeout(function () {
+                    clearTimeout(timer)
+                    console.log(3)
+                    timer = null
+                    fn.apply(this, arguments)
+                }, interval || 500)
+            }
+        }
+        console.log(throttle)//只在第一次调用时执行
+        //window.onresize等于返回的匿名函数所以每次触发都执行返回函数
+        window.onresize = throttle(function () {
+            console.log(111)
+        }, 8000)
+        var sf = []
+        function aff(af) {
+            // var af = 'fst'
+            for (var i = 0; i < 5; i++) {
+                // (
+                //     function () {
+                //         console.log(i, '二')
+                //     }
+                // )()
+                //相当于回调函数，此时for循环已经执行完啦
+                // sf.push(function a() {
+                //     console.log(af, i)//i一直是5
+                // })
+                //使用闭包结构
+                (function a(i) {
+                    sf.push(function a() {
+                        console.log(i)//0,1,2,3,4
+                    })
+                })(i)
+                console.log(sf, i)
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+                // {a: '2'} 5
+            }
+        }
+        aff({ a: '2' })
+        for (var j = 0, fun; fun = sf[j++];) {
+            fun()
+        }
+        //图片预加载
+        var myImage = (function () {
+            var img = document.createElement('img');
+            document.body.appendChild(img)
+            return function (src) {
+                img.src = src
+            }
+        })()
+        // var proxyImageFun = function (src) {
+        //     var imgProxy = new Image()
+        //     imgProxy.src = src
+        //     myImage('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第4章/荷花.jpg')
+        //     imgProxy.onload = function () {
+        //         console.log(this)
+        //         myImage(this.src)
+        //     }
+        // }
+        //为保持一致性 和myImage结构一样的写法
+        var proxyImageFun = (function () {
+            var imgProxy = new Image()
+            imgProxy.onload = function () {
+                console.log(this)
+                myImage(this.src)
+            }
+            return function (src) {
+                imgProxy.src = src
+                myImage('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第4章/荷花.jpg')
+            }
+        })()
+        proxyImageFun('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
+        var Dog = function (name) {
+            this.name = name
+        }
+        var dog1 = new Dog('dog1')
+        var dog2 = new Dog('dog1')
+        var dog3 = new Dog('dog3')
+        console.log(dog1 === dog1)
+        console.log(dog1 === dog3)
+
+        //手写new
+        var createFactory = function () {
+            var obj = {}
+            const Contructor = [].shift.call(arguments)
+            obj.__proto__ = Contructor.prototype
+            var ret = Contructor.apply(obj, arguments)
+            return typeof ret === 'object' ? ret : obj
+        }
+        //测试
+        var Teacher = function (name) {
+            this.name = name
+        }
+        var teacher = createFactory(Teacher, 'Jason')
+        console.log(teacher)
+        //4单例模式
+        //5.策略模式 封装算法 奖金计算 表单验证
+        //6代理模式 图片预加载
+        //缓存代理计算乘积
+        //7迭代器模式
+        //8章发布-订阅模式 观察者模式 购房通知
+        //9章命令模式 订单 按钮
+        //宏命令
+        //10章组合模式 文件夹扫描 树结构 统一处理方式
+        //11章模板方法模式 实现继承
+        //享元模式 上传文件 删除文件
+
+        //享元模式 创建对象的优化模式 分为内部状态和外部状态 内部状态不因环境变化，如上传方式，外部状态因环境而变化 如文件名称，文件大小 dom
+        //step1 Upload对象只有一个属性 即上传方式
+        var Upload = function (uploadType) {
+            this.uploadType = uploadType
+        }
+        //添加删除文件到方法
+        Upload.prototype.delFile = function (id) {
+            //给当前对象设置其他属性
+            uploadManager.setExternalState(id, this)
+            if (this.fileSize < 3000) {
+                console.log('文件大小小于3000直接删除文件')
+                return this.dom.parentNode.removeChild(this.dom)
+            }
+            //确认是否删除文件
+            if (window.confirm('are you sure delete this file' + this.fileName)) {
+                console.log('confirm delete this file' + this.fileName)
+                this.dom.parentNode.removeChild(this.dom)
+            }
+        }
+        var uploadManager = (
+            function () {
+                //存储信息 作为局部变量放到闭包结构中
+                var uploadDataBase = {}
+                return {
+                    //根据uploadType判断是否已经创建过对象，是返回之前的，否创建新的
+                    add: function (id, uploadType, fileName, fileSize) {
+                        //创建dom
+                        var dom = document.createElement('div')
+                        dom.innerHTML = '<span>文件名称：' + fileName + ',文件大小：' + fileSize + '</span><button class="delFile">删除</button>'
+                        document.body.appendChild(dom)
+
+                        var upload = createUploadFactory(uploadType)
+                        uploadDataBase[id] = {
+                            fileName: fileName,
+                            fileSize: fileSize,
+                            dom: dom
+                        }
+                        dom.querySelector('.delFile').onclick = function () {
+                            upload.delFile(id)
+                        }
+                    },
+                    setExternalState: function (id, flyWeightObj) {
+                        //匹配对应的flyWeightObj
+                        var uploadData = uploadDataBase[id]
+                        for (i in uploadData) {
+                            flyWeightObj[i] = uploadData[i]
+                        }
+                    }
+                }
+            }
+        )()
+        //创建享元模式工厂对象
+        var createUploadFactory = (
+            function () {
+                //将创建过的对象保存起来
+                var flyWeightObj = {}
+                return function (uploadType) {
+                    //判断是否创建过upload对象
+                    if (flyWeightObj[uploadType]) {
+                        console.log('已经创建过' + uploadType + '类型的上传方式')
+                        return flyWeightObj[uploadType]
+                    }
+                    return flyWeightObj[uploadType] = new Upload(uploadType)
+                }
+            }
+        )()
+        //单一共享对象的工厂
+        var createUploadFactorySingle = (function () {
+            var uploadObj;
+            return function () {
+                if (uploadObj) {
+                    return uploadObj
+                }
+                return uploadObj = new Upload()
+            }
+        })()
+        //执行
+        var id = 0
+        window.startloadFun = function (uploadType, files) {
+            for (var i = 0, file; file = files[i++];) {
+                console.log(file, 'file')
+                uploadManager.add(++id, uploadType, file.fileName, file.fileSize)
+            }
+        }
+        startloadFun('plugin', [
+            {
+                fileName: '1.txt',
+                fileSize: 1000
+            },
+            {
+                fileName: '12.txt',
+                fileSize: 3000
+            },
+            {
+                fileName: '3.txt',
+                fileSize: 3000
+            }
+        ])
+        startloadFun('flash', [
+            {
+                fileName: '4.txt',
+                fileSize: 4000
+            },
+            {
+                fileName: '5.txt',
+                fileSize: 5000
+            },
+            {
+                fileName: '6.txt',
+                fileSize: 6000
+            }
+        ])
+        //职责链模式 弱化请求发送者和一组接收者之间的联系
+        //变化的量的定金 支付 库存
+        //不变的判断条件 if 500 true 得到100元优惠券 false 执行下一个fn
+        // 200 true 50元优惠券
+        // 没有定金 普通购买 
+        var order500 = function (orderType, pay, stock) {
+            if (orderType === 1 && pay) {
+                console.log('500元定金，得到100元优惠券')
+            } else {
+                return 'nextSuccessor'
+            }
+        }
+        var order200 = function (orderType, pay, stock) {
+            if (orderType === 2 && pay) {
+                console.log('200元定金，得到50元优惠券')
+            } else {
+                return 'nextSuccessor'
+            }
+        }
+        var orderNormal = function (orderType, pay, stock) {
+            if (stock > 0) {
+                console.log('普通购买，没有优惠券')
+            } else {
+                console.log('库存不足')
+            }
+        }
+        var Chain = function (fn) {
+            this.fn = fn
+            this.next = null
+        }
+        Chain.prototype.passRequest = function (orderType, pay, stock) {
+            var ret = this.fn.apply(this, arguments)
+            if (ret === 'nextSuccessor') {
+                return this.next && this.next.passRequest.apply(this.next, arguments)
+            }
+        }
+        Chain.prototype.setNextSuccessor = function (next) {
+            return this.next = next
+        }
+        var order500Chain = new Chain(order500)
+        var order200Chain = new Chain(order200)
+        var orderNormalChain = new Chain(orderNormal)
+
+        //下一个节点
+        order500Chain.setNextSuccessor(order200Chain)
+        order200Chain.setNextSuccessor(orderNormalChain)
+
+        //发送请求给第一个节点 必须加类型判断，不然不会走到第二步
+        order500Chain.passRequest(1, true, 500)
+        order500Chain.passRequest(2, true, 500)
+        order500Chain.passRequest(3, true, 500)
+        order500Chain.passRequest(1, false, 0)
+        //500元定金，得到100元优惠券
+        // 200元定金，得到50元优惠券
+        // 普通购买，没有优惠券
+        // 库存不足
+
+        //中介者模式
+        //由中介者来创建游戏方，通知消息
+        var playerDirector = (
+            function () {
+                var teamPlayersData = {}
+                return {
+                    addPlayer: function (newPlayer) {
+                        var teamColor = newPlayer.teamColor
+                        teamPlayersData[teamColor] = teamPlayersData[teamColor] || []
+                        teamPlayersData[teamColor].push(newPlayer)
+                    },
+                    remove: function (player) {
+                        var teamColor = player.teamColor
+                        var teamPlayers = teamPlayersData[teamColor] || []
+                        for (var i = teamPlayers.length - 1; i >= 0; i--) {
+                            if (player === teamPlayers[i]) {
+                                teamPlayers.splice(i, 1)
+                            }
+                        }
+                    },
+                    changeTeam: function (player, newTeamColor) {
+                        //从原队移除
+                        this.remove(player)
+                        //改变队伍颜色
+                        player.teamColor = newTeamColor
+                        //新队伍加一人
+                        teamPlayersData[newTeamColor].push(player)
+                    },
+                    die: function (player) {
+                        var teamColor = player.teamColor
+                        var teamPlayers = teamPlayersData[teamColor]
+                        //判断all die
+                        var all_dead = true
+                        for (var i = 0, player; player = teamPlayers[i++];) {
+                            if (player.state !== 'dead') {
+                                all_dead = false
+                                break
+                            }
+                        }
+                        //本队输 对方队赢
+                        if (all_dead) {
+                            for (var color in teamPlayersData) {
+                                if (teamColor !== color) {
+                                    var teamPlayersEnmy = teamPlayersData[color]
+                                    for (var i = 0, player; player = teamPlayersEnmy[i++];) {
+                                        player.win()
+                                    }
+                                }
+                            }
+                            //本队输了
+                            for (var i = 0, player; player = teamPlayers[i++];) {
+                                player.lose()
+                            }
+                        }
+                    },
+                    receiveMessage: function () {
+                        var message = Array.prototype.shift.call(arguments)
+                        this[message].apply(this, arguments)
+                    }
+                }
+            }
+        )()
+        //游戏对象
+        function Player(name, teamColor) {
+            this.name = name
+            this.teamColor = teamColor
+            this.state = 'alive'
+        }
+        Player.prototype.win = function () {
+            console.log(this.name + 'won')
+        }
+        Player.prototype.lose = function () {
+            console.log(this.name + 'lose')
+        }
+        Player.prototype.die = function () {
+            this.state = 'dead'
+            console.log(this.name + 'dead')
+            playerDirector.receiveMessage('die', this)
+        }
+        Player.prototype.changeTeam = function (teamColor) {
+            console.log(this.name + '换队')
+            playerDirector.receiveMessage('changeTeam', this, teamColor)
+        }
+        Player.prototype.remove = function () {
+            console.log(this.name + '移除' + this.teamColor + '队')
+            playerDirector.receiveMessage('remove', this)
+        }
+        var playFactory = function (name, teamColor) {
+            var newPlayer = new Player(name, teamColor)
+            playerDirector.receiveMessage('addPlayer', newPlayer)
+            return newPlayer //不返回没法调用方法
+        }
+        //红队
+        var player1 = playFactory('皮蛋', 'red')
+        var player2 = playFactory('小鬼', 'red')
+        var player3 = playFactory('宝宝', 'red')
+        var player4 = playFactory('小强', 'red')
+        //蓝队
+        var player5 = playFactory('黑妞', 'blue')
+        var player6 = playFactory('葱头', 'blue')
+        var player7 = playFactory('胖墩', 'blue')
+        var player8 = playFactory('海盗', 'blue')
+
+        // player1.die()
+        // player2.die()
+        // player3.die()
+        // player4.die()
+
+        // player1.remove()
+        // player2.remove()
+        // player3.die()
+        // player4.die()
+
+        player1.changeTeam('blue')
+        player2.die()
+        player3.die()
+        player4.die()
+
+        //装饰者模式 飞机的例子
+        var Plane = function () { }
+        Plane.prototype.fire = function () {
+            console.log('普通子弹')
+        }
+        var MissileDecorator = function (plane) { this.plane = plane }
+        MissileDecorator.prototype.fire = function () {
+            this.plane.fire()
+            console.log('发射导弹')
+        }
+        var AtomDecorator = function (plane) { this.plane = plane }
+        AtomDecorator.prototype.fire = function () {
+            this.plane.fire()
+            console.log('发射原子弹')
+        }
+        var plane = new Plane()
+        var missileDecorator = new MissileDecorator(plane)
+        var atomDecorator = new AtomDecorator(plane)
+        plane.fire()
+        missileDecorator.fire()
+        atomDecorator.fire()
+        //装饰者模式
+        Function.prototype.after = (
+            function () {
+                return function (afn) {
+                    this.apply(this, arguments)
+                    return afn.apply(this, arguments)
+
+                }
+            }
+        )()
+        var beforef = function () {
+            console.log('before')
+        }
+        var fun = beforef.after(function () {
+            console.log('after')
+        })
+        console.log(fun)//undefined
+        //污染原型
+        var before = function (fn, beforefn) {
+            return function () {
+                beforefn.apply(this, arguments)
+                return fn.apply(this, arguments)
+            }
+        }
+        var a = before(function () { console.log(3) }, function () { console.log(2) })
+        a = before(a, function () { console.log(1) })
+        a()
+        //用AOP动态改变函数参数
+        Function.prototype.before = function (fn) {
+            var self = this
+            return function () {
+                fn.apply(this, arguments)
+                return self.apply(this, arguments)
+            }
+        }
+        var fun = function (param) {
+            console.log(param)
+        }
+        fun = fun.before(function (param) {
+            param.b = 'b'
+        })
+        fun({ a: 'a' })
+        var getToken = function () {
+            return 'Token'
+        }
+        var ajax = function (type, url, param) {
+            console.log(param)
+        }
+        ajax = ajax.before(function (type, url, param) {
+            param.Token = getToken()
+        })
+        ajax('get', 'http://xxx.com/userInfo', { name: 'sven' })
+
+        /*
+        字符串转数字
+         */
+        var strToNum = function (string) {
+            var number = 0
+            var i = 0
+            while (string[i]) {
+                console.log(string[i])
+                console.log(string[i] - 0)
+                number = number * 10 + (string[i] - 0)
+                i++
+            }
+            console.log(typeof number, number)
+        }
+        strToNum('34')
+    </script>
+
+</html>

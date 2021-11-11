@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>模板方法模式例子CoffeeTea</title>
+    </head>
+
+    <body>
+        <div>模板方法模式 咖啡和茶</div>
+    </body>
+    <script>
+        //11-10实现 模板方法模式 Coffee and Tea
+        //step1 煮水 2.浸泡coffee 3.倒入杯中 4.放糖奶 / 加柠檬
+        var Beverage = function () { }
+        Beverage.prototype.boilWater = function () {
+            console.log('煮沸水')
+        }
+        Beverage.prototype.brew = function () {
+            throw new Error('子类必须重写的方法')
+        }
+        Beverage.prototype.pourCup = function () {
+            throw new Error('子类必须重写的方法')
+        }
+        Beverage.prototype.addConditon = function () {
+            throw new Error('子类必须重写的方法')
+        }
+        Beverage.prototype.customCondition = function (flage) {
+            return true
+        }
+        Beverage.prototype.init = function () {
+            this.boilWater()
+            this.brew()
+            this.pourCup()
+            this.customCondition()
+        }
+        var Coffee = function () { }
+        Coffee.prototype.brew = function () {
+            console.log('用沸水浸泡咖啡')
+        }
+        Coffee.prototype.pourCup = function () {
+            console.log('把咖啡倒入杯子')
+        }
+        Coffee.prototype.addConditon = function () {
+            console.log('加糖或牛奶')
+        }
+        Coffee.prototype.customCondition = function(){
+            return window.confirm()
+        }
+        var Tea = function () { }
+        Tea.prototype.brew = function () {
+            console.log('用沸水浸泡茶')
+        }
+        Tea.prototype.pourCup = function () {
+            console.log('把茶倒入杯子')
+        }
+        Tea.prototype.addConditon = function () {
+            console.log('加柠檬')
+        }
+        var coffee = new Coffee()
+        coffee.init()
+
+        var tea = new Tea()
+        tea.init()
+    </script>
+
+</html>

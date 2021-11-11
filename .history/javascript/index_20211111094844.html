@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>设计模式实操</title>
+    </head>
+
+    <body>
+        <div>设计模式</div>
+        <div>
+            <form action="http://xxx.baidu.com" id="registerForm">
+                用户名：<input type="text" name="username"><label id='usernameError'></label><br />
+                密码：<input type="text" name="password"><label id='passwordError'></label><br />
+                手机号：<input type="text" name="phoneNumber"><label id='phoneNumberError'></label><br />
+                <button>submit</button>
+            </form>
+            <div>
+                <button id="btn1">点击按钮1</button>
+                <button id="btn2">点击按钮2</button>
+                <button id="btn3">点击按钮3</button>
+            </div>
+        </div>
+        <script>
+            // 函数节流
+            var throttle = function (fn, interval) {
+                var timer,
+                    __self = fn,//保存需要延迟到函数引用
+                    firstTime = true;
+                return function () {
+                    var __me = this;
+                    //第一次请求不需要延迟
+                    if (firstTime) {
+                        // console.log(this, 'this')
+                        // __self.apply(__me, arguments)
+                        return firstTime = false //不再继续向下执行
+                    }
+                    //延迟执行中
+                    if (timer) {
+                        return false
+                    }
+                    timer = setTimeout(function () {
+                        clearTimeout(timer)
+                        timer = null
+                        __self.apply(__me, arguments)
+                    }, interval || 8000)
+                }
+            }
+            //window.onresize等于throttle返回的函数，所以每次触发都执行返回的匿名函数
+            // window.onresize = throttle(function () { console.log(1) }, 8000)
+            //策略模式 表单验证第一版
+            //策略模式表单验证 校验规则和返回对应的错误信息
+            var errCss = {
+                color: 'red'
+            }
+            var strategies = {
+                isNonEmpty: function (val, errorMsg) {
+                    // console.log(arguments)
+                    //转为数组,取出对应的dom
+                    var dom = [].slice.call(arguments).pop()
+                    if (val === '') {
+                        return { dom, errorMsg }
+                    }
+                },
+                isMobile: function (val, errorMsg) {
+                    var dom = [].slice.call(arguments).pop()
+                    if (!/(^1[3|5|8][0-9]{9}$)/.test(val)) {
+                        return { dom, errorMsg }
+                    }
+                },
+                minLength: function (val, length, errorMsg) {
+                    var dom = [].slice.call(arguments).pop()
+                    if (val.length < length) {
+                        return { dom, errorMsg }
+                    }
+                },
+            }
+            var registerForm = document.getElementById('registerForm')
+            var showError = function (domAry, errorMsgAry) {
+                for (var i = 0; domAry[i]; domAry[i++]) {
+                    document.getElementById(domAry[i] + 'Error').innerHTML = errorMsgAry[domAry[i]]
+                    document.getElementById(domAry[i] + 'Error').style.color = errCss.color
+                }
+            }
+            registerForm.onsubmit = function (event) {
+                //阻止默认提交行为
+                event.preventDefault()
+                //请求校验规则
+                var errorMsgAry = validatorFun()
+                if (errorMsgAry.length !== 0) {
+                    showError(['username', 'password', 'phoneNumber'], errorMsgAry)
+                }
+            }
+            //第一版
+            // var validatorFun = function () {
+            //     //创建校验对象
+            //     var validator = new Validator()
+            //     //添加校验规则
+            //     validator.add(registerForm.username, 'isNonEmpty', '用户名不能为空', 'username')
+            //     validator.add(registerForm.password, 'minLength:6', '最小长度为6', 'password')
+            //     validator.add(registerForm.phoneNumber, 'isMobile', '手机号格式不正确', 'phoneNumber')
+            //     return validator.start()
+            // }
+            //重构输入框多种校验规则
+            var validatorFun = function () {
+                //创建校验对象
+                var validator = new Validator()
+                //添加校验规则
+                validator.add(registerForm.username, [
+                    {
+                        strategy: 'isNonEmpty',
+                        errorMsg: '用户名不能为空'
+                    },
+                    {
+                        strategy: 'minLength:10',
+                        errorMsg: '长度最小为10'
+                    },
+                ], 'username')
+                validator.add(registerForm.password, [
+                    {
+                        strategy: 'minLength:6',
+                        errorMsg: '长度最小为6'
+                    },
+                ], 'password')
+                validator.add(registerForm.phoneNumber,
+                    [
+                        {
+                            strategy: 'isMobile',
+                            errorMsg: '手机号格式不正确'
+                        },
+                    ], 'phoneNumber'
+                )
+                return validator.start()
+            }
+
+            //创建validator构造函数
+            var Validator = function () {
+                this.cache = []//保存校验规则
+            }
+            //添加add方法第一版
+            // Validator.prototype.add = function (dom, rule, errorMsg, domItem) {
+            //     this.cache.push(
+            //         function () {
+            //             var arg = rule.split(':')
+            //             var strategy = arg.shift()
+            //             var val = dom.value
+            //             arg.unshift(val)
+            //             arg.push(errorMsg)
+            //             arg.push(domItem)
+            //             //这里出错，传参数为一个数组，而接收为两个参数，第二个会是undefined,所以绑定dom随便绑定什么对象都可以
+            //             // console.log(strategies[strategy](arg))
+            //             //修改后
+            //             // console.log(strategies[strategy].apply(this, arg))
+            //             return strategies[strategy].apply(this, arg)
+            //         }
+            //     )
+            // }
+            // 添加方法第二版
+            Validator.prototype.add = function (dom, rules, domItem) {
+                //不能pushfor循环，把push放里边
+                //for作用域下this 是window,不是Validator对象了，保存当前对象
+                var self = this
+                for (var i = 0, rule; rule = rules[i++];) {
+                    (function (rule) {
+                        self.cache.push(function () {
+                            //此时执行rule获取到的是undefined,因为for循环已经执行完了，最后的值是undefined，应使用闭包保存rule,作为局部变量
+                            // console.log(rule.strategy)
+                            // console.log(dom)
+                            var arg = rule.strategy.split(':')
+                            var strategy = arg.shift()
+                            arg.unshift(dom.value)
+                            arg.push(rule.errorMsg)
+                            arg.push(domItem)
+                            return strategies[strategy].apply(this, arg)
+                        })
+                    })(rule)
+                }
+            }
+            Validator.prototype.start = function () {
+                // for (var i = 0; this.cache; this.cache[i++]) {
+                //     return this.cache[i]()
+                // }
+                //修改后
+                var errorMsgAry = {}
+                for (var i = 0, validatorFun; validatorFun = this.cache[i++];) {
+                    var msg = validatorFun()
+                    if (msg) {
+                        // console.log([].slice.call(errorMsgAry).push(msg));返回1，不会修改errorMsgAry,如何是字符串的话
+                        //msg={dom:'',errorMsg:''}
+                        errorMsgAry[msg['dom']] = errorMsgAry[msg['dom']] ? errorMsgAry[msg['dom']] + ', ' + msg['errorMsg'] : msg['errorMsg']
+                    }
+                }
+                return errorMsgAry
+            }
+            //虚拟代理图片预加载
+            var myImage = (function () {
+                var imgNode = document.createElement('img')
+                document.body.appendChild(imgNode)
+                return {
+                    setSrc: function (src) {
+                        imgNode.src = src
+                    }
+                }
+            })();
+            //proxyImage
+            var proxyImage = (function () {
+                var img = new Image()
+                img.onload = function () {
+                    myImage.setSrc(this.src)
+                }
+                return {
+                    setSrc: function (src) {
+                        myImage.setSrc('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg');
+                        img.src = src
+                    }
+                }
+
+            })();
+            proxyImage.setSrc('http://www.win4000.com/wallpaper_detail_167756_2.html')
+            //缓存代理计算乘积
+            var mult = function () {
+                var result = 1
+                for (var i = 0; i < arguments.length; i++) {
+                    result *= arguments[i]
+                }
+                console.log(result)
+            }
+            mult(2, 5)
+            var proxyMult = (function () {
+                var cache = {}//key:2,5 value:10
+                return function () {
+                    var arg = Array.prototype.join.call(arguments, ',')
+                    if (arg in cache) {
+                        return cache[arg]
+                    }
+                    return cache[arg] = mult.apply(this, arguments)
+                }
+            })()
+            proxyMult(2, 5, 2, 4)
+            proxyMult(2, 5, 2, 4)
+            //实现一个迭代器
+            var each = function (ary, callback) {
+                for (var i = 0, l = ary.length; i < l; i++) {
+                    callback.call(ary[i], i, ary[i]);
+                }
+            };
+            each([1, 2, 3], function (i, n) {
+                console.log([i, n])
+            })
+            var compare = function (arr1, arr2) {
+                if (arr1.length !== arr2.length) {
+                    console.log('两个数组不相等')
+                }
+                each(arr1, function (i, n) {
+                    if (n !== arr2[i]) {
+                        // throw new Error('arr1和arr2不相等')
+                        console.log('两个数组不相等')
+                    }
+                });
+                console.log('arr1和arr2相等')
+            }
+            compare([1, 2, 3], [1, 2, 4])
+            //外部迭代器
+            var Iterator = function (obj) {
+                var current = 0
+                var next = function () {
+                    current += 1
+                }
+                var isDone = function () {
+                    return current >= obj.length
+                }
+                var getCurrentItem = function () {
+                    return obj[current]
+                }
+                return {
+                    next,
+                    isDone,
+                    getCurrentItem
+                }
+            };
+            var iterator1 = Iterator([1, 2, 3])
+            var iterator2 = Iterator([1, 2, 4])
+            var compareOut = function (obj1, obj2) {
+                while (!obj1.isDone() && !obj2.isDone()) {
+                    if (obj1.getCurrentItem() !== obj2.getCurrentItem()) {
+                        throw new Error('不等')
+                    }
+                    obj1.next()
+                    obj2.next()
+                }
+            }
+            // compareOut(iterator1, iterator2)
+            //倒序迭代器
+            var reverseEach = function (arr, callback) {
+                for (var i = arr.length - 1; i >= 0; i--) {
+                    callback(i, arr[i])
+                }
+            }
+            reverseEach([1, 3, 5], function (i, n) {
+                console.log(n)
+            })
+            //中止迭代器
+            var each = function (arr, callback) {
+                for (var i = 0, l = arr.length; i < l; i++) {
+                    if (callback(i, arr[i]) === false) {
+                        break;
+                    }
+                }
+            }
+            each([1, 2, 4, 5, 6,], function (i, n) {
+                if (n > 5) {
+                    return false
+                }
+                console.log(n)
+            })
+            //命令模式
+            var btn1 = document.getElementById('btn1')
+            var btn2 = document.getElementById('btn2')
+            var btn3 = document.getElementById('btn3')
+            //执行命令
+            var bindClick = function (button, command) {
+                button.onclick = command
+            };
+            var MenuBar = {
+                refresh: function () {
+                    console.log('MenuBar refresh Page')
+                }
+            };
+            var SubMenu = {
+                add: function () {
+                    console.log('SubMenu add submenu')
+                },
+                del: function () {
+                    console.log('SubMenu del submenu')
+                }
+            }
+            bindClick(btn1, SubMenu.add)
+            bindClick(btn2, MenuBar.refresh)
+            bindClick(btn3, SubMenu.del)
+
+            //宏命令 执行一批操作
+            //遥控器关闭门 关闭电脑和qq
+            var closeDoorCommand = function () {
+                console.log('close the door')
+            };
+            var closePCCommand = function () {
+                console.log('close the computer')
+            };
+            var closeQQCommand = function () {
+                console.log('close the qq')
+            };
+            var MacroCommand = (function () {
+                var exceteCache = []
+                return {
+                    add: function (command) {
+                        exceteCache.push(command)
+                    },
+                    excute: function () {
+                        for (var c = 0, excute; excute = exceteCache[c]; exceteCache[c++]) {
+                            excute()
+                        }
+                    }
+                }
+            })()
+
+            MacroCommand.add(closeDoorCommand)
+            MacroCommand.add(closePCCommand)
+            MacroCommand.add(closeQQCommand)
+            MacroCommand.excute()
+
+            /*********组合模式**********/
+            /*********扫描文件夹**********/
+            //文件夹----文件夹----文件
+            var Folder = function (name) {
+                this.name = name;
+                this.files = []
+            }
+            // Folder.prototype.add = function (file) {
+            //     this.files.push(file)
+            // }
+            //引用父对象，当删除某个文件时，要从所在文件夹删除，如果不在某个文件夹下，代表游离文件，直接返回return
+            //1.给Folder,File添加this.parent属性在add方法中
+            Folder.prototype.add = function (file) {
+                this.files.push(file)
+                file.parent = this
+            }
+            Folder.prototype.scan = function () {
+                console.log('开始扫描文件夹', this.name)
+                for (var i = 0, file, files = this.files; file = files[i++];) {
+                    console.log(file, 'file************')
+                    file.scan()
+                }
+            }
+            var File = function (name) {
+                this.name = name
+            }
+            File.prototype.add = function () {
+                throw new Error('文件下面不能再添加文件')
+            }
+            File.prototype.scan = function () {
+                console.log('开始扫描文件', this.name)
+            }
+            //删除某个文件
+            File.prototype.remove = function () {
+                //如果没有返回return
+                if (!this.parent) {
+                    return
+                }
+                //如果有this.parent 从parent.files中删除
+                for (var files = this.parent.files, l = files.length - 1; l >= 0; l--) {
+                    var file = files[l]
+                    if (file === this) {
+                        files.splice(l, 1)
+                    }
+                }
+            }
+            var folder = new Folder('学习资料')
+            var folder1 = new Folder('JavaScript')
+            var folder2 = new Folder('Java')
+
+            var file1 = new File('JavaScript设计模式与开发实践')
+            var file2 = new File('Java实战')
+            var file3 = new File('重构与模式')
+
+            folder1.add(file1)
+            folder2.add(file2)
+
+            folder.add(folder1)
+            folder.add(folder2)
+            folder.add(file3)
+
+            //将以下文件夹移到上面树中
+            var folder3 = new Folder('Nodejs')
+            var file4 = new File('深入浅出Node.js')
+            folder3.add(file4)
+
+            var file5 = new File('JavaScript语言精髓与编程实践')
+            folder.add(folder3)
+            folder.add(file5)
+
+
+            file5.remove()
+            folder.scan()
+            console.log(folder.files)
+
+            //模板方法模式 Coffee Tea例子
+            // var Beverage = function () { }
+            // Beverage.prototype.boilWater = function () {
+            //     console.log('把水煮沸')
+            // }
+            // Beverage.prototype.brew = function () { throw new Error('子类必须重写brew方法') }
+            // Beverage.prototype.pourInCup = function () { throw new Error('子类必须重写pourInCup方法') }
+            // Beverage.prototype.addCondiments = function () { throw new Error('子类必须重写addCondiments方法') }
+            // //一些咖啡不要加糖和牛奶
+            // Beverage.prototype.customerWantsCondiments = function () {
+            //     return true //默认要加
+            // }
+            // Beverage.prototype.init = function () {
+            //     console.log(this)
+            //     this.boilWater()
+            //     this.brew()
+            //     this.pourInCup()
+            //     if (this.customerWantsCondiments()) {
+            //         this.addCondiments()
+            //     }
+            // }
+            // var Coffee = function () { }
+            // console.log(new Beverage().__proto__)
+            // //这样写修改了Beverage的原型
+            // // Coffee.prototype = new Beverage().__proto__，Tea=new Beverage的时候会继承Coffee上的方法
+            // Coffee.prototype = new Beverage()
+            // Coffee.prototype.brew = function () {
+            //     console.log('用沸水冲泡咖啡')
+            // }
+            // Coffee.prototype.pourInCup = function () {
+            //     console.log('把咖啡倒进杯子')
+            // }
+            // Coffee.prototype.customerWantsCondiments = function () {
+            //     return window.confirm('要加调料吗')//询问是否要加调料
+            // }
+            // Coffee.prototype.addCondiments = function () {
+            //     console.log('加糖和牛奶')
+            // }
+            // var Tea = function () { }
+            // Tea.prototype = new Beverage()
+            // Tea.prototype.brew = function () {
+            //     console.log('用沸水浸泡茶叶')
+            // }
+            // Tea.prototype.pourInCup = function () {
+            //     console.log('把茶倒进杯子')
+            // }
+            // Tea.prototype.addCondiments = function () {
+            //     console.log('加柠檬')
+            // }
+            // var coffee = new Coffee()
+            // coffee.init()
+            // var tea = new Tea()
+            // tea.init()
+            /********************享元模式************************
+             * 上传文件*/
+            //1.内部状态 不因环境变化的uploadType  plgin flash 此处举例
+            //2.外部状态 受外部环境影响 文件名称 文件大小 
+            //剥离外部状态 上传功能add setExternalState 放到uploadManger 统一管理
+            var uploadManager = (function () {
+                var uploadDataBase = {}
+                return {
+                    add: function (id, uploadType, filename, filesize) {
+                        //如果已有uploadType不创建新的Uplod对象
+                        var flyWeightObj = createUploadFactory(uploadType)
+                        var dom = document.createElement('div')
+                        dom.innerHTML = '<span>文件名称：' + filename + '， 文件大小：' + filesize + '</span>' +
+                            '<button class="del">删除</button>'
+                        document.body.appendChild(dom)
+                        //创建class id是唯一的
+                        dom.querySelector('.del').onclick = function () {
+                            flyWeightObj.delFile(id)
+                        }
+                        uploadDataBase[id] = {
+                            fileName: filename,
+                            fileSize: filesize,
+                            dom: dom
+                        }
+                        return flyWeightObj
+                    },
+                    setExternalState: function (id, flyWeightObj) {
+                        var uploadData = uploadDataBase[id]
+                        //flyWeightObj 没有这些属性
+                        for (var i in uploadData) {
+                            flyWeightObj[i] = uploadData[i]
+                        }
+                    }
+                }
+            })()
+            var Upload = function (uploadtype) {
+                this.uploadtype = uploadtype
+            }
+            Upload.prototype.delFile = function (id) {
+                uploadManager.setExternalState(id, this)
+                if (this.fileSize < 3000) {
+                    console.log('删除文件')
+                    return this.dom.parentNode.removeChild(this.dom)
+                }
+                if (window.confirm('are you sure delete this file' + this.fileName + 'now?')) {
+                    console.log('sure delete this file ' + this.fileName)
+                    this.dom.parentNode.removeChild(this.dom)
+                }
+            }
+            //工厂实例化对象
+            var createUploadFactory = (function () {
+                var createFlyWeightObj = {}
+                return function (uploadType) {
+                    if (createFlyWeightObj[uploadType]) {
+                        console.log('已存在不需创建')
+                        return createFlyWeightObj[uploadType]
+                    }
+                    return createFlyWeightObj[uploadType] = new Upload(uploadType)
+                }
+            })()
+            var id = 0
+            //开始触发上传的动作startUpload函数
+            window.startUpload = function (uploadType, files) {
+                for (var f = 0, file; file = files[f++];) {
+                    var uploadObj = uploadManager.add(++id, uploadType, file.fileName, file.fileSize)
+                    console.log(uploadObj, 'uploadObj')
+                }
+            }
+            //测试
+            startUpload('plugin', [
+                {
+                    fileName: '1.txt',
+                    fileSize: 1000
+                },
+                {
+                    fileName: '12.txt',
+                    fileSize: 3000
+                },
+                {
+                    fileName: '3.txt',
+                    fileSize: 3000
+                }
+            ])
+            startUpload('flash', [
+                {
+                    fileName: '4.txt',
+                    fileSize: 4000
+                },
+                {
+                    fileName: '5.txt',
+                    fileSize: 5000
+                },
+                {
+                    fileName: '6.txt',
+                    fileSize: 6000
+                }
+            ])
+
+            //对象池的实现 搜索附近地图，出现两个小气泡，搜索兰州拉面时出现6个小气泡，第二次搜索不会删除第一次创建的小气泡，第二次只需创建4个，不是6个
+            //先定义一获取小气泡节点的工厂，作为对象池的数组成为私有属性被包含在工厂闭包里，这个工厂有两个暴露对外的方法，create表示获取一个div节点，recover表示回收一个div节点
+            var toolTipFactory = (function () {
+                var toolTipPool = []
+                return {
+                    create: function () {
+                        if (toolTipPool.length === 0) {
+                            var div = document.createElement('div')
+                            document.body.appendChild(div)
+                            return div
+                        } else {
+                            return toolTipPool.shift()//则从对象池中取出一个dom
+                        }
+                    },
+                    recover: function (tooltipDom) {
+                        return toolTipPool.push(tooltipDom)
+                    }
+                }
+            })()
+            //目前第一次搜索，需要创建2个小气泡，为了方便回收，用一个数组ary来记录
+            var ary = []
+            for (var i = 0, str; str = ['A', 'B'][i++];) {
+                var toolTip = toolTipFactory.create()
+                toolTip.innerHTML = str
+                ary.push(toolTip)
+            }
+            //地图重新绘制
+            for (var i = 0, toolTip; toolTip = ary[i++];) {
+                toolTipFactory.recover(toolTip)
+            }
+            //再创建6个小气泡
+            for (var i = 0, str; str = ['A', 'B', 'C', 'D', 'E', 'F'][i++];) {
+                var toolTip = toolTipFactory.create()
+                toolTip.innerHTML = str
+            }
+
+            //职责链模式 3种购买模式 是否支付 库存
+            // 订金500元 得到100元优惠券
+            //职责链模式 订金200元 得到50元优惠券
+            //没有订金按普通购买模式
+            var order500 = function (orderType, pay, stock) {
+                if (orderType === 1 && pay === true) {
+                    console.log('500元定金预购，得到100优惠券')
+                } else {
+                    return 'nexSuccessor'
+                }
+            }
+            var order200 = function (orderType, pay, stock) {
+                if (orderType === 2 && pay === true) {
+                    console.log('200元定金预购，得到50优惠券')
+                } else {
+                    return 'nexSuccessor'
+                }
+            }
+            var orderNormal = function (orderType, pay, stock) {
+                if (stock > 0) {
+                    console.log('普通购买，无优惠券')
+                } else {
+                    console.log('手机库存不足')
+                }
+            }
+            var Chain = function (fn) {
+                this.fn = fn
+                this.successor = null
+            }
+            Chain.prototype.setNextSuccessor = function (successor) {
+                return this.successor = successor
+            }
+            Chain.prototype.passRequest = function () {
+                var ret = this.fn.apply(this, arguments)
+                if (ret === 'nexSuccessor') {
+                    return this.successor && this.successor.passRequest.apply(this.successor, arguments)
+                }
+                return ret;
+            }
+            var order500Chain = new Chain(order500)
+            var order200Chain = new Chain(order200)
+            var orderNormalChain = new Chain(orderNormal)
+            //指定节点在职责链中的顺序
+            order500Chain.setNextSuccessor(order200Chain)
+            order200Chain.setNextSuccessor(orderNormalChain)
+            //把请求传递给第一个节点
+            order500Chain.passRequest(1, true, 500)
+            order500Chain.passRequest(2, true, 500)
+            order500Chain.passRequest(3, true, 500)
+            order500Chain.passRequest(1, false, 0)
+
+            //AOP实现职责链模式
+            Function.prototype.next = function (fn) {
+                var self = this
+                return function () {
+                    var ret = self.apply(this, arguments)
+                    console.log(ret, 'ret')
+                    if (ret) {
+                        return fn.apply(this, arguments)
+                    }
+                }
+            }
+            var order = function () {
+                console.log(1)
+                return 'next1'
+            }
+            var order2 = function () {
+                console.log(2)
+                return 'next2'
+            }
+            var order3 = function () {
+                console.log(3)
+            }
+            var order = order.next(order2).next(order3)
+            order()
+
+            /**************中介者模式*******************/
+            //泡泡机游戏
+            //1.定义Player构造器和原型方法
+            function Player(name, teamColor) {
+                this.name = name
+                this.teamColor = teamColor
+                this.state = 'alive'
+            }
+            Player.prototype.win = function () {
+                console.log(this.name + 'won')
+            }
+            Player.prototype.lose = function () {
+                console.log(this.name + 'lose')
+            }
+            //玩家死亡
+            Player.prototype.die = function () {
+                this.state = 'dead'
+                console.log(this.name + 'is dead')
+                playDirector.reciveMessage('playerDead', this)
+            }
+            //移除玩家
+            Player.prototype.remove = function () {
+                playDirector.reciveMessage('removePlayer', this)
+            }
+            //玩家换队
+            Player.prototype.changeTeam = function (color) {
+                playDirector.reciveMessage('changeTeam', this, color)
+            }
+            //创建玩家对象
+            var playFactory = function (name, teamColor) {
+                var newPlayer = new Player(name, teamColor)
+                playDirector.reciveMessage('addPlayer', newPlayer)
+                return newPlayer
+            }
+            //中介者playerDirector对象
+            var playDirector = (function () {
+                var players = {}//save all players
+                var operations = {}//can do thing
+                /*********新增一个玩家*********/
+                operations.addPlayer = function (player) {
+                    var teamColor = player.teamColor
+                    players[teamColor] = players[teamColor] || []//没有玩家成立一个新队伍
+                    players[teamColor].push(player)
+                };
+                operations.removePlayer = function (player) {
+                    var teamColor = player.teamColor
+                    teamPlayers = players[teamColor] || [] //该队伍所有成员
+                    //遍历删除
+                    for (var p = teamPlayers.length; p >= 0; p--) {
+                        if (teamPlayers[p] === player) {
+                            teamPlayers.splice(p, 1)
+                        }
+                    }
+                };
+                operations.changeTeam = function (player, newTeamColor) {
+                    operations.removePlayer(player)//remove from before team
+                    player.teamColor = newTeamColor
+                    operations.addPlayer(player)//add to new team
+                };
+                operations.playerDead = function (player) {
+                    var teamColor = player.teamColor
+                    var teamPlayers = players[teamColor]//all players
+                    var all_dead = true
+                    for (var i = 0, player; player = teamPlayers[i++];) {
+                        if (player.state !== 'dead') {
+                            all_dead = false
+                            break
+                        }
+                    }
+                    if (all_dead) {//all dead
+                        for (var i = 0, player; player = teamPlayers[i++];) {
+                            player.lose()//本队所有玩家lose
+                        }
+                        //other team win
+                        for (var color in players) {
+                            if (color !== teamColor) {
+                                var teamPlayers = players[color]
+                                for (var i = 0, player; player = teamPlayers[i++];) {
+                                    player.win()
+                                }
+                            }
+                        }
+                    }
+                };
+                var reciveMessage = function () {
+                    var message = Array.prototype.shift.call(arguments)//first param is message
+                    operations[message].apply(this, arguments)
+                }
+                return {
+                    reciveMessage: reciveMessage
+                }
+            })()
+            //test
+            //红队
+            var player1 = playFactory('皮蛋', 'red')
+            var player2 = playFactory('小鬼', 'red')
+            var player3 = playFactory('宝宝', 'red')
+            var player4 = playFactory('小强', 'red')
+            //蓝队
+            var player5 = playFactory('黑妞', 'blue')
+            var player6 = playFactory('葱头', 'blue')
+            var player7 = playFactory('胖墩', 'blue')
+            var player8 = playFactory('海盗', 'blue')
+
+            player1.die()
+            player2.die()
+            player3.die()
+            player4.die()
+
+            //手机购买例子 中介者模式
+            
+        </script>
+    </body>
+
+</html>
