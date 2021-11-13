@@ -59,6 +59,26 @@ const person = getPerson();
 (<Student>person).learn();
 // (<Teacher>person).teach();
 
+// 2.25类型别名 就是给一个类型起一个新名字 只是为了某个类型或者类型集合创建了新名字  虽然没什么用，但是这样可以减少文档的编写量
+
+type Age = number;
+type AgeCreator = () => Age
+// 类型别名也可以时泛型
+type Person<T> = { age: T }
+
+//2.2.6字面量类型 
+type Profession = 'teacher'
+//通常结合联合类型使用
+type Professin = "teacher" | "doctor" | "accountant"
+function personCreator(profession: Professin) {
+}
+personCreator("teacher")
+personCreator("doctor")
+personCreator("accountant")
+
+//2.2.7 索引类型与映射类型
+// 索引类型和映射类型是相对复杂的内容，使用索引类型，编译器就能够检查使用了动态属性命的代码
+
 //P61 课后题 1
 let a: string = 'string'
 let b: number = 1
