@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <script>
+            //2021-11-12 代理模式 图片预加载
+            document.write('图片预加载**************单一职责原则')
+            var myImage = (
+                function () {
+                    var imgae = document.createElement('img')
+                    document.body.appendChild(imgae)
+                    return {
+                        setUrl: function (src) {
+                            imgae.src = src
+                        }
+                    }
+                }
+            )()
+            var proxyImageFun = (function () {
+                var imgProxy = new Image()
+                imgProxy.onload = function () {
+                    console.log(this)
+                    myImage.setUrl(this.src)
+                }
+
+                return {
+                    setUrl: function (src) {
+                        imgProxy.src = src
+                        myImage.setUrl('/Users/caomengdie/Documents/ps/作品/向日葵.jpg')
+                    }
+                }
+            })()
+            proxyImageFun.setUrl('/Users/caomengdie/Documents/ps/car.jpeg')
+        </script>
+    </body>
+
+</html>

@@ -22,6 +22,7 @@
                 <button id="btn2">点击按钮2</button>
                 <button id="btn3">点击按钮3</button>
             </div>
+            <button id="log">数据上报</button>
         </div>
         <script>
             // 函数节流
@@ -817,8 +818,73 @@
             player3.die()
             player4.die()
 
-            //手机购买例子 中介者模式
-            
+            //迭代器模式 创建div 
+            var appendDiv = function (data) {
+                each(data, function (i, n) {
+                    var div = document.createElement('div')
+                    div.innerHTML = n + 'ok'
+                    document.body.appendChild(div)
+                })
+            }
+            var each = function (obj, callback) {
+                var length = obj.length,
+                    i = 0,
+                    isArray = Array.isArray(obj)
+                //遍历数组
+                if (isArray) {
+                    for (; i < length; i++) {
+                        callback.call(obj[i], i, obj[i])
+                    }
+                } else {
+                    //对象
+                    for (var i in obj) {
+                        callback.call(obj[i], i, obj[i])
+                    }
+                }
+            }
+            appendDiv([1, 2, 3, 4, 5, 6])
+            appendDiv({ a: 1, b: 2, c: 3, d: 4 })
+            //上报装饰者模式
+            Function.prototype.after =
+                function (fn) {
+                    var self = this
+                    return function () {
+                        self.apply(this, arguments)
+                        return fn.apply(this, arguments)
+                    }
+                }
+            var showLogin = function () {
+                console.log('打开登录浮窗')
+            }
+            var log = function () {
+                console.log('上报标签为' + this.getAttribute('tag'))
+            }
+            document.getElementById('log').onclick = showLogin.after(log)
+            //替换空格 面试题4
+            //实现一个函数，把字符串中的每个空格替换成“%20” 例如We are happy ==> We%20are%20happy
+            //1.遍历字符串 2.数空格数 3.计算替换之后的字符总长度 准备两个指针 分别原始字符串的末尾和改变长度后的字符串的末尾 4.移动指针
+            var trimSpace = function (str) {
+                var count = 0
+                for (var i = 0, c; c = str[i++];) {
+                    if (c === '') {
+                        count++
+                    }
+                }
+                if (count) {
+                    var addLen,
+                        length,
+                        p1, p2,
+                        sum;
+                    addLen = count * 2
+                    length = str.length
+                    sum = addLen + length
+                    p1 = length - 1
+                    p2 = sum - 1
+                    
+                } else {
+                    return '没有空格不需要替换'
+                }
+            }
         </script>
     </body>
 

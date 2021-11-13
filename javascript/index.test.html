@@ -85,8 +85,10 @@
             img.style.width = '100%'
             img.style.height = '100%'
             document.body.appendChild(img)
-            return function (src) {
-                img.src = src
+            return {
+                setUrl: function (src) {
+                    img.src = src
+                }
             }
         })()
         // var proxyImageFun = function (src) {
@@ -103,14 +105,17 @@
             var imgProxy = new Image()
             imgProxy.onload = function () {
                 console.log(this)
-                myImage(this.src)
+                myImage.setUrl(this.src)
             }
-            return function (src) {
-                imgProxy.src = src
-                myImage('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
+
+            return {
+                setUrl: function (src) {
+                    imgProxy.src = src
+                    myImage.setUrl('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
+                }
             }
         })()
-        proxyImageFun('/Users/caomengdie/Documents/ps/car.jpeg')
+        proxyImageFun.setUrl('/Users/caomengdie/Documents/ps/car.jpeg')
         var Dog = function (name) {
             this.name = name
         }
@@ -840,7 +845,7 @@
         var sing2 = new CreateSingletonFactory('sing2')
 
         console.log(sing1 === sing2)
-
+        //2021-11-12
         //原数据
         var getGuangdongCity = function () {
             var guandongCity = [
@@ -878,6 +883,77 @@
             }
         }
         render(addressAdapter(getGuangdongCity))
+        //2021-11-12 代理模式 图片预加载
+        document.write('图片预加载**************单一职责原则')
+        var myImag = (
+            function () {
+                var imgae = document.createElement('img')
+                imgae.style.width = '100%'
+                imgae.style.height = '100%'
+                document.body.appendChild(imgae)
+                return {
+                    setUrl: function (src) {
+                        imgae.src = src
+                    }
+                }
+            }
+        )()
+        var proxyImage = (function () {
+            var pImg = new Image()
+            // setTimeout(function () {
+            //     pImg.onload = function () {
+            //         myImag.setUrl(this.url)
+            //     }
+            // }, 2000)
+            pImg.onload = function () {
+                console.log(this, '预加载')
+                myImag.setUrl(this.src)
+            }
+            return {
+                setUrl: function (url) {
+                    myImag.setUrl('/Users/caomengdie/Documents/ps/作品/向日葵.jpg')
+                    pImg.src = url
+                }
+            }
+        })()
+        proxyImage.setUrl('/Users/caomengdie/Documents/ps/作品/奔跑.jpg')
+        //2021-11-12 迭代器模式
+        //先遍历一个集合，然后往页面中添加一些div,这些div的innerHTML
+        //就是对应集合里的元素
+        // var appendDiv = function (data) {
+        //     for (var i = 0; i < data.length; i++) {
+        //         var div = document.createElement('div')
+        //         div.innerHTML = data[i]
+        //         document.body.appendChild(div)
+        //     }
+        // }
+        // appendDiv([1, 2, 3, 4, 5, 6])
+        //提取遍历数据职责
+        var each = function (data, callback) {
+            var value,
+                i = 0,
+                length = data.length,
+                isArray = Array.isArray(data)
+            if (isArray) {
+                for (; i < length; i++) {//数组
+                    callback.call(data[i], i, data[i])
+                }
+            } else {
+                for (i in data) {//对象
+                    value = callback.call(data[i], i, data[i])
+                }
+            }
+            return data;
+        };
+        var appendDiv = function (data) {
+            each(data, function (i, n) {
+                var div = document.createElement('div')
+                div.innerHTML = n
+                document.body.appendChild(div)
+            })
+        }
+        appendDiv([1, 2, 3, 4, 5, 6])
+        appendDiv({ a: 1, b: 2, c: 3, d: 4 })
     </script>
 
 </html>
