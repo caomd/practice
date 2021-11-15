@@ -78,7 +78,13 @@ personCreator("accountant")
 
 //2.2.7 索引类型与映射类型
 // 索引类型和映射类型是相对复杂的内容，使用索引类型，编译器就能够检查使用了动态属性命的代码
+//依托于keyof关键自完成了类型索引
+//返回类型是 T[K][]实际表达的是 变量T取属性K的值的数组，其中T[K]就是索引访问操作符
 
+function plunck<T, K extends keyof T>(obj: T, names: K[]): T[K] {
+    return names.map(name => obj[name])
+}
+plunck(person, ['name']);//["Jarid"]
 interface Person {
     name?: string;
     age?: number
