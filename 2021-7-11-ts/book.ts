@@ -79,6 +79,16 @@ personCreator("accountant")
 //2.2.7 索引类型与映射类型
 // 索引类型和映射类型是相对复杂的内容，使用索引类型，编译器就能够检查使用了动态属性命的代码
 
+interface Person {
+    name?: string;
+    age?: number
+}
+
+interface Person2 {
+    readonly name: string;
+    readonly age: number
+}
+
 //P61 课后题 1
 let a: string = 'string'
 let b: number = 1
