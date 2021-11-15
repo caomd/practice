@@ -6,17 +6,17 @@ Function.prototype.bind = function (context) {
     }
 }
 
-Function.prototype.bind = function () {
-    //保存原函数
-    var __self = this;
-    //获取指向对象
-    var context = [].shift.call(arguments);
-    //将剩余参数转为数组
-    var args = [].slice.apply(arguments);
-    return function () {
-        return __self.apply(context, [].concat.apply(args, [].slice.call(arguments)))
-    }
-}
+// Function.prototype.bind = function () {
+//     //保存原函数
+//     var __self = this;
+//     //获取指向对象
+//     var context = [].shift.call(arguments);
+//     //将剩余参数转为数组
+//     var args = [].slice.apply(arguments);
+//     return function () {
+//         return __self.apply(context, [].concat.apply(args, [].slice.call(arguments)))
+//     }
+// }
 var func1 = {
     name: 66
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>复习2021-11-15</title>
+    </head>
+
+    <body>
+        <div>复习2021-11-15</div>
+    </body>
+    <script>
+        function throttle(fn, interval) {
+            var timer,
+                firstTime = true;
+            return function () {
+                if (firstTime) {
+                    fn.apply(this, arguments)
+                    return firstTime = false
+                }
+                console.log(timer)
+                if (timer) {//执行中
+                    return false
+                }
+                timer = setTimeout(() => {
+                    timer = null
+                    clearTimeout(timer)
+                    fn.apply(this, arguments)
+                }, interval || 5000);
+            }
+        }
+        window.onresize = throttle(function () {
+            console.log(new Date())
+        }, 8000)
+    </script>
+
+</html>
