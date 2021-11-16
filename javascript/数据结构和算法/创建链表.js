@@ -10,5 +10,6 @@ function LinkedList() {
     this.removeAt = function (position) { }
     this.remove = function (element) { }
     this.indexOf = function (element) { }
-    //...... 2021 - 11 - 15
+    //...... 2021 - 11 - 15 
+    this.isEmpty = function () { }
 }
