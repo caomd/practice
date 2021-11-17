@@ -36,7 +36,7 @@ function DoublyLinkedList() {
                 tail = node
             }// 中间位置
             else {
-                //while循环 问题解决 2021-11-17
+                //while循环 问题解决
                 while (index++ < position) {
                     previoius = current
                     current = current.next
@@ -58,10 +58,16 @@ function DoublyLinkedList() {
         if (position >= 0 && position < length) {
             //remove 第一个节点
             if (position === 0) {
-                current = current.next
                 head = current.next
+                if (length === 1) {
+                    tail = null
+                } else {
+                    head.prev = null
+                }
             } else if (position === length - 1) {
-                tail = tail.prev
+                current = tail
+                tail = current.prev
+                tail.next = null
             } else {
                 while (index++ < position) {
                     previous = current
