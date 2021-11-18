@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>
+            <form action="http://xxx.baidu.com" id="registerForm">
+                用户名：<input type="text" name="username"><label id='usernameError'></label><br />
+                密码：<input type="text" name="password"><label id='passwordError'></label><br />
+                手机号：<input type="text" name="phoneNumber"><label id='phoneNumberError'></label><br />
+                <button>submit</button>
+            </form>
+        </div>
+    </body>
+    <script>
+        //表单验证
+        /**
+         * 步骤1 封装算法类
+         * 步骤2 Context类 Validator 变量cache保存各个算法
+         *    3 给Context原型添加add start方法
+         *    4 用validateFun同一管理 添加方法 执行函数
+        */
+        //策略
+        var strategies = {
+            isNoEmpty: function (val, errMsg) {
+                if (val === '') {
+                    return errMsg
+                }
+            },
+            isPhoneNum: function (val, errMsg) {
+                if (!/(^1[3|5|8][0-9]{9}$)/.test(val)) {
+                    return errMsg
+                }
+            },
+            minLength: function (val, length, errMsg) {
+                if (val < length) {
+                    return errMsg
+                }
+            }
+        }
+        var registerForm = document.getElementById('registerForm')
+        registerForm.onsubmit = function (e) {
+            e.preventDefault()
+            var ret = validatorFun()
+        }
+        var Validator = function () {
+            this.cache = []
+        }
+        Validator.prototype.add = function (dom, rules) {
+            var self = this
+            for (var i = 0, rule; rule = rules[i++];) {
+                // var args = rule.strategy.split(':')
+                // var strategy = args.shift()
+                // //把参数都添加到args
+                // args.unshift(dom.value)
+                // args.push(rule.errMsg)
+                //将还未执行的校验规则放到cache下
+                //这个是已经执行的了，嵌套一层函数，要它不执行
+                // return this.cache.push(strategies[strategy].apply(this, args))
+
+                //用户名的验证被覆盖了 变成了minLength 三个minlength 一个isPhoneNum
+                // this.cache.push(function () {
+                //     console.log(this)
+                //     return strategies[strategy].apply(self, args)
+                // })
+
+                //第三种 //获取不到rule undefined 从外部传进来 使用闭包
+                (
+                    function (rule) {
+                        self.cache.push(
+                            function () {
+                                var args = rule.strategy.split(':')
+                                var strategy = args.shift()
+                                args.unshift(dom.value)
+                                args.push(rule.errMsg)
+                                return strategies[strategy].apply(self, args)
+                            }
+                        )
+                    }
+                )(rule)
+            }
+        }
+        Validator.prototype.start = function () {
+            for (var i = 0, fn; fn = this.cache[i++];) {
+                var msg = fn()
+                console.log(msg)
+            }
+        }
+        var validatorFun = function () {
+            var validator = new Validator()
+            //验证dom的value,strategy,errMsg
+            validator.add(registerForm.username, [
+                {
+                    strategy: 'isNoEmpty',
+                    errMsg: '用户名不能为空'
+                },
+                {
+                    strategy: 'minLength:6',
+                    errMsg: '长度不能小于6位'
+                }
+            ])
+            validator.add(registerForm.password, [
+                {
+                    strategy: 'minLength:6',
+                    errMsg: '密码长度不小于6位'
+                }
+            ])
+            validator.add(registerForm.phoneNumber,
+                [
+                    {
+                        strategy: 'isPhoneNum',
+                        errMsg: '输入正确的手机号码'
+                    }
+                ]
+            )
+            return validator.start()
+        }
+    </script>
+
+</html>
