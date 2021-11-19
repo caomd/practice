@@ -130,6 +130,26 @@ console.log(priorityQueue.isEmpty(), 'priorityQueue')
 priorityQueue.enqueue('John', 25)
 priorityQueue.enqueue('John2', 1)
 priorityQueue.enqueue('John3', 23)
-console.log(priorityQueue.isEmpty())
-console.log(priorityQueue.size())
-console.log(priorityQueue.print())
+// console.log(priorityQueue.isEmpty())
+// console.log(priorityQueue.size())
+// console.log(priorityQueue.print())
+
+//循环遍历 击鼓传花 2021-11-18
+function hotPotato(nameList, num) {
+    let queue = new Queue()
+    for (let i = 0; i < nameList.length; i++) {
+        queue.enqueue(nameList[i])
+    }
+    let eliminated = ''
+    while (queue.size > 1) {
+        for (let i = 0; i < num; i++) {
+            queue.enqueue(queue.dequeue())
+        }
+        eliminated = queue.dequeue()
+        console.log(eliminated + '在击鼓传花游戏中被淘汰')
+    }
+    return queue.dequeue()
+}
+let names = ['John', 'Jack', 'Camila', 'Ingrid', 'Carl']
+let winner = hotPotato(names, 7)
+console.log('The winner is ' + winner)
