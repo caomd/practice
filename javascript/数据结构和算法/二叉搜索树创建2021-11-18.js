@@ -27,7 +27,7 @@ function BinarySearchTree() {
             }
         }
     }
-
+    // 2021-11-19
     //在树中实现的方法
     this.insert = function (key) {
         var newNode = new Node(key)
