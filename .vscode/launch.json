@@ -8,7 +8,7 @@
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Open avlTree.html",
-            "file": "/Users/caomengdie/Documents/dachang/practise/practice/javascript/数据结构和算法/avlTree.html"
+            "file": "/Users/caomengdie/Documents/dachang/practise/practice/javascript/复习2021-11-20/图片预加载.html"
         }
     ]
 }
