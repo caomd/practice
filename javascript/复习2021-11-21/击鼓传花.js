@@ -3,14 +3,13 @@ var hotPotato = function (names, num) {
     for (var i = 0; i < names.length; i++) {
         queue.push(names[i])
     }
-    var eliminated = ''
     while (queue.length > 1) {
         for (var j = 0; j < num; j++) {
             queue.push(queue.shift())
         }
-        eliminated = queue.shift()
+        queue.shift()
     }
-    console.log('获胜者是：' + queue.shift())
+    console.log(queue.shift() + '是winner')
 }
 let names = ['John', 'Jack', 'Camila', 'Ingrid', 'Carl']
 let winner = hotPotato(names, 7)
