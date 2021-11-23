@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>
+            <button id="closeBtn">colseBtn</button>
+        </div>
+    </body>
+    <script>
+        //一个命令执行多个操作
+        var closeDoor = function () {
+            console.log('关门')
+        }
+        var closePCCommand = function () {
+            console.log('close the computer')
+        };
+        var closeQQCommand = function () {
+            console.log('close the qq')
+        };
+        var MacroCommand = (
+            function () {
+                var cacheCommand = []
+                return {
+                    add: function (command) {
+                        cacheCommand.push(command)
+                    },
+                    excute: function () {
+                        for (var i = 0; i < cacheCommand.length; i++) {
+                            cacheCommand[i]()
+                        }
+                    }
+                }
+            }
+        )()
+        var Btn = document.getElementById('closeBtn')
+        Btn.onclick = function () {
+            MacroCommand.add(closeQQCommand)
+            MacroCommand.add(closePCCommand)
+            MacroCommand.add(closeDoor)
+            MacroCommand.excute()
+        }
+    </script>
+
+</html>

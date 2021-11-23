@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div id="fileContent">
+            <button id="start">start scan file</button>
+            <button id="delFolder1">删除文件夹1</button>
+            <button id="delFolder2">删除文件夹2</button>
+            <button id="delFolder3">删除文件夹3</button>
+            <button id="delFile3">删除文件3</button>
+        </div>
+    </body>
+    <script>
+        //组合模式 扫描文件
+        var Folder = function (name) { this.name = name; this.cacheList = [] }
+        Folder.prototype.add = function (node) {
+            node.parent = this
+            this.cacheList.push(node)
+        }
+        Folder.prototype.scan = function () {
+            createElementDom('开始扫描文件夹' + this.name)
+            var self = this
+            for (var i = 0; i < this.cacheList.length; i++) {
+                (
+                    function (i) {
+                        //这里使用闭包，不用给setTimeout穿参数，不然获取到的是undefined
+                        setTimeout(function () {
+                            self.cacheList[i].scan()
+                        }, 2000)
+                    }
+                )(i)
+            }
+        }
+        Folder.prototype.remove = function () {
+            if (window.confirm('确认要删除' + this.name + '这个文件夹吗？')) {
+                this.cacheList = []
+                window.alert('已删除文件夹' + this.name)
+            }
+        }
+        var File = function (name) { this.name = name }
+        File.prototype.add = function () {
+            throw new Error('文件不能添加子节点')
+        }
+        File.prototype.scan = function (name) {
+            createElementDom('开始扫描文件' + this.name)
+        }
+        File.prototype.remove = function () {
+            console.log(this.parent)
+            if (window.confirm('确认要删除文件' + this.name + '吗？')) {
+                if (this.parent !== null) {
+                    for (var i = 0; i < this.parent.cacheList.length; i++) {
+                        if (this === this.parent.cacheList[i]) {
+                            this.parent.cacheList.splice(i, 1)
+                        }
+                    }
+                }
+                window.alert("已从文件夹" + this.parent.name + '中删除文件' + this.name)
+            }
+        }
+        var folder1 = new Folder('folder1')
+        var file1 = new File('file1')
+
+        folder1.add(file1)
+        var folder2 = new Folder('folder2')
+        var folder3 = new Folder('folder3')
+        var file2 = new File('file2')
+        var file3 = new File('file3')
+
+        folder2.add(file2)
+        folder1.add(folder3)
+        folder1.add(file3)
+        folder1.add(file2)
+
+        var delFolder1 = document.getElementById('delFolder1')
+        var delFolder2 = document.getElementById('delFolder2')
+        var delFolder3 = document.getElementById('delFolder3')
+        var delFile3 = document.getElementById('delFile3')
+
+        delFolder1.onclick = function () {
+            folder1.remove()
+        }
+        delFolder2.onclick = function () {
+            folder2.remove()
+        }
+        delFolder3.onclick = function () {
+            folder3.remove()
+        }
+        delFile3.onclick = function () {
+            file3.remove()
+        }
+
+        var btn = document.getElementById('start')
+        btn.onclick = function () {
+            folder1.scan()
+        }
+        //创建页面内容dom
+        function createElementDom(innnerContent) {
+            var div = document.createElement('div')
+            div.innerHTML = innnerContent
+            var br = document.createElement('br')
+            div.appendChild(br)
+            var fileDom = document.getElementById('fileContent')
+            fileDom.appendChild(div)
+        }
+    </script>
+
+</html>

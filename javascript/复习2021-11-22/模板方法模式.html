@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        //模板方法模式
+        var Beverage = function () { }
+        Beverage.prototype.addWater = function () {
+            console.log('step one 加入水')
+        }
+        Beverage.prototype.boilWater = function () {
+            console.log('煮沸水')
+        }
+        Beverage.prototype.addAddBeverage = function () {
+            throw new Error('子类必须重写该方法')
+        }
+        Beverage.prototype.boilBeverage = function () {
+            throw new Error('子类必须重写该方法')
+        }
+        Beverage.prototype.addCondition = function () {
+            throw new Error('子类必须重写该方法')
+        }
+        Beverage.prototype.pourCup = function () {
+            console.log('倒入杯中')
+        }
+        Beverage.prototype.customCondition = function () {
+            return true
+        }
+        Beverage.prototype.init = function () {
+            this.addWater()
+            this.boilWater()
+            this.addAddBeverage()
+            if (this.customCondition()) {
+                this.addCondition()
+            }
+        }
+        var Coffee = function () { }
+        //等于实例化对象的原型，这样就不会因为别的子类修改了原型上方法而覆盖其他子类上继承的方法
+        /*
+         Coffee.prototype = Beverage
+         Tea.prototype = Beverage
+         这样写Coffee的方法会被Tea的方法覆盖
+        */
+        Coffee.prototype = new Beverage()
+        var Tea = function () { }
+        Tea.prototype = new Beverage()
+        Coffee.prototype.addAddBeverage = function () {
+            console.log('加入咖啡')
+        }
+        Coffee.prototype.boilBeverage = function () {
+            console.log('浸泡咖啡')
+        }
+        Coffee.prototype.customCondition = function () {
+            return window.confirm('要加入调料吗？')
+        }
+        Coffee.prototype.addCondition = function () {
+            console.log('加入牛奶和糖')
+        }
+
+        Tea.prototype.addAddBeverage = function () {
+            console.log('加入茶')
+        }
+        Tea.prototype.customCondition = function () {
+            return window.confirm('要加入调料吗？')
+        }
+        Tea.prototype.addCondition = function () {
+            console.log('加入柠檬')
+        }
+        var coffee = new Coffee()
+        var tea = new Tea()
+        coffee.init()
+        tea.init()
+
+
+    </script>
+
+</html>

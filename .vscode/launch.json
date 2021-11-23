@@ -8,7 +8,7 @@
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Open avlTree.html",
-            "file": "/Users/caomengdie/Documents/dachang/practise/practice/javascript/复习2021-11-21/命令模式.html"
+            "file": "/Users/caomengdie/Documents/dachang/practise/practice/javascript/复习2021-11-22/组合模式_扫描文件.html"
         }
     ]
 }
