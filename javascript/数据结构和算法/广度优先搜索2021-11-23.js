@@ -5,6 +5,18 @@ Dictionary.prototype.get = function (v) {
 Dictionary.prototype.set = function (v, m) {
     return this[v] = m
 }
+var Stack = function () {
+    var items = []
+    this.push = function (node) {
+        items.push(node)
+    }
+    this.pop = function () {
+        return items.pop()
+    }
+    this.isEmpty = function () {
+        return items.length === 0
+    }
+}
 var Queue = function () {
     var Q = []
     this.enqueue = function (node) {
@@ -122,4 +134,20 @@ console.log(graph.toString())
 //test bfs
 graph.bfs(myVertices[0], printNode)
 var shortestPath = graph.BFS(myVertices[0])
-console.log(shortestPath.distances)
+console.log(shortestPath.distances, shortestPath.predecessors)
+//根据前溯点可以构建从A点到其他顶点的路径
+var fromVertex = myVertices[0]
+for (var i = 0; i < myVertices.length; i++) {
+    var toVertex = myVertices[i]
+    path = new Stack()
+    //这个for循环类似var i=0;i<length;i++
+    for (var v = toVertex; v != fromVertex; v = shortestPath.predecessors[v]) {
+        path.push(v)
+    }
+    path.push(fromVertex)
+    var s = path.pop()
+    while (!path.isEmpty()) {
+        s += '-' + path.pop()
+    }
+    console.log(s)
+}
