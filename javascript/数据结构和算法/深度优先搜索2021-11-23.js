@@ -143,3 +143,18 @@ graph.addEdge('E', 'I')
 console.log(graph.toString())
 graph.dfs(printNode)
 console.log(graph.DFS())
+console.log('**************************DAG********************************')
+var DAGGraph = new Graph()
+var myVerticesDAG = ['A', 'B', 'C', 'D', 'E', 'F']
+for (var i = 0; i < myVerticesDAG.length; i++) {
+    DAGGraph.addVertex(myVerticesDAG[i])
+}
+DAGGraph.addEdge('A', 'C')
+DAGGraph.addEdge('A', 'D')
+DAGGraph.addEdge('B', 'D')
+DAGGraph.addEdge('B', 'E')
+DAGGraph.addEdge('C', 'F')
+DAGGraph.addEdge('F', 'E')
+var result = DAGGraph.DFS()
+console.log(result)
+DAGGraph.dfs(printNode)
