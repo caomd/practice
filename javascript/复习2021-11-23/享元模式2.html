@@ -5,14 +5,14 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>享元模式2021-11-23</title>
+        <title>享元模式</title>
     </head>
 
     <body>
 
     </body>
     <script>
-        //内部状态 不因外界环境改变而改变 uploadType 外部状态fileName, fileSize 
+        //享元模式 内部状态 uploadType 外部状态fileName,fileSize由状态管理器统一管理 工厂创建实例对象
         var Upload = function (uploadType) {
             this.uploadType = uploadType
         }
@@ -21,43 +21,36 @@
             if (this.fileSize < 3000) {
                 return this.dom.parentNode.removeChild(this.dom)
             }
-            if (window.confirm('确定要删除该文件吗？' + this.fileName)) {
+            if (window.confirm('确定要删除文件吗' + this.fileName)) {
                 return this.dom.parentNode.removeChild(this.dom)
             }
         }
-        //工厂进行对象的实例化
-        var UploadFactory = (
-            function () {
-                var createFlyWeightObjs = {}
-                return {
-                    create: function (uploadType) {
-                        if (createFlyWeightObjs[uploadType]) {
-                            return createFlyWeightObjs[uploadType]
-                        }
-                        return createFlyWeightObjs[uploadType] = new Upload(uploadType)
-                    }
-                }
+        //工厂进行实例化
+        var UploadFactory = function (uploadType) {
+            var createFlyWeightObj = {}
+            if (createFlyWeightObj[uploadType]) {
+                return createFlyWeightObj[uploadType]
             }
-        )()
-        //管理器封装外部状态
+            return createFlyWeightObj[uploadType] = new Upload(uploadType)
+        }
+        //外部状态管理器
         var uploadManger = (
             function () {
                 var uploadDataBase = {}
                 return {
                     add: function (id, uploadType, fileName, fileSize) {
-                        var flyWeightObj = UploadFactory.create(uploadType)
+                        var flyWeightObj = UploadFactory(uploadType)
                         var dom = document.createElement('div')
-                        dom.innerHTML = '<span>文件名称：' + fileName + ', 文件大小：' + fileSize + '</span>' + '<button class="delFile">删除</button>';
+                        dom.innerHTML = '<span>文件名为：' + fileName + '，文件大小为：' + fileSize + '</span><button class="delFile">删除</button>';
                         dom.querySelector('.delFile').onclick = function () {
                             flyWeightObj.delFile(id)
                         }
-                        document.body.appendChild(dom);
+                        document.body.appendChild(dom)
                         uploadDataBase[id] = {
                             fileName: fileName,
                             fileSize: fileSize,
                             dom: dom
                         }
-                        return flyWeightObj
                     },
                     setExternalState: function (id, flyWeightObj) {
                         var uploadData = uploadDataBase[id]
@@ -68,13 +61,14 @@
                 }
             }
         )()
-        //开始触发上传动作startUpload函数
+        //开始触发上传事件
         var id = 0
         window.startUpload = function (uploadType, files) {
             for (var i = 0, file; file = files[i++];) {
-                var uploadObj = uploadManger.add(++id, uploadType, file.fileName, file.fileSize)
+                uploadManger.add(id++, uploadType, file.fileName, file.fileSize)
             }
         }
+        //test
         //测试时间 
         startUpload('plugin', [
             {
