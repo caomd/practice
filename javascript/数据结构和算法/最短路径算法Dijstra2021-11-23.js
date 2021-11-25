@@ -12,8 +12,8 @@ var Graph = function () {
         vertieces.push(v)
         adjList.set(v, [])
     }
-    this.addEdage = function (v, w, d) {
-        adjList.get(v).push({ w: d })
+    this.addEdage = function (v, w) {
+        adjList.get(v).push(w)
 
     }
     var graph = [
