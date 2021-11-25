@@ -21,7 +21,7 @@ var Graph = function () {
                 }
             }
         }
-        //规律 dist1-2 dist[1-0]+dist[0-2] dist[3-4] = dist[3]
+        //规律 dist1-2 dist[1-0]+dist[0-2] 
         for (var k = 0; k < length; k++) {
             for (var i = 0; i < length; i++) {
                 for (var j = 0; j < length; j++) {
