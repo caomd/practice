@@ -42,8 +42,8 @@ var Graph = function () {
             visited[u] = true
             //通过顶点u 更新其余到达源顶点的距离，查找最小路径
             for (var v = 0; v < length; v++) {
-                //graph[u][v] !== 0判断是排除没有路径到达
-                if (!visited[v] && graph[u][v] !== 0 && dist[v] > dist[u] + graph[u][v]) {
+                //graph[u][v] !== 0判断是排除没有路径到达 0 ---> false
+                if (!visited[v] && graph[u][v] && dist[v] > dist[u] + graph[u][v]) {
                     dist[v] = dist[u] + graph[u][v]
                 }
             }

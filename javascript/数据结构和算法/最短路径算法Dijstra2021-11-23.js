@@ -40,7 +40,8 @@ var Graph = function () {
             var u = minDistance(dist, visited)
             visited[u] = true
             for (var v = 0; v < length; v++) {
-                if (!visited[v] && graph[u][v] !== 0 && dist[u] !== INF && dist[u] + graph[u][v] < dist[v]) {
+                //不用判断等于0 --》false
+                if (!visited[v] && graph[u][v] && dist[u] !== INF && dist[u] + graph[u][v] < dist[v]) {
                     dist[v] = dist[u] + graph[u][v]
                 }
             }
