@@ -17,8 +17,8 @@ Player.prototype.die = function () {
     PlayerDirector.receiveMessage('die', this)
 }
 Player.prototype.changeTeam = function (newTeamColor) {
-    console.log(this.name + '换队')
-    PlayerDirector.receiveMessage('changeTeam', newTeamColor)
+    console.log(this.name + '换到' + newTeamColor + '队')
+    PlayerDirector.receiveMessage('changeTeam', newTeamColor, this)
 }
 Player.prototype.remove = function () {
     console.log(this.name + '移除' + this.teamColor + '队')
@@ -106,7 +106,17 @@ var player6 = playFactory('葱头', 'blue')
 var player7 = playFactory('胖墩', 'blue')
 var player8 = playFactory('海盗', 'blue')
 
-player1.die()
+// player1.die()
+// player2.die()
+// player3.die()
+// player4.die()
+
+// player1.remove()
+// player2.remove()
+// player3.die()
+// player4.die()
+
+player1.changeTeam('blue')
 player2.die()
 player3.die()
 player4.die()
