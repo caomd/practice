@@ -1,9 +1,10 @@
 var LinkedList = function () {
+    this.length = 0
     var Node = function (element) {
         this.element = element
         this.next = null
     }
-    var head, length = 0
+    var head
     this.append = function (element) {
         let node = new Node(element)
         var current = head
@@ -15,13 +16,31 @@ var LinkedList = function () {
         } else {
             head = node
         }
-        length++
+        this.length++
     }
     this.getHead = function () {
         return head
     }
     this.isEmpty = function () {
-        return length === 0
+        return this.length === 0
+    }
+    this.remove = function (element) {
+        var current = head, previous
+        if (head.element === element) {
+            head = current.next
+            this.length--
+        } else {
+            while (current.next) {
+                //易出错地方
+                previous = current
+                current = current.next
+                if (current.element === element) {
+                    this.length--
+                    return previous.next = current.next
+                }
+            }
+        }
+
     }
     this.print = function () {
         var current = head, i = 0
@@ -160,4 +179,9 @@ hashT.put('Mindy', 'mindy@email.com')
 hashT.put('Paul', 'paul@email.com')
 hashT.put('Nathan', 'nathan@email.com')
 hashT.put('Donnie', 'donnie@email.com')
+hashT.print()
+console.log(hashT.get('Sue'))
+console.log(hashT.remove('Sue'))
+hashT.print()
+console.log(hashT.remove('Nathan'))
 hashT.print()
