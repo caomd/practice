@@ -8,8 +8,10 @@ var LinkedList = function () {
         let node = new Node(element)
         var current = head
         if (head) {
-            node.next = current
-            head = node
+            while (current.next) {
+                current = current.next
+            }
+            current.next = node
         } else {
             head = node
         }
@@ -20,6 +22,12 @@ var LinkedList = function () {
     }
     this.isEmpty = function () {
         return length === 0
+    }
+    this.print = function () {
+        var current = head, i = 0
+        while (current.next) {
+            console.log(current.element)
+        }
     }
 }
 //创建散列表
@@ -34,12 +42,12 @@ var HashTable = function () {
     //分离链接重写put方法，解决冲突
     this.put = function (key, val) {
         let position = loseloseHashCode(key)
-        //没有值，添加链表头部
+        //没有值，初始化一个LinkedList类实例
         if (table[position] === undefined) {
             table[position] = new LinkedList()
-            //element 是一个ValuePair的实例，包含key和val两个属性
-            table[position].append(new ValuePair(key, val))
         }
+        //element 是一个ValuePair的实例，包含key和val两个属性
+        table[position].append(new ValuePair(key, val))
     }
     // this.get = function (key) {
     //     return table[loseloseHashCode(key)]
@@ -98,7 +106,14 @@ var HashTable = function () {
     this.print = function () {
         for (var i = 0; i < table.length; i++) {
             if (table[i] !== undefined) {
-                console.log(i + ':' + table[i])
+                var linkedList = table[i]
+                //遍历链表
+                var current = linkedList.getHead()
+                while (current.next) {
+                    console.log(current.element.toString())
+                    current = current.next
+                }
+                console.log(current.element.toString())
             }
         }
     }
@@ -131,18 +146,18 @@ hash.put('Tyrion', 'tyrion.email.com')
 console.log(hash.get('Gandalf'))
 console.log(hash.get('Loiane')) //undefined
 
-//处理冲突
+//处理冲突 还有问题*********************
 var hashT = new HashTable()
-hash.put('Grandalf', 'gandalf@email.com')
-hash.put('John', 'john@email.com')
-hash.put('Tyrion', 'tyrion@email.com')
-hash.put('Aaron', 'aaron@email.com')
-hash.put('Donnie', 'donnie@email.com')
-hash.put('Ana', 'ana@email.com')
-hash.put('Jonathan', 'jonathan@email.com')
-hash.put('Jamie', 'jamie@email.com')
-hash.put('Sue', 'sue@email.com')
-hash.put('Mindy', 'mindy@email.com')
-hash.put('Paul', 'paul@email.com')
-hash.put('Nathan', 'nathan@email.com')
-hash.print()
+hashT.put('Grandalf', 'gandalf@email.com')
+hashT.put('John', 'john@email.com')
+hashT.put('Tyrion', 'tyrion@email.com')
+hashT.put('Aaron', 'aaron@email.com')
+hashT.put('Ana', 'ana@email.com')
+hashT.put('Jonathan', 'jonathan@email.com')
+hashT.put('Jamie', 'jamie@email.com')
+hashT.put('Sue', 'sue@email.com')
+hashT.put('Mindy', 'mindy@email.com')
+hashT.put('Paul', 'paul@email.com')
+hashT.put('Nathan', 'nathan@email.com')
+hashT.put('Donnie', 'donnie@email.com')
+hashT.print()
