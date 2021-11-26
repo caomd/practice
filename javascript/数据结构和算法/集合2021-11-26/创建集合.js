@@ -72,7 +72,39 @@ function Set() {
     }
     //交集
     this.intersection = function (otherSet) {
-
+        let intersectonSet = new Set()
+        let values = this.values()
+        for (let i = 0; i < values.length; i++) {
+            if (otherSet.has(values[i])) {
+                intersectonSet.add(values[i])
+            }
+        }
+        return intersectonSet
+    }
+    //差集 存在于A中不存在于B中
+    this.difference = function (otherSet) {
+        let differenceSet = new Set()
+        let values = this.values()
+        for (let i = 0; i < values.length; i++) {
+            if (!otherSet.has(values[i])) {
+                differenceSet.add(values[i])
+            }
+        }
+        return differenceSet
+    }
+    //子集 当前Set实例是否是参数实例的子集 1.个数小于参数实例 2.必须所含元素都在参数实例集合中
+    this.subSet = function (otherSet) {
+        if (this.size() > otherSet.size()) {
+            return false
+        } else {
+            let values = this.values()
+            for (let i = 0; i < values.length; i++) {
+                if (!otherSet.has(values[i])) {
+                    return false
+                }
+            }
+            return true
+        }
     }
 }
 
@@ -91,5 +123,18 @@ setB.add(3)
 setB.add(4)
 setB.add(5)
 setB.add(6)
+let setC = new Set()
+setC.add(4)
+setC.add(5)
+//并集
 let unionAB = set.union(setB)
 console.log(unionAB.values())
+//交集
+let intersectionAB = set.intersection(setB)
+console.log(intersectionAB.values())
+//差集
+let differenceAB = set.difference(setB)
+console.log(differenceAB.values())
+//子集
+console.log(setC.subSet(setB))//true
+console.log(set.subSet(setB))//false
