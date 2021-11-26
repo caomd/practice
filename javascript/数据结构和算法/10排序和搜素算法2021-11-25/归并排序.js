@@ -5,7 +5,8 @@ var ArrayList = function () {
         length++
     }
     //外循环控制迭代轮数 
-    this.mergeSortRec = function () {
+    this.mergeSortRec = function (array) {
+        let length = array.length
         if (length === 1) {
             return array
         }
@@ -51,5 +52,4 @@ function createNonSortedArray(arr) {
 }
 var array = createNonSortedArray([8, 7, 6, 5, 4, 3, 2, 1])
 array.toString()
-array.mergeSortRec()
-array.toString()
+console.log(array.mergeSortRec([8, 7, 6, 5, 4, 3, 2, 1]))
