@@ -9,12 +9,12 @@ var ArrayList = function () {
         var j, temp
         for (var i = 1; i < length; i++) {
             j = i
-            temp = array[i]
+            temp = array[i] //当前值
             while (j > 0 && array[j - 1] > temp) {
-                array[j] = array[j - 1]
-                j--
+                array[j] = array[j - 1] //前一项大于当前值 将大值赋值给当前值
+                j--//元素前移
             }
-            array[j] = temp
+            array[j] = temp//将当前值临时变量赋给j移到的位置
         }
     }
     var swap = function (arr, index1, index2) {
