@@ -58,9 +58,15 @@ var HashTable = function () {
     //     console.log(position + '-' + key)
     //     table[position] = val
     // }
+    //使用djb2HashCode 解决冲突
+    this.put = function (key, val) {
+        var position = djb2HashCode(key)
+        console.log(position + '-' + key)
+        table[position] = val
+    }
     //分离链接重写put方法，解决冲突
     this.put = function (key, val) {
-        let position = loseloseHashCode(key)
+        let position = djb2HashCode(key)
         //没有值，初始化一个LinkedList类实例
         if (table[position] === undefined) {
             table[position] = new LinkedList()
@@ -71,9 +77,13 @@ var HashTable = function () {
     // this.get = function (key) {
     //     return table[loseloseHashCode(key)]
     // }
+    //使用djb2HashCode
+    // this.get = function (key) {
+    //     return table[djb2HashCode(key)]
+    // }
     //分离链接 重写get方法  
     this.get = function (key) {
-        let position = loseloseHashCode(key)
+        let position = djb2HashCode(key)
         if (table[position] !== undefined) {
             //遍历链表得到键值
             var current = table[position].getHead()
@@ -94,9 +104,13 @@ var HashTable = function () {
     // this.remove = function (key) {
     //     table[loseloseHashCode(key)] = undefined
     // }
+    //使用djb2HashCode
+    // this.remove = function (key) {
+    //     table[djb2HashCode(key)] = undefined
+    // }
     //分离链接 重写remove 
     this.remove = function (key) {
-        let position = loseloseHashCode(key)
+        let position = djb2HashCode(key)
         if (table[position] !== undefined) {
             //获取头部
             var current = table[position].getHead()
@@ -153,6 +167,14 @@ var HashTable = function () {
             hash += key.charCodeAt(i)
         }
         return hash % 37 //为了得到比较小的数值 使用hash值和任意数除法的余数
+    }
+    //比loselose更好的散列函数djb2
+    var djb2HashCode = function (key) {
+        var hash = 5381
+        for (var i = 0; i < key.length; i++) {
+            hash = hash * 33 + key.charCodeAt(i)
+        }
+        return hash % 1013
     }
 }
 
