@@ -1,5 +1,7 @@
-工厂实例化对象
 中介者模式 解决多对多强耦合，为一对多 
+工厂实例化对象 PlayFactory 
+中介者 PlayerDirector
+
 
 Function.prototype.before = function (fn) {
     var self = this
@@ -10,8 +12,13 @@ Function.prototype.before = function (fn) {
     }
 }
 
-//ajax动态获取token
+//ajax动态获取token 这里的参数是因为ajax传的参数个数，可以用arguments获取
 var getToken = function (type, url, param) {
+    param.token = 'Token'
+}
+//arguments获取
+var getToken = function () {
+    var param = Array.prototype.pop.call(arguments)
     param.token = 'Token'
 }
 var ajax = function (type, url, param) {

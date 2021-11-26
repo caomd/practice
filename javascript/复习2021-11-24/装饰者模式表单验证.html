@@ -5,11 +5,46 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>检测输入和提交表单</title>
     </head>
 
     <body>
-        
+        <div>
+            <form action="" id="formData">
+                <div>username:<input name="username" /></div>
+                <div>password:<input name="password" /></div>
+                <button id="submitBtn">提交</button>
+            </form>
+        </div>
     </body>
+    <script>
+        var formData = document.getElementById('formData')
+        var submitBtn = document.getElementById('submitBtn')
+        Function.prototype.before = function (fn) {
+            var self = this
+            return function () {
+                var msg = fn.apply(this, arguments)
+                if (msg) {
+                    return window.alert(msg)
+                }
+                self.apply(this, arguments)
+            }
+        }
+        submitBtn.onclick = function () {
+            submitFn()
+        }
+        var validata = function () {
+            var username = formData.username.value
+            var password = formData.password.value
+            if (!username || !password) {
+                return '用户名或密码不能为空'
+            }
+            console.log(formData.username.value, formData.password.value, 'formData')
+        }
+        var submitFn = function () {
+            console.log('message')
+        }
+        submitFn = submitFn.before(validata)
+    </script>
 
 </html>
