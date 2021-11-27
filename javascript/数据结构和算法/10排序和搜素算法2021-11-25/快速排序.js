@@ -2,7 +2,7 @@
  * @Author: caomengdie 
  * @Date: 2021-11-27 18:15:35 
  * @Last Modified by: caomengdie
- * @Last Modified time: 2021-11-27 19:54:30
+ * @Last Modified time: 2021-11-27 19:55:38
  */
 //分治思想 利用两个指针 第一指向第一位，右边一个指向最后一项，中间项作为主元
 var quickSort = function (array) {
