@@ -1,8 +1,8 @@
 /*
  * @Author: caomengdie 
  * @Date: 2021-11-27 18:15:35 
- * @Last Modified by: caomengdie
- * @Last Modified time: 2021-11-27 19:55:38
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-11-28 17:49:37
  */
 //分治思想 利用两个指针 第一指向第一位，右边一个指向最后一项，中间项作为主元
 var quickSort = function (array) {
@@ -37,7 +37,7 @@ var partition = function (arr, left, right) {
         while (arr[j] > pivot) {
             j--
         }
-        //比较i,j大小换位置
+        //停下了，说明arr[i]大于中间值，arr[j]小于中间值 比较i,j大小换位置
         if (i <= j) {
             swap(arr, i, j)
             i++
