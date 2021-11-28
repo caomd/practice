@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>适配器模式</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        /*
+* @Author: caomd
+* @Date: 2021-11-28 08:42:27
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-11-28 09:12:45
+*/
+        var getGuangdongCity = function () {
+            var guandongCity = [
+                {
+                    name: 'shenzhen',
+                    id: 11
+                },
+                {
+                    name: 'guangzhou',
+                    id: 12
+                },
+                {
+                    name: 'zhuhai',
+                    id: 13
+                }
+            ]
+            return guandongCity
+        }
+        //新数据
+        var guangdongCity = {
+            shenzhen: 11,
+            guangzhou: 12,
+            zhuhai: 13
+        }
+        var adpterAddress = function (oldAddressFn) {
+            var address = {}
+            var oldAddress = oldAddressFn()
+            for (var i = 0, add; add = oldAddress[i++];) {
+                address[add.name] = add.id
+            }
+            return address
+        }
+        var renderAddress = function (adpter) {
+            var div = document.createElement('div')
+            // var s = ''
+            // for (var key in adpter) {
+            //     s += key + ':' + adpter[key] + '\n'
+            // }
+            // console.log(s)
+            // div.innerHTML = adpter //[Object Object]
+            div.innerHTML = JSON.stringify(adpter)
+            document.body.appendChild(div)
+        }
+        renderAddress(adpterAddress(getGuangdongCity))
+    </script>
+
+</html>
