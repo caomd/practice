@@ -50,6 +50,6 @@ function createNonSortedArray(arr) {
     }
     return array
 }
-var array = createNonSortedArray([8, 7, 6, 5, 4, 3, 2, 1])
+var array = createNonSortedArray([3, 5, 1, 6, 4, 7, 2])
 array.toString()
-console.log(array.mergeSortRec([8, 7, 6, 5, 4, 3, 2, 1]))
+console.log(array.mergeSortRec([3, 5, 1, 6, 4, 7, 2]))

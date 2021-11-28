@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 10:45:00 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 19:45:25
+ * @Last Modified time: 2021-11-29 06:15:31
  */
 //一定判断越界问题
 //优化遍历，如果大于length/2 从尾部遍历 双向链表的优势
@@ -61,3 +61,15 @@
 
     二分搜索
      while (low <= high) { //临界条件
+    归并排序
+    //分治思想 
+    var mergeSort = function (arr) {
+    if (arr.length === 1) {
+        return arr
+    }
+    var mid = Math.floor(arr.length / 2),
+        left = arr.slice(0, mid),
+        right = arr.slice(mid, arr.length)
+    //这里一定要写return 不然mergeSort排序正确的数组不会返回，而是undefinde
+    return merge(mergeSort(left), mergeSort(right))
+   }
