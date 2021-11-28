@@ -27,7 +27,7 @@ var ArrayList = function () {
         }
         console.log(s)
     }
-    //改进后的冒泡排序 除去外层已跑过的轮数 已在正确位置上的数字不必再比较
+    //改进后的冒泡排序 除去外层已跑过的轮数 每一轮都把最大值排好了 已在正确位置上的数字不必再比较
     this.modifiedBubbleSort = function () {
         for (var i = 0; i < length; i++) {
             // 除去外层已跑过的轮数 

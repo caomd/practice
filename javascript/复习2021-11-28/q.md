@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 10:45:00 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 10:48:32
+ * @Last Modified time: 2021-11-28 18:15:06
  */
 //一定判断越界问题
 //优化遍历，如果大于length/2 从尾部遍历 双向链表的优势
@@ -57,3 +57,4 @@
             current.pre = node
         }
     }
+    冒泡排序 除去外层轮数 因为每次都把最大值排好了
