@@ -2,7 +2,7 @@
  * @Author: caomengdie 
  * @Date: 2021-11-28 06:27:42 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 10:42:27
+ * @Last Modified time: 2021-11-28 10:47:44
  */
 
 //双向链表 比单向多了pre
@@ -35,7 +35,7 @@ var DoublyLinkedList = function () {
     this.insert = function (element, index) {
         //判断越界
         if (index < 0 || index > length) {
-            return false
+            throw new Error('index 超过链表长度范围')
         }
         var current = head, previous
         var node = new Node(element)
@@ -59,6 +59,7 @@ var DoublyLinkedList = function () {
                 node,
                 length
             }
+            //优化遍历，如果大于length/2 从尾部遍历 双向链表的优势
             compareMidPos(paramObj)
         }
         length++
