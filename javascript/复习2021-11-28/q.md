@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 10:45:00 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 18:15:06
+ * @Last Modified time: 2021-11-28 19:45:25
  */
 //一定判断越界问题
 //优化遍历，如果大于length/2 从尾部遍历 双向链表的优势
@@ -58,3 +58,6 @@
         }
     }
     冒泡排序 除去外层轮数 因为每次都把最大值排好了
+
+    二分搜索
+     while (low <= high) { //临界条件
