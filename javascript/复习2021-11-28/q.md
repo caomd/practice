@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 10:45:00 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 10:45:49
+ * @Last Modified time: 2021-11-28 10:48:32
  */
 //一定判断越界问题
 //优化遍历，如果大于length/2 从尾部遍历 双向链表的优势
