@@ -13,3 +13,5 @@
     if (arr[right] > arr[largest] && right < size) {
         largest = right
     }
+
+    ES6版本的队列 一定要把里面的类return出去，不然不是一个构造函数

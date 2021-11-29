@@ -141,9 +141,10 @@ function hotPotato(nameList, num) {
         queue.enqueue(nameList[i])
     }
     let eliminated = ''
-    while (queue.size > 1) {
+    while (queue.size() > 1) {
         for (let i = 0; i < num; i++) {
             queue.enqueue(queue.dequeue())
+            console.log(queue.size())//一直都是5
         }
         eliminated = queue.dequeue()
         console.log(eliminated + '在击鼓传花游戏中被淘汰')
