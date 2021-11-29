@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-11-29 06:16:14
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-29 07:45:43
+ * @Last Modified time: 2021-11-29 08:43:48
  */
 //堆排序
 //1.先构建堆结构 将大值至于堆顶 
@@ -16,18 +16,19 @@ var heapSort = function () {
     if (arr.length > 1) {
         var heapSize = arr.length
         buildHeap(arr, heapSize)
-        //交换最大值和最后一位交换位置
+        //交换最大值和最后一位交换位置 while 不然执行一次就结束了
         while (heapSize > 1) {
             heapSize--
             swap(arr, heapSize, 0)
             //破会了堆结构重新构建
-            heapify(arr, heapSize)
+            heapify(arr, heapSize, 0)
         }
     }
+    console.log(arr)
 }
 var buildHeap = function (arr, size) {
     //堆顶坐标
-    while (var i = arr[Math.floor(size / 2)]; i >= 0; i--) {
+    for (var i = Math.floor(size / 2); i >= 0; i--) {
         heapify(arr, size, i)
     }
 }
@@ -35,19 +36,17 @@ var heapify = function (arr, size, root) {
     var left = root * 2 + 1,
         right = root * 2 + 2,
         largest = root
-    while (left < size && right < size) {
-        if (arr[left] > arr[largest]) {
-            largest = left
-        }
-        if (arr[right] > arr[largest]) {
-            largest = right
-        }
-        //根节点变了 交换位置，根节点是最大值
-        if (root !== largest) {
-            swap(arr, largest, root)
-            //交换位置后，破坏了堆结构
-            heapify(arr, size, largest)
-        }
+    if (arr[left] > arr[largest] && left < size) {
+        largest = left
+    }
+    if (arr[right] > arr[largest] && right < size) {
+        largest = right
+    }
+    //根节点变了 交换位置，根节点是最大值
+    if (root !== largest) {
+        swap(arr, largest, root)
+        //交换位置后，破坏了堆结构
+        heapify(arr, size, largest)
     }
 }
 var swap = function (arr, i, j) {
@@ -55,3 +54,4 @@ var swap = function (arr, i, j) {
     arr[i] = arr[j]
     arr[j] = t
 }
+heapSort()
