@@ -17,3 +17,14 @@
     ES6版本的队列 一定要把里面的类return出去，不然不是一个构造函数
 
     bind 函数 返回一个新的函数 参数合并
+
+    new 
+     //继承 即对象的隐性属性__proto__指向构造器的原型对象
+    obj.__proto__ = constructor.prototype
+    //将剩余参数转为数组
+    var args = Array.prototype.slice.call(arguments)
+    //这个参数是传给构造器的
+    var ret = constructor.apply(obj, args) //undefined
+    return typeof ret === 'object' ? ret : obj
+
+    var playTwo = createFactory(Play, { type: 'Object' })
