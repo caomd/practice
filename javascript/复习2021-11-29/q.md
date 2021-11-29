@@ -31,7 +31,7 @@
 
     //函数节流
      window.onresize = throttle(clgFn, 1000)
-     window.onresize 执行的是throttle的返回函数
+    window.onresize 执行的是throttle返回函数，每次触发就会执行返回函数
      //函数表达式要提前声明
       var throttle =
             // (
@@ -87,3 +87,17 @@
                 }
             }
         )()
+快速排序 判断左侧有小数组和右侧有大数组的边界 即返回值
+    var index = partition(arr, left, right)
+    if (left < index - 1) {
+        quick(arr, left, index - 1)
+    }
+    if (right > index) {
+        quick(arr, index, right)
+    }
+    //交换arr[i]和arr[j]的位置,交换了位置，符合左边小于中间值，右边大于中间值 做相应的加加减减
+        if (i <= j) {
+            swap(arr, i, j)
+            i++
+            j--
+        }
