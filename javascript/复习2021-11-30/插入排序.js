@@ -2,9 +2,9 @@
  * @Author: caomd
  * @Date: 2021-11-30 06:37:22
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 06:49:50
+ * @Last Modified time: 2021-11-30 07:44:29
  */
-//插入排序的特点：后一项和它前面的所有项做比较 小就换位置 i从第一位开始 j=i-1 j-- j>=0
+//插入排序的特点：后一项和它前面的所有项做比较 小就换位置 i从第一位开始 j=i j-- j>=0
 var arr = [3, 5, 1, 6, 4, 7, 2]
 var insertionSort = function () {
     for (var i = 1; i < arr.length; i++) {
