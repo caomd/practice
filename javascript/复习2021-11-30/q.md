@@ -2,14 +2,14 @@
  * @Author: caomd 
  * @Date: 2021-11-30 09:54:26 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 10:19:07
+ * @Last Modified time: 2021-11-30 14:50:28
  */
-二叉搜索树 root的赋值问题 Closure闭包 将函数表达式提前声明 不然一直为null
+二叉搜索树 root的赋值问题 Closure闭包外界无法访问私有变量 将函数表达式提前声明 不然一直为null
  var root = null, size = 0
     this.insert = function (element) {
         var newNode = new Node(element)
         console.log(root)
-        //root 要在这里赋值才会形成私有变量，闭包，看左侧的变量结构Closure，不然一直都是null并没有赋值，因为所在的作用域变了 
+        //root 要在这里赋值才会形成私有变量，闭包，看左侧的变量结构Closure，不然一直都是null并没有赋值，因为所在的作用域变了 外界是无法访问闭包私有变量的
         root必须在这里赋值才可以！！!
         if (!root) {
             return root = newNode
@@ -52,3 +52,19 @@
             }
         }
     }
+
+    函数表达式提前声明 才能获取值
+    闭包 私有变量的作用域使用范围
+    二叉搜索树 查询一个元素返回true 问题：总是返回undefined 因为递归 
+    答：因为调用递归函数没有return 返回就是undefined
+    if (node !== null) {
+            if (item < node.element) {
+                //在左子树中 这里要写return
+                return searchNode(node.left, item)
+            } else if (item > node.element) {
+                return searchNode(node.right, item)
+            } else if (item = node.element) {
+                return true
+            } else {
+                return 'not founded the search item'
+            }

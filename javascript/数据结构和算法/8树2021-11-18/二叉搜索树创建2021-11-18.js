@@ -110,9 +110,9 @@ function BinarySearchTree() {
             return false
         } else {
             if (key > node.key) {
-                searchNode(node.right, key)
-            } else if (key > node.key) {
-                searchNode(node.right, key)
+                return searchNode(node.right, key)
+            } else if (key < node.key) {
+                return searchNode(node.left, key)
             } else {
                 return true
             }

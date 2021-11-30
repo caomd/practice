@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-11-30 09:19:48
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 10:48:35
+ * @Last Modified time: 2021-11-30 14:53:25
  */
 //创建二叉搜索树 
 var BinarySearchTree = function () {
@@ -32,13 +32,42 @@ var BinarySearchTree = function () {
     // }
     this.insert = function (element) {
         var newNode = new Node(element)
-        console.log(root)
         //root 要在这里赋值才会形成私有变量闭包，不然一直都是null并没有赋值，因为所在的作用域变了
         if (!root) {
+            size++
             return root = newNode
         }
         insertNode(root, newNode)
-        this.print(root)
+    }
+    this.max = function () {
+        var node = root
+        while (node && node.right) {
+            node = node.right
+        }
+        return node.element
+    }
+    var searchNode = function (node, item) {
+        if (node !== null) {
+            if (item < node.element) {
+                //在左子树中 这里要写return
+                return searchNode(node.left, item)
+            } else if (item > node.element) {
+                return searchNode(node.right, item)
+            } else if (item = node.element) {
+                return true
+            } else {
+                return 'not founded the search item'
+            }
+        } else {
+            return false
+        }
+    }
+    this.search = function (item) {
+        if (item === root.element) {
+            return root
+        }
+        var rt = searchNode(root, item)
+        return searchNode(root, item)
     }
     //函数声明 就不会获取root为null
     function insertNode(node, newNode) {
@@ -74,12 +103,86 @@ var BinarySearchTree = function () {
             }
             node.right = newNode
         }
+        size++
     }
-    //先序遍历
+    //提前定义函数表达式
+    var preOrderTranverseNode = function (node, callback, size) {
+        if (node !== null) {
+            callback(node.element, size)
+            preOrderTranverseNode(node.left, callback, size)
+            preOrderTranverseNode(node.right, callback, size)
+        }
+    }
+    //先序遍历 先遍历根节点 然后左子节点 -》右子节点
+    this.preOrderTranverse = function (callback) {
+        preOrderTranverseNode(root, callback, size)
+    }
+    //中序遍历 先遍历左子节点 根节点 右子节点
+    this.inOrderTranver = function (callback) {
+        inOrderTranverNode(root, callback, size)
+    }
+    function inOrderTranverNode(node, callback, size) {
+        if (node !== null) {
+            inOrderTranverNode(node.left, callback, size)
+            callback(node.element, size)
+            inOrderTranverNode(node.right, callback, size)
+        }
+    }
+    //后序遍历 先遍历左子节点 然后右子节点 然后根节点
+    this.postOrderTranver = function (callback) {
+        postOrderTranverNode(root, callback, size)
+    }
+    function postOrderTranverNode(node, callback, size) {
+        if (node !== null) {
+            postOrderTranverNode(node.left, callback, size)
+            postOrderTranverNode(node.right, callback, size)
+            callback(node.element, size)
+        }
+    }
+    this.printTreeStr = function () {
+        //根据先序遍历打印 根-》左-》右
+        orderTree(root)
+    }
+}
+var print = (
+    function () {
+        var nodeCache = []
+        return function (value, size) {
+            if (nodeCache.includes(value)) {
+                nodeCache = []
+            }
+            nodeCache.push(value)
+            if (nodeCache.length === size) {
+                var nodeCacheStr = nodeCache.join(' ')
+                console.log(nodeCacheStr)
+            }
+        }
+    }
+)()
+// var printTreeStr = function (node) {
+//     //根据先序遍历打印 根-》左-》右
+//     orderTree(root)
+// }
 
-    this.print = function () {
+var orderTree = function (node) {
+    var s = ''
+    if (node !== null) {
+        s += '  ' + node.element + '\n'
+        if (node.left && node.right) {
+            s += '\/' + '   ' + '\\' + '\n'
+            orderTree(node.left)
+            orderTree(node.right)
+        } else if (node.left && !node.right) {
+            s += '\/' + '\n'
+            orderTree(node.left)
+        } else if (node.right && !node.left) {
+            s += '\\' + '\n'
+            orderTree(node.right)
+        }
+    } else {
 
     }
+    console.log(s)
 }
 //测试
 var tree = new BinarySearchTree()
@@ -99,3 +202,8 @@ tree.insert(18)
 tree.insert(25)
 tree.insert(6)
 console.log(tree)
+tree.preOrderTranverse(print)
+tree.inOrderTranver(print)
+tree.postOrderTranver(print)
+console.log(tree.max())
+console.log(tree.search(25))
