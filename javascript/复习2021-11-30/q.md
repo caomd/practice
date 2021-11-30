@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-30 09:54:26 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 14:50:28
+ * @Last Modified time: 2021-11-30 19:16:48
  */
 二叉搜索树 root的赋值问题 Closure闭包外界无法访问私有变量 将函数表达式提前声明 不然一直为null
  var root = null, size = 0
@@ -68,3 +68,9 @@
             } else {
                 return 'not founded the search item'
             }
+
+最少零钱问题 判定newMin和min的边界条件 
+if (newAmount >= 0 && (newMin.length < min.length || !min.length) && (!newAmount || newMin.length))
+if (!amount) {
+            return []
+        }

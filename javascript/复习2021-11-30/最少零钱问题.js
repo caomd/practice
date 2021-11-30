@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-30 14:55:46 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 15:13:40
+ * @Last Modified time: 2021-11-30 16:10:25
  */
 var CoinMinChange = function (coins) {
     //面额
@@ -12,6 +12,9 @@ var CoinMinChange = function (coins) {
             newAmount, newMin
         if (cache[amount]) {
             return cache[amount]
+        }
+        if (!amount) {
+            return []
         }
         for (var i = 0; i < coins.length; i++) {
             var coin = coins[i]
