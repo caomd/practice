@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-01 08:15:00
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-01 17:44:43
+ * @Last Modified time: 2021-12-01 17:49:02
  */
 //自平衡树 添加节点如果超出左节点高度-右节点高度 不等于 0 -1 1 则使用自平衡方法
 var AVLTree = function () {
@@ -92,13 +92,13 @@ var AVLTree = function () {
     }
     //右双旋转
     function rotationLR(node) {
-        //先左后右 !!!!!!!!!!! 左节点变化了 传给左节点
+        //先左后右 !!!!!!!!!!! 右边失衡 赋值给左边
         node.left = rotationRR(node.left)
         return rotationLL(node)
     }
     //右双旋转
     function rotationRL(node) {
-        //先右后左
+        //先右后左 左边失衡 赋值给右边
         node.right = rotationLL(node.right)
         return rotationRR(node)
     }

@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-30 09:54:26 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-01 17:43:22
+ * @Last Modified time: 2021-12-01 17:55:10
  */
 二叉搜索树 root的赋值问题 Closure闭包外界无法访问私有变量 将函数表达式提前声明 不然一直为null
  var root = null, size = 0
@@ -119,3 +119,13 @@ LR RR -〉LL 先插入右边 右边失衡 赋给给左边 node.left = rotationRR
         node.right = rotationLL(node.right)
         return rotationRR(node)
     }
+
+    LL
+    var temp = node.left
+    node.left = temp.right
+    temp.right = node
+
+    RR
+    var temp = node.right
+    node.right = temp.left
+    temp.left = node

@@ -10,6 +10,7 @@ var ArrayList = function () {
         for (var i = 0; i < length; i++) {
             //每次找到最小值，放到第一位
             indexMin = i
+            //j从i开始因为每次都会排好一位
             for (var j = i; j < length; j++) {
                 if (array[indexMin] > array[j]) {
                     indexMin = j //当前值大于后一项的值
