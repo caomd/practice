@@ -37,56 +37,56 @@ function AVLTree() {
     var insertNode = function (node, element) {
         var newNode = new Node(element)
         if (node === null) {
-            root = newNode
+            node = newNode
         }//左侧子节点
         else if (element < node.key) {
-            //判断是否有左侧子节点，没有插入，有继续遍历 L
-            if (node.left === null) {
-                node.left = newNode
-                return node
-            } else {
-                node.left = insertNode(node.left, element)
-                //计算平衡因子 确认是否平衡
-                if (node.left !== null) {
-                    //如果高度大于1
-                    var b = heightNode(node.left) - heightNode(node.right)
-                    if (b > 1) {
-                        //判断是LL,还是LR
-                        if (element < node.left.key) {
-                            //LL
-                            node = rotationLL(node)
-                        } else {
-                            node = rotationLR(node)
-                        }
+            //判断是否有左侧子节点，没有插入，有继续遍历 L 可以不写因为上边写了
+            // if (node.left === null) {
+            //      node.left = newNode
+            // }
+            // else {
+            node.left = insertNode(node.left, element)
+            //计算平衡因子 确认是否平衡
+            if (node.left !== null) {
+                //如果高度大于1
+                var b = heightNode(node.left) - heightNode(node.right)
+                if (b > 1) {
+                    //判断是LL,还是LR
+                    if (element < node.left.key) {
+                        //LL
+                        node = rotationLL(node)
+                    } else {
+                        node = rotationLR(node)
                     }
                 }
-                return node
             }
+            // }
         } else {
             //判断右节点是否为空
-            if (node.right === null) {
-                node.right = newNode
-                return node
-            } else {
-                node.right = insertNode(node.right, element)
-                if (node.right !== null) {
-                    //计算平衡因子
-                    //如果高度大于1
-                    var b = heightNode(node.right) - heightNode(node.left)
-                    if (b > 1) {
-                        if (element < node.right.key) {
-                            node = rotationRL(node)
-                        } else {
-                            node = rotationRR(node)
-                        }
+            //     if (node.right === null) {
+            //     node.right = newNode
+            // } 
+            // else {
+            node.right = insertNode(node.right, element)
+            if (node.right !== null) {
+                //计算平衡因子
+                //如果高度大于1
+                var b = heightNode(node.right) - heightNode(node.left)
+                if (b > 1) {
+                    if (element < node.right.key) {
+                        node = rotationRL(node)
+                    } else {
+                        node = rotationRR(node)
                     }
                 }
-                return node
             }
+            // }
         }
+        return node
     }
     this.insert = function (element) {
-        insertNode(root, element)
+        root = insertNode(root, element)
+        console.log(root)
     }
     this.print = function () {
         return root
