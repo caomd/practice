@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-11-30 09:19:48
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-30 14:53:25
+ * @Last Modified time: 2021-12-02 09:32:20
  */
 //创建二叉搜索树 
 var BinarySearchTree = function () {
@@ -55,8 +55,6 @@ var BinarySearchTree = function () {
                 return searchNode(node.right, item)
             } else if (item = node.element) {
                 return true
-            } else {
-                return 'not founded the search item'
             }
         } else {
             return false
@@ -66,27 +64,10 @@ var BinarySearchTree = function () {
         if (item === root.element) {
             return root
         }
-        var rt = searchNode(root, item)
         return searchNode(root, item)
     }
-    //函数声明 就不会获取root为null
-    function insertNode(node, newNode) {
-        // //判断是否有根节点，没有创建 这样写并不会赋值成功 连接不到root上
-        // if (!node) {
-        //     node = newNode
-        // } else {
-        //     //判断节点和根节点的大小 插入左子树还是右子树
-        //     if (newNode.element < node.element) {
-        //         //插入左子树
-        //         //判断左子树是否存在，递归 这样写不会赋值成功
-        //         insertNode(node.left, newNode)
-        //     } else {
-        //         //插入右子树 递归
-        //         insertNode(node.left, newNode)
-        //     }
-        // }
-
-
+    //闭包 root 私有变量 不会被外界访问
+    var insertNode = function (node, newNode) {
         //判断新加入节点和根节点的大小
         if (newNode.element < node.element) {
             //插入左子树
@@ -105,7 +86,11 @@ var BinarySearchTree = function () {
         }
         size++
     }
-    //提前定义函数表达式
+    //先序遍历 先遍历根节点 然后左子节点 -》右子节点
+    this.preOrderTranverse = function (callback) {
+        console.log('先序遍历')
+        preOrderTranverseNode(root, callback, size)
+    }
     var preOrderTranverseNode = function (node, callback, size) {
         if (node !== null) {
             callback(node.element, size)
@@ -113,12 +98,9 @@ var BinarySearchTree = function () {
             preOrderTranverseNode(node.right, callback, size)
         }
     }
-    //先序遍历 先遍历根节点 然后左子节点 -》右子节点
-    this.preOrderTranverse = function (callback) {
-        preOrderTranverseNode(root, callback, size)
-    }
     //中序遍历 先遍历左子节点 根节点 右子节点
     this.inOrderTranver = function (callback) {
+        console.log('中序遍历')
         inOrderTranverNode(root, callback, size)
     }
     function inOrderTranverNode(node, callback, size) {
@@ -130,6 +112,7 @@ var BinarySearchTree = function () {
     }
     //后序遍历 先遍历左子节点 然后右子节点 然后根节点
     this.postOrderTranver = function (callback) {
+        console.log('后序遍历')
         postOrderTranverNode(root, callback, size)
     }
     function postOrderTranverNode(node, callback, size) {
@@ -205,5 +188,5 @@ console.log(tree)
 tree.preOrderTranverse(print)
 tree.inOrderTranver(print)
 tree.postOrderTranver(print)
-console.log(tree.max())
+console.log('The max key is', tree.max())
 console.log(tree.search(25))
