@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>策略模式表单验证</title>
+    </head>
+
+    <body>
+        <div>策略模式表单验证</div>
+        <div>
+            <form action="" id="formData">
+                用户名：<input type="text" name="username" />
+                手机号：<input type="text" name="phoneNumber" />
+                密码：<input type="text" name="password" />
+                <button id="btn">提交</button>
+            </form>
+        </div>
+    </body>
+    <script>
+        /*
+ * @Author: caomd 
+ * @Date: 2021-12-02 11:37:54 
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-02 12:12:35
+ */
+        var btn = document.getElementById('btn')
+        var formData = document.getElementById('formData')
+        //规则
+        var Strategy = {
+            isNotEmpty: function (val, errMsg) {
+                if (!val) {
+                    return errMsg
+                }
+            },
+            isPhoneNum: function (val, errMsg) {
+                if (!/(^1[3|5|8][0-9]{9}$)/.test(val)) {
+                    return errMsg
+                }
+            },
+            isMinLength: function (val, length, errMsg) {
+                if (val.length < length) {
+                    return errMsg
+                }
+            }
+        }
+        //Context 类Validator
+        var Validator = function () {
+            this.cache = []
+        }
+        Validator.prototype.add = function (dom, rules) {
+            var self = this
+            //this.cache.push(strategy[rule])
+            //rules 有：格式的
+            //如果直接在for循环中push 会造成回调函数执行是变量for循环已经执行结束 i=2 如果传入rule[i]
+            //应放入闭包中作为私有变量 
+            for (var i = 0, rule; rule = rules[i++];) {
+                (
+                    function (rule) {
+                        self.cache.push(
+                            function () {
+                                var args = rule.strategy.split(':')
+                                var strategy = args.shift()
+                                args.unshift(dom.value)
+                                args.push(rule.msg)
+                                //这里执行函数
+                                return Strategy[strategy].apply(self, args)
+                            }
+                        )
+                    }
+                )(rule)
+            }
+        }
+        Validator.prototype.start = function () {
+            for (var i = 0, fn; fn = this.cache[i++];) {
+                var msg = fn()
+                console.log(msg)
+            }
+        }
+        //
+        var ValidatorFun = function () {
+            var validator = new Validator()
+            //添加规则
+            validator.add(formData.username, [
+                {
+                    strategy: 'isNotEmpty',
+                    msg: '用户名不能为空'
+                },
+                {
+                    strategy: 'isMinLength:6',
+                    msg: '最小长度为6'
+                }
+            ])
+            validator.add(formData.phoneNumber, [
+                {
+                    strategy: 'isPhoneNum',
+                    msg: '手机号格式不正确'
+                }
+            ])
+            validator.add(formData.password, [
+                {
+                    strategy: 'isMinLength:8',
+                    msg: '最小长度为8'
+                }
+            ])
+            return validator.start()
+        }
+        formData.onsubmit = function (e) {
+            e.preventDefault()
+            var ret = ValidatorFun()
+        }
+
+    </script>
+
+</html>
