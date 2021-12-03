@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-03 06:50:38 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-03 09:57:27
+ * @Last Modified time: 2021-12-03 10:11:27
  */
 var BinarySearchTree = function () {
     var root = null, size = 0,
@@ -107,9 +107,17 @@ var BinarySearchTree = function () {
         if (node !== null) {
             if (node.key > key) {
                 //left
-                node.left = removeNode(node.left, key)
+                if (node.left) {
+                    node.left = removeNode(node.left, key)
+                } else {
+                    new Error('不存在删除项')
+                }
             } else if (node.key < key) {
-                node.right = removeNode(node.right, key)
+                if (node.right) {
+                    node.right = removeNode(node.right, key)
+                } else {
+                    throw new Error('不存在删除项')
+                }
             } else if (node.key === key) {
                 //判断是否有子节点
                 if (node.left === null && node.right === null) {
@@ -129,6 +137,8 @@ var BinarySearchTree = function () {
                 }
             }
             return node
+        } else {
+            throw new Error('不存在删除项')
         }
     }
     var findMinRight = function (node) {
@@ -162,4 +172,6 @@ console.log('查找到搜索项结果是：', tree.search(35))
 console.log('最大节点为：', tree.max())
 console.log('最小节点为：', tree.min())
 console.log('删除元素：30,返回size', tree.remove(30))
+console.log('删除元素：40,返回size', tree.remove(40))
+// console.log('删除元素：90,返回size', tree.remove(90))
 tree.inOrderTranvers(print)
