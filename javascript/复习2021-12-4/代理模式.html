@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        var myImg = (
+            function () {
+                var image = document.createElement('img')
+                document.body.appendChild(image)
+                return {
+                    setUrl: function (url) {
+                        image.src = url
+                    }
+                }
+            }
+        )()
+        var proxyImg = (
+            function () {
+                var img = new Image()
+                img.onload = function () {
+                    console.log('hello world')
+                    myImg.setUrl(this.src)
+                }
+                return {
+                    setUrl: function (url) {
+                        img.src = url
+                        myImg.setUrl('/Users/caomengdie/Documents/ps/1.同步学习文件/素材与结果文件/素材文件/第3章/笔.jpg')
+                    }
+                }
+            }
+        )()
+        proxyImg.setUrl('/Users/caomengdie/Documents/ps/carw.jpeg')
+    </script>
+
+</html>

@@ -32,4 +32,4 @@ var createElement = (
         }
     }
 )()
-proxyPicture().setSrc('/Users/caomengdie/Documents/ps/car.jpeg')
+proxyPicture().setSrc('/Users/caomengdie/Documents/ps/carw.jpeg')
