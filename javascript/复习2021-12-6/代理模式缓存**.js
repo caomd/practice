@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-06 08:11:16
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-06 08:47:14
+ * @Last Modified time: 2021-12-06 15:31:15
  */
 //代理模式缓存判断是否是相同数据
 var proxyCache = function () {
