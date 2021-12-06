@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>发布-订阅模式</title>
+    </head>
+
+    <body>
+        <div>发布-订阅模式
+            <form id="formData">search keyword<input type="text" name="username" id="ipt">
+                <button id="btn">提交</button>
+            </form>
+        </div>
+    </body>
+    <script>
+        /*
+ * @Author: caomd
+ * @Date: 2021-12-06 08:49:46
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-06 09:57:36
+ */
+        //发布订阅模式 比如事件监听 统一发布消息
+        //事件监听 false 默认 冒泡排序 true 事件捕获
+        var form = document.getElementById('formData')
+        window.addEventListener('change', function () {
+            console.log(form.username.value)
+        }, false)
+        // window.addEventListener('click', function () {
+        //     var form = document.getElementById('formData')
+        //     console.log(form.username.value)
+        // }, false)
+        /**********************发布-订阅模式*****************************/
+        var SaleOffice = function () {
+            this.listenerList = {}
+        }
+        SaleOffice.prototype.listener = function (price, fn) {
+            if (!this.listenerList[price]) {
+                this.listenerList[price] = []
+            }
+            return this.listenerList[price].push(fn)
+        }
+        SaleOffice.prototype.subscribe = function (price) {
+            if (this.listenerList[price]) {
+                var length = this.listenerList[price].length,
+                    fns = this.listenerList[price],
+                    msg = []
+                for (var i = 0, fn; fn = fns[i++];) {
+                    msg.push(fn())
+                }
+                return msg
+            }
+        }
+        var saleOffice = new SaleOffice()
+        saleOffice.listener('12000/88', function () {
+            return '12000元/88平,此房产原价为10000'
+        })
+        saleOffice.listener('12000/88', function () {
+            return '12000元/88平,此房产现已售罄'
+        })
+        saleOffice.listener('12000/100', function () {
+            return '12000/100,此房产现已售罄'
+        })
+        var btn = document.getElementById('btn'),
+            ipt = document.getElementById('ipt')
+        form.onsubmit = function (e) {
+            e.preventDefault()
+            var keyword = ipt.value
+            var msgArr = saleOffice.subscribe(keyword)
+            if (msgArr && msgArr.length) {
+                var msgDom = ''
+                for (var i = 0; i < msgArr.length; i++) {
+                    i !== msgArr.length - 1 ? msgDom += msgArr[i] + '; ' : msgDom += msgArr[i]
+                }
+                return createDom(msgDom)
+            }
+            return createDom('抱歉没有找到相关信息')
+        }
+        var createDom = (
+            function () {
+                var div
+                return function (content) {
+                    if (!div) {
+                        div = document.createElement('div')
+                    }
+                    div.innerHTML = content
+                    document.body.appendChild(div)
+                }
+            }
+        )()
+    </script>
+
+</html>

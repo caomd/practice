@@ -32,13 +32,11 @@ var timeCount = (function () {
         timer = setInterval(function () {
             if (count > 20) {
                 clearInterval(timer)
-                timer = null
+                return timer = null
             }
             count++
             console.log(count)
         }, 1000)
     }
 })()
-timeCount()
-timeCount()
 timeCount()
