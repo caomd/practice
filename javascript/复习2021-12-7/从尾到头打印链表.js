@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-07 08:18:51
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-07 08:43:53
+ * @Last Modified time: 2021-12-07 21:25:01
  */
 //从尾到头打印链表 思路：使用栈，后进先出的方式 将链表项插入栈中，然后出栈
 //step 1 创建栈
@@ -49,21 +49,14 @@ var LinkedList = function () {
     this.insert = function (position, element) {
         var node = new Node(element)
         //judge final conditions
-        if (position >= 0) {
+        if (position >= 0 && position < size) {
+            var current = head, previous
             if (position === 0) {
                 //judge head exist
-                if (!head) {
-                    head = node
-                } else {
-                    node.next = head
-                    head = node
-                }
+                node.next = head
+                head = node
                 return size++
-            } else if (position === size) {
-                //add tail
-                this.append(element)
             } else {
-                var current = head, previous
                 i = 0
                 while (i++ < position) {
                     previous = current

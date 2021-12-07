@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-07 08:44:13
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-07 09:06:56
+ * @Last Modified time: 2021-12-07 21:24:09
  */
 //use recursion tranverse and print linkedlist from tail to head
 //idea recursion from stack if node has next console node.next util next is null
@@ -27,19 +27,13 @@ var LinkedList = function () {
     }
     this.insert = function (pos, ele) {
         var node = new Node(ele)
-        if (pos >= 0) {
+        var i = 0, previous, current = head
+        if (pos >= 0 && pos < size) {
             if (pos === 0) {
-                if (!head) {
-                    head = node
-                } else {
-                    node.next = head
-                    head = node
-                }
+                node.next = current
+                head = node
                 return size++
-            } else if (pos === size) {
-                this.append(ele)
             } else {
-                var i = 0, previous, current = head
                 while (i++ < pos) {
                     previous = current
                     current = current.next

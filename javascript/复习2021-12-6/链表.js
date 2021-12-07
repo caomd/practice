@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-06 22:37:04
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-06 23:14:47
+ * @Last Modified time: 2021-12-07 21:22:20
  */
 //linkedlist tail add element 
 var LinkedList = function () {
@@ -26,19 +26,12 @@ var LinkedList = function () {
         return size++
     }
     this.insert = function (element, position) {
-        if (position >= 0) {
+        if (position >= 0 && position < size) {
             var node = new Node(element), current = head
             //add head
             if (position === 0) {
-                if (!head) {
-                    head = node
-                } else {
-                    current = node
-                    node.next = head
-                    head = node
-                }
-            } else if (position === size) {
-                this.append(element)
+                node.next = current
+                head = node
             } else {
                 // random position
                 var i = 0, previous

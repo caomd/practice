@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-07 09:34:03
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-07 10:05:56
+ * @Last Modified time: 2021-12-07 21:17:16
  */
 //two sort arr one has enough capacity to insert another one and sort the bigger one
 //idea from the behind one to insert to arr1 compare two array last one if
@@ -26,3 +26,20 @@ var insertArray = function (arr1, arr2) {
     }
     console.log(arr1)
 }
+
+//methods two use new memory storage
+var insert = function (arr1, arr2) {
+    var i = arr1.length - 1, j = arr2.length - 1, result = []
+    while (i >= 0 && j >= 0) {
+        while (arr1[i] <= arr2[j]) {
+            result.unshift(arr2[j])
+            j--
+        }
+        while (arr1[i] > arr2[j]) {
+            result.unshift(arr1[i])
+            i--
+        }
+    }
+    console.log(result)
+}
+insert(A1, B1)
