@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>宏命令</title>
+    </head>
+
+    <body>
+        <button id="btn">total open</button>
+    </body>
+    <script>
+        /*
+ * @Author: caomd
+ * @Date: 2021-12-07 15:27:52
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-07 15:46:52
+ */
+        //idear one command control many active 
+        var closeComuter = {
+            close: function () {
+                return 'close computer'
+            },
+            open: function () {
+                return 'open computer'
+            }
+        }
+        var closeQQ = {
+            close: function () {
+                return 'close QQ'
+            }
+        }
+        var closeLight = {
+            close: function () {
+                return 'close light'
+            }
+        }
+        var commandFactory = (
+            function () {
+                var cache = []
+                return {
+                    add: function (command) {
+                        cache.push(command)
+                    },
+                    run: function () {
+                        var s = ''
+                        for (var i = 0; i < cache.length; i++) {
+                            s += cache[i]()
+                        }
+                        createDom(s)
+                    }
+                }
+            }
+        )()
+        var createDom = (
+            function () {
+                var div
+                return function (innerHtml) {
+                    if (!div) {
+                        div = document.createElement('div')
+                    }
+                    div.innerHTML = innerHtml
+                    document.body.appendChild(div)
+                }
+            }
+        )()
+        commandFactory.add(closeComuter.close)
+        commandFactory.add(closeQQ.close)
+        commandFactory.add(closeLight.close)
+        var btn = document.getElementById('btn')
+        btn.onclick = function () {
+            commandFactory.run()
+        }
+    </script>
+
+</html>

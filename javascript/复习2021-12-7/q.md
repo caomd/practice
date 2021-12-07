@@ -14,3 +14,18 @@ answer: declare variables not add betweent ,
 var mid = Math.floor(arr.length / 2),
         left = arr.slice(0, mid),
         right = arr.slice(mid, arr.length)
+***************quickSort 
+return index quick(index,right) right = index =2?????
+quick() method master not well two if not if else if
+var quick = function (arr, left, right) {
+    var index = partition(arr, left, right)
+    if (index - 1 > left) {
+        quick(arr, left, index - 1)
+    }
+    if (index < right) {
+        quick(arr, index, right)
+    }
+}
+*****************recursion 
+recursion is stack
+//binarySearch final condition while(low<=high)
