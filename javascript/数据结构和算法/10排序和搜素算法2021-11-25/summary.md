@@ -1,11 +1,11 @@
 /*
  * @Author: caomd 
  * @Date: 2021-11-29 20:19:50 
- * @Last Modified by:   caomd 
- * @Last Modified time: 2021-11-29 20:19:50 
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-07 09:31:27
  */
 
-冒泡排序 : 外层循环轮数，里层减去外层已经拍好的轮数
+冒泡排序 : 外层循环轮数<length，里层减去外层已经拍好的轮数length-1-i   当前项和下一项 所以到倒数第二位
 选择排序 ：每次选出最小的元素 放到第一位
 插入排序 ：一个从前遍历第二位开始i=1，一个从后遍历，前小后大交换
 快速排序 ： 利用中间值 pivot 主元做比较
