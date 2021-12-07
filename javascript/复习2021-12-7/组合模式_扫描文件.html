@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>组合模式</title>
+    </head>
+
+    <body>
+        <button id="btn">delete execute</button>
+    </body>
+    <script>
+        /*
+     * @Author: caomd
+     * @Date: 2021-12-07 16:32:10
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-07 17:41:54
+     */
+        // group pattern entirety part compose methods same uniform execute folder can add folder and file
+        var createDom = function (content) {
+            var div = document.createElement('div')
+            div.innerHTML = content
+            document.body.appendChild(div)
+        }
+        var Folder = function (name) {
+            this.name = name
+            this.files = []
+        }
+        Folder.prototype.add = function (file) {
+            this.files.push(file)
+            createDom(this.name + ' add ' + file.name)
+            console.log(this.name + ' add ' + file.name)
+        }
+        Folder.prototype.scan = function () {
+            createDom('scan folder ' + this.name)
+            console.log('scan folder ' + this.name)
+            if (this.files.length !== 0) {
+                for (var i = 0, file; file = this.files[i++];) {
+                    file.scan()
+                }
+            }
+        }
+        Folder.prototype.del = function () {
+            if (this.files.length !== 0) {
+                for (var i = 0, file; file = this.files[i++];) {
+                    this.files.splice(i - 1, 1)
+                }
+            }
+            console.log(this.files)
+            if (window.confirm('delete folder ' + this.name)) {
+                createDom('delete folder ' + this.name)
+            }
+            console.log('delete folder ' + this.name)
+        }
+        var File = function (name) {
+            this.name = name
+        }
+        File.prototype.add = function () {
+            throw new Error('File can not add file')
+        }
+        File.prototype.scan = function () {
+            createDom('scan file ' + this.name)
+            console.log('scan file ' + this.name)
+        }
+        File.prototype.del = function () {
+            if (window.confirm('delete file ' + this.name)) {
+                createDom('delete file ' + this.name)
+            }
+            console.log('delete file ' + this.name)
+        }
+        var folder1 = new Folder('folder1')
+        var folder2 = new Folder('folder2')
+        var folder3 = new Folder('folder3')
+
+        var file1 = new File('file1')
+        var file2 = new File('file2')
+        var file3 = new File('file3')
+        var file4 = new File('file4')
+        var file5 = new File('file5')
+
+        folder1.add(file1)
+        folder1.add(file2)
+        folder1.add(folder2)
+        folder2.add(file3)
+        folder3.add(file4)
+        folder3.add(file5)
+        folder1.add(folder3)
+        var btn = document.getElementById('btn')
+        btn.onclick = function () {
+            folder1.del()
+            folder2.del()
+            file3.del()
+            folder1.scan()
+        }
+    </script>
+
+</html>

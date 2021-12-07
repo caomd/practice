@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>模版方法模式Coffee or Tea</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        /*
+ * @Author: caomd 
+ * @Date: 2021-12-07 16:31:22 
+ * @Last Modified by:   caomd 
+ * @Last Modified time: 2021-12-07 16:31:22 
+ */
+        var Beverage = function () { }
+        Beverage.prototype.addWater = function () {
+            console.log('加入水')
+        }
+        Beverage.prototype.boilWater = function () {
+            console.log('煮沸水')
+        }
+        Beverage.prototype.brew = function () {
+            throw new Error('child Class must extends this methods')
+        }
+        Beverage.prototype.pourInCup = function () {
+            throw new Error('child Class must extends this methods')
+        }
+        Beverage.prototype.addConditions = function () {
+            throw new Error('child class must extends this methods')
+        }
+        Beverage.prototype.customerWantsCondiments = function () {
+            return true
+        }
+        Beverage.prototype.init = function () {
+            this.addWater()
+            this.boilWater()
+            this.brew()
+            this.pourInCup()
+            if (this.customerWantsCondiments()) {
+                this.addConditions()
+            }
+        }
+        var Coffee = function () { }
+        Coffee.prototype = new Beverage()
+        Coffee.prototype.brew = function () {
+            console.log('用沸水冲泡咖啡')
+        }
+        Coffee.prototype.pourInCup = function () {
+            console.log('把咖啡倒进杯子')
+        }
+        Coffee.prototype.customerWantsCondiments = function () {
+            return window.confirm('要加入调料吗？')
+        }
+        Coffee.prototype.addConditions = function () {
+            console.log('加入牛奶和糖')
+        }
+        var Tea = function () { }
+        Tea.prototype = new Beverage()
+        Tea.prototype.brew = function () {
+            console.log('用沸水浸泡茶叶')
+        }
+        Tea.prototype.pourInCup = function () {
+            console.log('把茶倒进杯子')
+        }
+        Tea.prototype.addConditions = function () {
+            console.log('加柠檬')
+        }
+        Tea.prototype.customerWantsCondiments = function () {
+            return window.confirm('Do you want to add conditions')
+        }
+        var coffee = new Coffee()
+        var tea = new Tea()
+        coffee.init()
+        tea.init()
+    </script>
+
+</html>
