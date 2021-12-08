@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>享元模式</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        /*
+        * @Author: caomd
+        * @Date: 2021-12-08 21:00:03
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-08 21:52:43
+        */
+        //享元模式 内部状态 不因环境而改变，uploadtype一个对象，外部状态 因外界而改变 上传文件 uploadtype 内部 filename,filesize 外部
+        //Upload 对象
+        var Upload = function (uploadType) {
+            this.uploadType = uploadType
+        }
+        Upload.prototype.add = function () {
+
+        }
+        Upload.prototype.del = function (id) {
+            console.log(id, 'get id')
+            uploadManager.setExternalState(id, this)
+            if (this.filesize < 3000) {
+                this.dom.parentNode.removeChild(this.dom)
+            } else {
+                if (window.confirm('confirm delete this file' + this.filename)) {
+                    this.dom.parentNode.removeChild(this.dom)
+                }
+            }
+        }
+        //生成对象工厂模式
+        var UploadFactory = (
+            function () {
+                var uploadFlyWeight = {}
+                return function (uploadType) {
+                    if (!uploadFlyWeight[uploadType]) {
+                        return uploadFlyWeight[uploadType] = new Upload(uploadType)
+                    }
+                    return uploadFlyWeight[uploadType]
+                }
+            }
+        )()
+        //manage 统一管理
+        var uploadManager = (
+            function () {
+                //cache
+                var cacheUploadTypeId = {}
+                return {
+                    add: function (id, uploadType, filename, filesize) {
+                        //judge uploadType whether exist
+                        var flyWeight = UploadFactory(uploadType)
+                        var dom = document.createElement('div')
+                        dom.innerHTML = `<span>文件名：` + filename + `文件大小：` + filesize + `<button class='delFile'>删除</button></span>`
+                        document.body.appendChild(dom)
+                        dom.querySelector('.delFile').onclick = function () {
+                            flyWeight.del(id)
+                        }
+                        cacheUploadTypeId[id] = {
+                            uploadType,
+                            filename,
+                            filesize,
+                            dom
+                        }
+                    },
+                    setExternalState: function (id, upload) {
+                        var flyWeight = cacheUploadTypeId[id]
+                        for (var k in flyWeight) {
+                            upload[k] = flyWeight[k]
+                        }
+                    }
+                }
+            }
+        )()
+        //test
+        var id = 0
+        window.startUpload = function (uploadType, files) {
+            for (var f = 0, file; file = files[f++];) {
+                uploadManager.add(++id, uploadType, file.fileName, file.fileSize)
+            }
+        }
+        //测试
+        startUpload('plugin', [
+            {
+                fileName: '1.txt',
+                fileSize: 1000
+            },
+            {
+                fileName: '12.txt',
+                fileSize: 3000
+            },
+            {
+                fileName: '3.txt',
+                fileSize: 3000
+            }
+        ])
+        startUpload('flash', [
+            {
+                fileName: '4.txt',
+                fileSize: 4000
+            },
+            {
+                fileName: '5.txt',
+                fileSize: 5000
+            },
+            {
+                fileName: '6.txt',
+                fileSize: 6000
+            }
+        ])
+    </script>
+
+</html>

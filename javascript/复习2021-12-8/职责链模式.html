@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>职责链模式</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        /*
+         * @Author: caomd
+         * @Date: 2021-12-08 21:57:15
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-08 22:19:09
+         */
+        //弱化发送者和接受者之间的耦合关系
+        //职责链模式 3种购买模式 是否支付 库存
+        // 订金500元 得到100元优惠券
+        //职责链模式 订金200元 得到50元优惠券
+        //没有订金按普通购买模式
+        var order500 = function (orderType, pay, stock) {
+            if (orderType === 1 && pay === true) {
+                console.log('500元定金预购，得到100优惠券')
+            } else {
+                return 'nexSuccessor'
+            }
+        }
+        var order200 = function (orderType, pay, stock) {
+            if (orderType === 2 && pay === true) {
+                console.log('200元定金预购，得到50优惠券')
+            } else {
+                return 'nexSuccessor'
+            }
+        }
+        var orderNormal = function (orderType, pay, stock) {
+            if (stock > 0) {
+                console.log('普通购买，无优惠券')
+            } else {
+                console.log('手机库存不足')
+            }
+        }
+        var Chain = function (fn) {
+            this.fn = fn
+            this.successor = null
+        }
+        Chain.prototype.setNextSuccessor = function (successor) {
+            return this.successor = successor
+        }
+        Chain.prototype.passRequest = function () {
+            var ret = this.fn.apply(this, arguments)
+            if (ret === 'nexSuccessor') {
+                // ret = this.successor.fn.apply(this, arguments)
+                return this.successor && this.successor.passRequest.apply(this.successor, arguments)
+            }
+        }
+        var chainOrder500 = new Chain(order500)
+        var chainOrder200 = new Chain(order200)
+        var chainOrderNormal = new Chain(orderNormal)
+        chainOrder500.setNextSuccessor(chainOrder200)
+        chainOrder200.setNextSuccessor(chainOrderNormal)
+        chainOrder500.passRequest(1, true, 500)
+        chainOrder500.passRequest(2, true, 500)
+        chainOrder500.passRequest(3, true, 500)
+        chainOrder500.passRequest(1, false, 0)
+    </script>
+
+</html>
