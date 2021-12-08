@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-07 21:17:47 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-07 22:51:18
+ * @Last Modified time: 2021-12-08 11:45:52
  */
 // input binaryTree preOrder and inOrder result rebuild this binaryTree
 //idear from preOrder can get root node and inOrder get left tree and right tree
@@ -10,7 +10,7 @@ var rebuildBinaryTree = function (preOrder, inOrder, length) {
     if (preOrder === null || inOrder === null || length <= 0) {
         return false
     }
-    rebuild(preOrder, inOrder, length)
+    return rebuild(preOrder, inOrder, length)
 }
 var rebuild = function (preOrder, inOrder, length) {
     var root = preOrder[0], leftTree, rightTree
@@ -29,11 +29,9 @@ var rebuild = function (preOrder, inOrder, length) {
     if (rightTree.length > 1) {
         rebuild(aPreOrder, rightTree, rightTree.length)
     }
-    return merge(leftTree, rightTree, root)
-
-}
-var merge = function (left, right, root) {
-    var leftNode = left.length ? left.slice(0, left.length) : null, rightNode = right.length ? right.slice(0, right.length) : null
-    console.log('root: ' + root + '  leftNode: ' + leftNode + '  rightNode: ' + rightNode)
+    leftTree = leftTree.length ? leftTree : null
+    rightTree = rightTree.length ? rightTree : null
+    console.log('root ', root + ' leftTree ' + leftTree + ' rightTree ' + rightTree)
+    return root
 }
 rebuildBinaryTree([1, 2, 4, 7, 3, 5, 6, 8], [4, 7, 2, 1, 5, 3, 8, 6], 8)
