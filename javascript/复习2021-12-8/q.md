@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-08 15:31:34 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-08 22:18:44
+ * @Last Modified time: 2021-12-08 23:17:12
  */
 //methods 2 practical 实用的 时间复杂度O(n) //fibMinusOne = 1 can not set two to one
 var fibonacci2 = function (n) {
@@ -37,3 +37,5 @@ var dom = document.createElement('div')
                 return this.successor && this.successor.passRequest.apply(this.successor, arguments)
             }
         }
+******************interview_11 
+final conditions 
