@@ -1,11 +1,28 @@
 /*
- * @Author: caomd
- * @Date: 2021-12-09 21:53:01
+ * @Author: caomd 
+ * @Date: 2021-12-09 20:24:37 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-09 22:10:01
+ * @Last Modified time: 2021-12-09 21:50:46
  */
-//合并两个排序的链表
-//思路：从比较两个链表的最后一项开始 前一个链表大就前移 直到小于等于另一个链表节点插入节点next 移动后一个链表指针 小于等于前一项就停止，插入前一项
+//use stack
+var Stack = function () {
+    var items = [], length = 0
+    this.push = function (element) {
+        items.push(element)
+        return length++
+    }
+    this.pop = function () {
+        length--
+        return items.pop()
+    }
+    this.isEmpty = function () {
+        return length === 0
+    }
+    this.toString = function () {
+        return items.toString()
+    }
+}
+//反转链表
 var LinkedList = function () {
     var Node = function (element) {
         this.key = element
@@ -99,40 +116,12 @@ var LinkedList = function () {
             return reverseHead
         }
     }
-    this.size = function () {
-        return size
-    }
-    this.getHead = function () {
-        return root
-    }
 }
 var linked = new LinkedList()
 linked.append(1)
 linked.append(2)
 linked.append(3)
 linked.append(4)
-linked.append(4)
-linked.append(6)
-linked.append(7)
 linked.toString()
-var linked2 = new LinkedList()
-linked2.append(3)
-linked2.append(3)
-linked2.append(4)
-linked2.append(5)
-linked2.append(6)
-linked2.append(8)
-linked2.toString()
-var mergeSortLinked = function (l1, l2) {
-    if (l1 === null && l2 !== null) {
-        return l2
-    } else if (l1 !== null && l2 === null) {
-        return l1
-    } else if (l1 === null && l2 === null) {
-        return null
-    } else {
-        l1head = linked.getHead()
-        l2head = linked2.getHead()
-    }
-}
-mergeSortLinked(linked, linked2)
+console.log(linked.reverse())
+// console.log(linked.reverseTwo())
