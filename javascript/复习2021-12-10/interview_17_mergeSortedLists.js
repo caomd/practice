@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-09 21:53:01
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-09 22:10:01
+ * @Last Modified time: 2021-12-10 07:21:06
  */
 //合并两个排序的链表
 //思路：从比较两个链表的最后一项开始 前一个链表大就前移 直到小于等于另一个链表节点插入节点next 移动后一个链表指针 小于等于前一项就停止，插入前一项
@@ -103,7 +103,49 @@ var LinkedList = function () {
         return size
     }
     this.getHead = function () {
-        return root
+        if (root) {
+            return root
+        }
+        return null
+    }
+    this.remove = function (node) {
+        if (root !== null) {
+            if (root.key === node.key) {
+                var current = root
+                root = null
+                root = current.next
+                size--
+                return this
+            }
+            removeNode(root, node)
+            size--
+        }
+    }
+    var removeNode = function (node, rnode) {
+        if (node !== null) {
+            var current = node, previous
+            while (current.next) {
+                previous = current
+                current = current.next
+                if (current.key === rnode.key) {
+                    previous.next = current.next
+                    return this
+                }
+            }
+            previous.next = null
+            return this
+        }
+    }
+}
+var print = function (node) {
+    if (node !== null) {
+        var s = ''
+        while (node.next) {
+            s += node.key
+            node = node.next
+        }
+        s += node.key
+        console.log(s)
     }
 }
 var linked = new LinkedList()
@@ -113,16 +155,16 @@ linked.append(3)
 linked.append(4)
 linked.append(4)
 linked.append(6)
-linked.append(7)
-linked.toString()
+// linked.append(7)
+// linked.toString()
 var linked2 = new LinkedList()
 linked2.append(3)
-linked2.append(3)
-linked2.append(4)
-linked2.append(5)
-linked2.append(6)
-linked2.append(8)
-linked2.toString()
+// linked2.append(3)
+// linked2.append(4)
+// linked2.append(5)
+// linked2.append(6)
+// linked2.append(8)
+// linked2.toString()
 var mergeSortLinked = function (l1, l2) {
     if (l1 === null && l2 !== null) {
         return l2
@@ -131,8 +173,42 @@ var mergeSortLinked = function (l1, l2) {
     } else if (l1 === null && l2 === null) {
         return null
     } else {
-        l1head = linked.getHead()
-        l2head = linked2.getHead()
+        var l1head = linked.getHead()
+        var l2head = linked2.getHead()
+        var currentl1 = l1head, currentl2 = l2head, orderHead = null, previous = null
+        if (l1head !== null && l2head !== null) {
+            if (l1head.key < l2head.key) {
+                orderHead = l1head
+                linked = linked.remove(l1head)
+                if (l1head.next) {
+                    previous = currentl1
+                    previous.next = mergeSortLinked(linked, linked2)
+                } else {
+                    l1head.next = l2head
+                }
+            } else {
+                orderHead = l2head
+                linked2 = linked2.remove(l2head)
+                if (l2head.next) {
+                    previous = currentl2
+                    previous.next = mergeSortLinked(linked, linked2)
+                } else {
+                    l2head.next = l1head
+                }
+            }
+            console.log(linked.size())
+            console.log(linked2.size())
+            return orderHead
+        } else if (l1head === null) {
+            return linked2
+        } else if (l2head === null) {
+            return linked
+        } else {
+            throw new Error('not exist node')
+        }
     }
 }
-mergeSortLinked(linked, linked2)
+var ret = mergeSortLinked(linked, linked2)
+print(ret)
+
+//method 2 not remove node use insert way
