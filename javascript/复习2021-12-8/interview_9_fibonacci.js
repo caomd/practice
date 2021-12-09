@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-08 15:14:01
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-08 15:31:09
+ * @Last Modified time: 2021-12-09 11:41:27
  */
 //fibonacci  input n and request n 
 //method 1 efficiency low

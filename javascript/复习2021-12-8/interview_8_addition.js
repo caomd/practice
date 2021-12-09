@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-08 14:31:52
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-08 14:58:42
+ * @Last Modified time: 2021-12-09 11:49:56
  */
 //when arr[i] ===arr[j] and === arr[mid] can not confirm mid in before increase arr or behind part increase so can not use twi divide search and select orderSort arithmetic /algorithm
 //src arr [1,0,1,1,1,1]
