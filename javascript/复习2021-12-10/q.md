@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-10 09:30:10 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-10 12:40:59
+ * @Last Modified time: 2021-12-10 22:52:27
  */
 **************interview_17
 //return order Node 无所谓赋值给head1 还是head2
@@ -67,3 +67,8 @@ rotationLL(node){
     temp.right = node
     return temp  
 }
+******************* dijstra 贪心算法 从源点到其他顶点的最小距离
+//这里要用dist[u] 因为总是更新这个是变化的 而graph[src][u]是不变的
+            if (!visited[v] && graph[u][v] && dist[u] + graph[u][v] < dist[v]) {
+                dist[v] = dist[u] + graph[u][v]
+            }

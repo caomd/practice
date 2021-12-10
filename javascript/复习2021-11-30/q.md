@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-30 09:54:26 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-01 17:55:10
+ * @Last Modified time: 2021-12-10 22:47:26
  */
 二叉搜索树 root的赋值问题 Closure闭包外界无法访问私有变量 将函数表达式提前声明 不然一直为null
  var root = null, size = 0
@@ -35,25 +35,6 @@
         }
     }
 
-    //函数声明 后定义 就不会获取root为null
-    function insertNode(node, newNode) {
-        //判断是否有根节点，没有创建
-        if (!node) {
-            node = newNode
-        } else {
-            //判断节点和根节点的大小 插入左子树还是右子树
-            if (newNode.element < node.element) {
-                //插入左子树
-                //判断左子树是否存在，递归
-                insertNode(node.left, newNode)
-            } else {
-                //插入右子树 递归
-                insertNode(node.left, newNode)
-            }
-        }
-    }
-
-    函数表达式提前声明 才能获取值
     闭包 私有变量的作用域使用范围
     二叉搜索树 左节点小于根节点 右子树大于根节点
     查询一个元素返回true 问题：总是返回undefined 因为递归 
