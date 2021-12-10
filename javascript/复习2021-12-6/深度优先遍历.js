@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-06 19:02:18
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-06 19:51:34
+ * @Last Modified time: 2021-12-10 21:43:21
  */
 //深度优先遍历 DFS 由深到宽 栈结构
 class Stack {
@@ -64,6 +64,7 @@ var Graph = function () {
                 dfsVisited(u, callback, color)
             }
         }
+        color[v] = 'black'
     }
     var initalColor = function () {
         var color = []
