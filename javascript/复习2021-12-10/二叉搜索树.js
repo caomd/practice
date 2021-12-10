@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-10 09:32:00
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-10 11:53:44
+ * @Last Modified time: 2021-12-10 21:01:59
  */
 var Stack = function () {
     var items = [], size = 0
@@ -129,6 +129,31 @@ var BinarySearchTree = function () {
             return node
         }
     }
+    this.findNode = function (key) {
+        if (this.root !== null) {
+            return findNodeFn(this.root, key)
+        }
+    }
+    var findNodeFn = function (node, key) {
+        if (node !== null) {
+            if (node.key > key) {
+                //left tree
+                if (node.left !== null) {
+                    return findNodeFn(node.left, key)
+                } else {
+                    return false
+                }
+            } else if (node.key < key) {
+                if (node.right !== null) {
+                    return findNodeFn(node.right, key)
+                } else {
+                    return false
+                }
+            } else {
+                return node
+            }
+        }
+    }
 }
 var print = (
     function () {
@@ -154,3 +179,4 @@ tree.preOrderTraverse(print)
 tree.remove(30)
 tree.preOrderTraverse(print)
 console.log(tree.size)
+console.log(tree.findNode(35))
