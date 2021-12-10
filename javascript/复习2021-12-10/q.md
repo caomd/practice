@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-10 09:30:10 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-10 09:30:43
+ * @Last Modified time: 2021-12-10 12:40:59
  */
 **************interview_17
 //return order Node 无所谓赋值给head1 还是head2
@@ -41,4 +41,29 @@ var print = function (node) {
     }
     s += current.key + '  '
     console.log('orderNode  ' + s)
+}
+*******************自平衡树
+rotationRL(node){
+    //左插值 失衡 
+    node.right = rotationLL(node.right)
+    retun rotationRR(node)
+}
+rotationLR(node){
+    //右插值 失衡 给左边赋值
+    node.left = rotationRR(node.left)
+    retun rotationLL(node)
+}
+rotationRR(node){
+    //右失衡 
+    var temp = node.right
+    node.right = temp.left
+    temp.left = node
+    return temp  
+}
+rotationLL(node){
+    //左失衡 
+    var temp = node.left
+    node.left = temp.right
+    temp.right = node
+    return temp  
 }
