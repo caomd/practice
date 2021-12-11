@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-11 10:31:53
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-11 12:59:34
+ * @Last Modified time: 2021-12-11 22:00:16
  */
 //bst
 var BinarySearchTree = function () {
@@ -212,9 +212,9 @@ bst.insert(30);
 bst.insert(70);
 bst.insert(40);
 bst.insert(10);
-bst.insert(9);
-bst.insert(39);
 bst.insert(35);
+bst.insert(39);
+bst.insert(9);
 bst.insert(65)
 bst.insert(60)
 bst.inOrderTraver(print)
