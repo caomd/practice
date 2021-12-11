@@ -28,6 +28,6 @@ var quick = function (arr, left, right) {
 }
 *****************recursion 
 recursion is stack
-//binarySearch final condition while(low<=high)
+//quickSort final condition while(low<=high)
 
 //macro command return object also closure

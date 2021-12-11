@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-11-30 09:19:48
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-02 09:32:20
+ * @Last Modified time: 2021-12-11 10:59:56
  */
 //创建二叉搜索树 
 var BinarySearchTree = function () {
@@ -12,32 +12,15 @@ var BinarySearchTree = function () {
         this.right = null
     }
     var root = null, size = 0
-    //并不在二叉树的构造方法中，而是作为闭包函数，私有变量，和root一样
-    //要提前声明 这是函数表达式, 不然传入的node 如果是root 会一直是null
-    // var insertNode = function (node, newNode) {
-    //     //判断是否有根节点，没有创建
-    //     if (!node) {
-    //         node = newNode
-    //     } else {
-    //         //判断节点和根节点的大小 插入左子树还是右子树
-    //         if (newNode.element < node.element) {
-    //             //插入左子树
-    //             //判断左子树是否存在，递归
-    //             insertNode(node.left, newNode)
-    //         } else {
-    //             //插入右子树 递归
-    //             insertNode(node.left, newNode)
-    //         }
-    //     }
-    // }
     this.insert = function (element) {
-        var newNode = new Node(element)
-        //root 要在这里赋值才会形成私有变量闭包，不然一直都是null并没有赋值，因为所在的作用域变了
-        if (!root) {
-            size++
-            return root = newNode
-        }
-        insertNode(root, newNode)
+        // var newNode = new Node(element)
+
+        // if (!root) {
+        //     size++
+        //     return root = newNode
+        // }
+        root = insertNode(root, element)
+        return size++
     }
     this.max = function () {
         var node = root
@@ -67,24 +50,36 @@ var BinarySearchTree = function () {
         return searchNode(root, item)
     }
     //闭包 root 私有变量 不会被外界访问
-    var insertNode = function (node, newNode) {
+    var insertNode = function (node, key) {
         //判断新加入节点和根节点的大小
-        if (newNode.element < node.element) {
-            //插入左子树
-            //判断左子树是否存在，递归 这样写会赋值成功
-            if (node.left) {
-                return insertNode(node.left, newNode)
+        // if (newNode.element < node.element) {
+        //     //插入左子树
+        //     //判断左子树是否存在，递归 这样写会赋值成功
+        //     if (node.left) {
+        //         return insertNode(node.left, newNode)
+        //     }
+        //     node.left = newNode
+        // } else {
+        //     //插入右子树
+        //     //判断右子树是否为空
+        //     if (node.right) {
+        //         return insertNode(node.right, newNode)
+        //     }
+        //     node.right = newNode
+        // }
+        // size++
+        var newNode = new Node(key)
+        if (node !== null) {
+            if (node.key > key) {
+                //left
+                node.left = insertNode(node.left, key)
+            } else {
+                node.right = insertNode(node.right, key)
             }
-            node.left = newNode
         } else {
-            //插入右子树
-            //判断右子树是否为空
-            if (node.right) {
-                return insertNode(node.right, newNode)
-            }
-            node.right = newNode
+            node = newNode
         }
-        size++
+        return node
     }
     //先序遍历 先遍历根节点 然后左子节点 -》右子节点
     this.preOrderTranverse = function (callback) {
