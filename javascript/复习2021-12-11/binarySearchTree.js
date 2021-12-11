@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-11 10:31:53
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-11 10:55:31
+ * @Last Modified time: 2021-12-11 11:31:14
  */
 //bst
 var BinarySearchTree = function () {
@@ -76,6 +76,52 @@ var BinarySearchTree = function () {
             throw new Error('not found the node')
         }
     }
+    this.remove = function (key) {
+        if (root !== null) {
+            root = removeNode(root, key)
+            return size--
+        }
+    }
+    var removeNode = function (node, key) {
+        if (node !== null) {
+            if (node.key > key) {
+                //left
+                node.left = removeNode(node.left, key)
+            } else if (node.key < key) {
+                node.right = removeNode(node.right, key)
+            } else {
+                //jduge childnode
+                if (node.left === null && node.right === null) {
+                    node = null
+                } else if (node.left === null && node.right !== null) {
+                    node = node.right
+                } else if (node.right === null && node.left !== null) {
+                    node = node.left
+                } else {
+                    //left and right all not equals null
+                    //select right tree minNode replace remove node
+                    var minRight = findMinRight(node.right)
+                    node.key = minRight.key
+                    //delete from node.right
+                    node.right = removeNode(node.right, minRight.key)
+                }
+            }
+            return node
+        } else {
+            throw new Error('not fount remove key')
+        }
+    }
+    var findMinRight = function (node) {
+        // while (node.left !== null) {
+        //     node = node.left
+        // }
+        // return node
+        //recursion
+        if (node.left !== null) {
+            return findMinRight(node.left)
+        }
+        return node
+    }
 }
 var print = (
     function () {
@@ -99,4 +145,6 @@ bst.insert(10);
 bst.insert(35);
 bst.inOrderTraver(print)
 console.log(bst.find(30))
-console.log(bst.find(90))
+// console.log(bst.find(90))
+bst.remove(30)
+bst.inOrderTraver(print)
