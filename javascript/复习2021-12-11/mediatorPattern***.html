@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>mediapattern</title>
+    </head>
+
+    <body>
+
+    </body>
+    <script>
+        /*
+ * @Author: caomd
+ * @Date: 2021-12-11 17:45:07
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-11 18:49:09
+ */
+        //由中介者同一管理
+        var PlayDirector = (
+            function () {
+                var teamPlayerCache = {}
+                return {
+                    addPlayer: function (player, color) {
+                        teamPlayerCache[color] = teamPlayerCache[color] || []
+                        teamPlayerCache[color].push(player)
+                    },
+                    dead: function (player) {
+                        var teamPlayers = teamPlayerCache[player.teamColor]
+                        var all_dead = true
+                        for (var i = 0, players; players = teamPlayers[i++];) {
+                            if (players.state === 'alive') {
+                                all_dead = false
+                                break
+                            }
+                        }
+                        if (all_dead) {
+                            //this team lose
+                            for (var i = 0, playerR; playerR = teamPlayers[i++];) {
+                                playerR.lose()
+                            }
+                            //other win
+                            var enemyTeam = []
+                            for (var color in teamPlayerCache) {
+                                if (color !== player.teamColor) {
+                                    enemyTeam = teamPlayerCache[color]
+                                    break
+                                }
+                            }
+                            for (var j = 0, playerE; playerE = enemyTeam[j++];) {
+                                playerE.win()
+                            }
+                        }
+                    },
+                    changeTeam: function (player, newColor) {
+                        var teamPlayers = teamPlayerCache[player.teamColor]
+                        for (var i = 0; i < teamPlayers.length; i++) {
+                            if (teamPlayers[i] === player) {
+                                teamPlayers.splice(i, 1)
+                                break
+                            }
+                        }
+                        player.teamColor = newColor
+                        teamPlayerCache[newColor].push(player)
+                    },
+                    receiveMsg: function () {
+                        var type = Array.prototype.shift.call(arguments)
+                        this[type].apply(this, arguments)
+                    }
+                }
+            }
+        )()
+        var Player = function (name, color) {
+            this.name = name
+            this.teamColor = color
+            this.state = 'alive'
+        }
+        Player.prototype.changeTeam = function (newColor) {
+            createDom(this.name + ' changeTeam ' + newColor)
+            PlayDirector.receiveMsg('changeTeam', this, newColor)
+        }
+        Player.prototype.win = function () {
+            createDom(this.name + ' win')
+        }
+        Player.prototype.lose = function () {
+            createDom(this.name + ' lose')
+        }
+        Player.prototype.die = function () {
+            this.state = 'dead'
+            createDom(this.name + ' die')
+            PlayDirector.receiveMsg('dead', this)
+        }
+        var createDom = function (text) {
+            var dom = document.createElement('div')
+            dom.innerHTML = `<span>` + text + ` </span>`
+            document.body.appendChild(dom)
+        }
+        var playFactory = function (name, color) {
+            var player = new Player(name, color)
+            PlayDirector.receiveMsg('addPlayer', player, color)
+            //队员等于工厂的返回值
+            return player
+        }
+        window.onload = function () {
+            //红队 
+            var player1 = playFactory('皮蛋', 'red')
+            var player2 = playFactory('小鬼', 'red')
+            var player3 = playFactory('宝宝', 'red')
+            var player4 = playFactory('小强', 'red')
+            //蓝队
+            var player5 = playFactory('黑妞', 'blue')
+            var player6 = playFactory('葱头', 'blue')
+            var player7 = playFactory('胖墩', 'blue')
+            var player8 = playFactory('海盗', 'blue')
+            // player1.die()
+            // player2.die()
+            // player3.die()
+            // player4.die()
+            player1.changeTeam('blue')
+            player2.die()
+            player3.die()
+            player4.die()
+        }
+    </script>
+
+</html>
