@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-11 10:31:53
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-11 11:31:14
+ * @Last Modified time: 2021-12-11 12:59:34
  */
 //bst
 var BinarySearchTree = function () {
@@ -58,8 +58,55 @@ var BinarySearchTree = function () {
     }
     this.find = function (key) {
         if (root !== null) {
-            return findNode(root, key)
+            // return findNode(root, key)
+            //非递归方式
+            return findNotRecursivily(root, key)
         }
+    }
+    var findNotRecursivily = function (node, key) {
+        while (node.left !== null || node.right !== null) {
+            while (node.key > key) {
+                //left 
+                while (node !== null && node.left !== null) {
+                    node = node.left
+                    if (node.key === key) {
+                        return node
+                    } else if (node.key > key) {
+                        node = node.left
+                    } else if (node.key < key) {
+                        node = node.right
+                        break
+                    }
+                }
+                if (node === null || node.left === null) {
+                    return false
+                }
+                if (node.key === key) {
+                    return node
+                }
+            }
+            while (node.key < key) {
+                //right
+                while (node !== null && node.right !== null) {
+                    node = node.right
+                    if (node.key === key) {
+                        return node
+                    } else if (node.key > key) {
+                        node = node.left
+                        break
+                    } else if (node.key < key) {
+                        node = node.right
+                    }
+                }
+                if (node === null || node.right === null) {
+                    return false
+                }
+                if (node.key === key) {
+                    return node
+                }
+            }
+        }
+        return false
     }
     var findNode = function (node, key) {
         if (node !== null) {
@@ -111,6 +158,29 @@ var BinarySearchTree = function () {
             throw new Error('not fount remove key')
         }
     }
+    this.max = function () {
+        if (root !== null) {
+            return maxFind(root)
+        }
+    }
+    var maxFind = function (node) {
+        while (node.right !== null) {
+            node = node.right
+        }
+        return node.key
+    }
+    this.min = function () {
+        if (root !== null) {
+            return minFind(root)
+        }
+    }
+    var minFind = function (node) {
+        //recursion
+        if (node.left !== null) {
+            return minFind(node.left)
+        }
+        return node.key
+    }
     var findMinRight = function (node) {
         // while (node.left !== null) {
         //     node = node.left
@@ -142,9 +212,15 @@ bst.insert(30);
 bst.insert(70);
 bst.insert(40);
 bst.insert(10);
+bst.insert(9);
+bst.insert(39);
 bst.insert(35);
+bst.insert(65)
+bst.insert(60)
 bst.inOrderTraver(print)
-console.log(bst.find(30))
+console.log(bst.find(11))
 // console.log(bst.find(90))
 bst.remove(30)
 bst.inOrderTraver(print)
+console.log(bst.max())
+console.log(bst.min())
