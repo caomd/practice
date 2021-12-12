@@ -1,11 +1,9 @@
 /*
- * @Author: caomd
- * @Date: 2021-12-11 21:52:21
+ * @Author: caomd 
+ * @Date: 2021-12-12 18:03:19 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-11 22:53:47
+ * @Last Modified time: 2021-12-12 19:06:21
  */
-//树的子结构
-//judge b tree is a tree child tree
 var BinarySearchTree = function () {
     var Node = function (key) {
         this.key = key
@@ -31,39 +29,19 @@ var BinarySearchTree = function () {
         }
         return node
     }
-    //left right root
-    this.postOrderTraverse = function (callback) {
-        //unrecursivily
+    this.getRoot = function () {
+        return root
+    }
+    this.preOrderTraverse = function (callback) {
         if (root !== null) {
-            postOrderTraverseNode(root, callback, size)
+            preOrderTraverseNode(root, callback, size)
         }
     }
-    var postOrderTraverseNode = function (node, callback, size) {
-        var stack = []
-        while (node !== null) {
-            stack.push(node)
-            // while (stack.length !== 0) {
-
-            if (node.left !== null) {
-                while (node.left) {
-                    node = node.left
-                    stack.push(node)
-                }
-                callback(node.key, size)
-                stack.pop()
-                node = stack.pop()
-            }
-            if (node.right === null) {
-                callback(node.key, size)
-            } else {
-                while (node.right) {
-                    node = node.right
-                    stack.push(node)
-                }
-            }
-            node = stack.pop()
-            // }
-
+    var preOrderTraverseNode = function (node, callback, size) {
+        if (node !== null) {
+            callback(node.key, size)
+            preOrderTraverseNode(node.left, callback, size)
+            preOrderTraverseNode(node.right, callback, size)
         }
     }
 }
@@ -72,7 +50,6 @@ var print = (
         var cache = []
         return function (val, size) {
             cache.push(val)
-            console.log(val)
             if (cache.length === size) {
                 console.log(cache.join('  '))
                 cache = []
@@ -80,11 +57,43 @@ var print = (
         }
     }
 )()
+var hasSubTree = function (tree1, tree2) {
+    //root 
+    var root1 = tree1.getRoot()
+    var root2 = tree2.getRoot()
+
+    if (root1 === null || root2 === null) {
+        return false
+    } else if (root1 === null && root2 === null) {
+        return true
+    } else {
+        return tree1HasTree2(root1, root2)
+    }
+    //left
+    //right
+}
+var tree1HasTree2 = function (root1, root2) {
+    var current1 = root1, current2 = root2
+    if (current1.left) {
+        return tree1HasTree2(current1.left, current2)
+    } else if (current1.right) {
+        return tree1HasTree2(current1.right, current2)
+    } else {
+        return false
+    }
+}
 var tree = new BinarySearchTree()
+tree.insert(10);
 tree.insert(50);
 tree.insert(30);
 tree.insert(70);
 tree.insert(40);
-tree.insert(10);
 tree.insert(35);
-tree.postOrderTraverse(print)
+tree.preOrderTraverse(print)
+console.log(tree.getRoot())
+var tree2 = new BinarySearchTree()
+tree2.insert(30);
+tree2.insert(70);
+tree2.insert(40);
+tree2.preOrderTraverse(print)
+console.log(hasSubTree(tree, tree2))
