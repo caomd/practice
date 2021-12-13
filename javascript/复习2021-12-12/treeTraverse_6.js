@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-11 21:52:21
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-12 23:16:53
+ * @Last Modified time: 2021-12-13 10:28:50
  */
 //树的子结构
 //judge b tree is a tree child tree
@@ -59,24 +59,20 @@ var BinarySearchTree = function () {
         }
     }
     var postOrderTraverseNode = function (node, callback, size) {
-        var stack = [], b
+        var stack = [], stack2 = [], b, top = node
         while (node !== null || stack.length) {
             if (node) {
-                if (b) {
-                    stack.push(b)
-                    b = 0
-                }
                 stack.push(node)
-                node = node.left
+                stack2.push(node)
+                node = node.right
             } else {
                 b = stack.pop()
-                node = b.right
-                if (node === null && node === null) {
-                    callback(b.key, size)
-                    b = stack.pop()
-                    node = b.right
-                }
+                node = b.left
             }
+        }
+        while (stack2.length) {
+            var node = stack2.pop()
+            callback(node.key, size)
         }
     }
     this.preOrderTraverse = function (callback) {
