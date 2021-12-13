@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>
+            <div id="text">状态模式</div>
+            <button id="btn"></button>
+        </div>
+    </body>
+    <script>
+        /*
+        * @Author: caomd
+        * @Date: 2021-12-13 17:39:29
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-13 18:03:46
+             */
+        //statePattern every state encapsulating
+        function WeakLight(light) { this.light = light }
+        WeakLight.prototype.buttonPressed = function () {
+            this.light.state = this.light.strongLight
+            this.light.dom = '强光'
+            console.log('strong light')
+        }
+        function StrongLight(light) { this.light = light }
+        StrongLight.prototype.buttonPressed = function () {
+            this.light.state = this.light.offLight
+            this.light.dom = '关灯'
+            console.log('off light')
+        }
+        function OffLight(light) { this.light = light }
+        OffLight.prototype.buttonPressed = function () {
+            this.light.state = this.light.weakLight
+            this.light.dom = '弱光'
+            console.log('weak light')
+        }
+        function Light() {
+            this.weakLight = new WeakLight(this)
+            this.strongLight = new StrongLight(this)
+            this.offLight = new OffLight(this)
+            this.state = this.offLight
+            this.dom = '关灯'
+        }
+        Light.prototype.buttonPressed = function () {
+            this.state.buttonPressed()
+        }
+        var btn = document.getElementById('btn')
+        btn.innerHTML = '关灯'
+        var light = new Light()
+        btn.onclick = function () {
+            light.buttonPressed()
+            btn.innerHTML = light.dom
+        }
+    </script>
+
+</html>
