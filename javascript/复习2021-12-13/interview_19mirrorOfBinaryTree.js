@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-13 11:01:36
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-13 12:03:40
+ * @Last Modified time: 2021-12-13 14:59:55
  */
 
 // tree traverse algorithm
@@ -72,7 +72,9 @@ var MirrorOfBinaryTree = function (tree) {
     //recursion 
     if (tree !== null) {
         var root = tree.root
-        return root = switchTreeLeftAndRightNode(root)
+        //unrecursivily
+        switchMirrorTreeNodeUnRecursivily(root)
+        // return root = switchTreeLeftAndRightNode(root)
     }
 }
 var switchTreeLeftAndRightNode = function (node) {
@@ -89,6 +91,25 @@ var switchTreeLeftAndRightNode = function (node) {
         return null
     }
 }
+var switchMirrorTreeNodeUnRecursivily = function (node) {
+    var stack = []
+    while (node !== null || stack.length) {
+        if (node) {
+            stack.push(node)
+            node = node.left
+        } else {
+            var node = stack.pop()
+            if (node.left || node.right) {
+                var tem = node.left
+                node.left = node.right
+                node.right = tem
+                node = node.left
+            } else {
+                node = node.right
+            }
+        }
+    }
+}
 
 var tree = new BinarySearchTree()
 tree.insert(10);
@@ -100,3 +121,7 @@ tree.insert(35);
 tree.postOrderTraver(print)
 console.log(MirrorOfBinaryTree(tree))
 tree.postOrderTraver(print)
+
+// var tem = node.left
+// node.left = node.right
+// node.right = tem
