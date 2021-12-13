@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-12 18:03:19 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-12 19:06:21
+ * @Last Modified time: 2021-12-13 10:46:00
  */
 var BinarySearchTree = function () {
     var Node = function (key) {
@@ -57,30 +57,37 @@ var print = (
         }
     }
 )()
-var hasSubTree = function (tree1, tree2) {
-    //root 
+var getRoot = function (tree1, tree2) {
     var root1 = tree1.getRoot()
     var root2 = tree2.getRoot()
-
-    if (root1 === null || root2 === null) {
-        return false
-    } else if (root1 === null && root2 === null) {
-        return true
-    } else {
-        return tree1HasTree2(root1, root2)
-    }
-    //left
-    //right
+    return HasSubTree(root1, root2)
 }
-var tree1HasTree2 = function (root1, root2) {
-    var current1 = root1, current2 = root2
-    if (current1.left) {
-        return tree1HasTree2(current1.left, current2)
-    } else if (current1.right) {
-        return tree1HasTree2(current1.right, current2)
-    } else {
+var HasSubTree = function (root1, root2) {
+    var result = false
+    if (root1 !== null && root2 !== null) {
+        if (root1.key === root2.key) {
+            return DoesTree1HaveTree2(root1, root2)
+        }
+        if (!result) {
+            result = HasSubTree(root1.left, root2)
+        }
+        if (!result) {
+            result = HasSubTree(root1.right, root2)
+        }
+    }
+    return result
+}
+var DoesTree1HaveTree2 = function (r1, r2) {
+    if (r2 === null) {
+        return true
+    }
+    if (r1 === null) {
         return false
     }
+    if (r1.key !== r2.key) {
+        return false
+    }
+    return DoesTree1HaveTree2(r1.left, r2.left) && DoesTree1HaveTree2(r1.right, r2.right)
 }
 var tree = new BinarySearchTree()
 tree.insert(10);
@@ -93,7 +100,7 @@ tree.preOrderTraverse(print)
 console.log(tree.getRoot())
 var tree2 = new BinarySearchTree()
 tree2.insert(30);
-tree2.insert(70);
 tree2.insert(40);
+tree2.insert(35);
 tree2.preOrderTraverse(print)
-console.log(hasSubTree(tree, tree2))
+console.log(getRoot(tree, tree2))
