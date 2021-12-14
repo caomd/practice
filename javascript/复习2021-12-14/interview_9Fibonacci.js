@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-14 18:14:23
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-14 18:22:50
+ * @Last Modified time: 2021-12-14 18:41:44
  */
 //fibonacci recursion actually tree traverse 
 var Fibonacci = function (n) {
