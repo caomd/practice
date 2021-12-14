@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-14 09:46:18 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-14 12:04:19
+ * @Last Modified time: 2021-12-14 16:02:57
  */
 var BinarySearchTree = function () {
     var Node = function (key) {
@@ -182,6 +182,135 @@ var insertAlgorithmVersion = function (root, key, tree) {
     }
     return root
 }
+var countNodes = function (root) {
+    if (root === null) return 0
+    return 1 + countNodes(root.left) + countNodes(root.right)
+}
+//perfect tree sum nodes 2^h-1
+var countNodesHeight = function (root) {
+    var h = 0
+    //count tree height
+    while (root !== null) {
+        root = root.left
+        h++
+    }
+    //sum nodes 2^h-1
+    return Math.pow(2, h) - 1
+}
+var judgeCounts = function (root) {
+    if (root === null) return 0
+    var hl = 0, hr = 0, rl = root, rr = root
+    while (rl) {
+        rl = rl.left
+        hl++
+    }
+    while (rr) {
+        rr = rr.right
+        hr++
+    }
+    if (hl === hr) {
+        return Math.pow(2, hl) - 1
+    }
+    return 1 + judgeCounts(root.left) + judgeCounts(root.right)
+}
+//bst serialize to string
+var serilizeStr = ''
+var serialize = function (root) {
+    //preOrderTraverse
+    if (root === null) return serilizeStr += ' -1 '
+    serilizeStr += root.key + '  '
+    serialize(root.left)
+    serialize(root.right)
+    return serilizeStr
+}
+
+var Linked = function () {
+    var Node = function (key) {
+        this.key = key
+        this.next = null
+    }
+    this.head = null
+    this.size = 0
+    this.append = function (key) {
+        var newNode = new Node(key)
+        if (this.head === null) {
+            this.head = newNode
+        } else {
+            var current = this.head
+            while (current.next) {
+                current = current.next
+            }
+            current.next = newNode
+        }
+        return this.size++
+    }
+    this.isEmpty = function () {
+        return this.size === 0
+    }
+    this.removeFirst = function () {
+        if (this.head !== null) {
+            var current = this.head
+            this.head = current.next
+            current.next = null
+            this.size--
+            return current.key
+        }
+    }
+    this.removeLast = function () {
+        if (this.head !== null) {
+            var current = this.head, last, pre
+            while (current.next) {
+                pre = current
+                current = current.next
+            }
+            last = current
+            if (pre) {
+                pre.next = null
+            }
+            this.size--
+            return last.key
+        }
+    }
+}
+function strSplitList(str) {
+    var list = new Linked()
+    for (var i = 0; i < str.length; i++) {
+        list.append(str[i])
+    }
+    return list
+}
+//preOrderTraverse deserialize
+var deserialize = function (list) {
+    if (list.isEmpty()) return null
+    //first get root
+    var first = list.removeFirst()
+    if (first === '#') return null
+    var root = new Node(first)
+    root.left = deserialize(list)
+    root.right = deserialize(list)
+    return root
+}
+var postOrderTraverseDeserialize = function (list) {
+    if (list.isEmpty()) return null
+    var first = list.removeLast()
+    if (first === '#') return null
+    var root = new Node(first)
+    //right tree first
+    root.right = postOrderTraverseDeserialize(list)
+    root.left = postOrderTraverseDeserialize(list)
+    return root
+}
+var s = ''
+var printNode = function (root) {
+    if (root !== null) {
+        s += root.key + ' '
+        printNode(root.left)
+        printNode(root.right)
+        return s
+    } else {
+        s += '#'
+    }
+}
 var tree = new BinarySearchTree()
 tree.insert(10);
 tree.insert(50);
@@ -219,3 +348,24 @@ insertAlgorithmVersion(tree.root, 6, tree)
 insertAlgorithmVersion(tree.root, 10, tree)
 insertAlgorithmVersion(tree.root, 1, tree)
 tree.postOrderTraverse(print)
+console.log(countNodes(tree.root))
+//not a perfect tree return 7 wrong actually 8
+console.log(countNodesHeight(tree.root))
+console.log(judgeCounts(tree.root))
+var treeSerialize = new BinarySearchTree()
+treeSerialize.insert(6)
+treeSerialize.insert(2)
+treeSerialize.insert(1)
+treeSerialize.insert(18)
+treeSerialize.insert(10)
+//string deserialize to bst
+var str = '1,2,#,4,#,#,3,#,#'
+var post = '#,#,#,4,2,#,#,3,1'
+var strArr = str.split(',')
+var strPost = post.split(',')
+console.log(serialize(treeSerialize.root))
+// var de = deserialize(list)
+// console.log(printNode(de))
+var listpost = strSplitList(strPost)
+var postDe = postOrderTraverseDeserialize(listpost)
+console.log(printNode(postDe))
