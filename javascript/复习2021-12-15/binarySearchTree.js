@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-15 15:56:59
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-15 16:38:46
+ * @Last Modified time: 2021-12-15 18:50:40
  */
 //非递归查找
 var BinarySearchTree = function () {
@@ -69,34 +69,31 @@ var BinarySearchTree = function () {
         return this.size--
     }
     var deleteNode = function (node, key) {
-        var stack = []
-        while (node !== null || stack.length) {
-            if (node) {
-                stack.push(node)
+        var parent
+        while (node) {
+            parent = node
+            if (node.key > key) {
                 node = node.left
-            } else {
-                var t = stack.pop()
-                if (t.key === key) {
-                    //left right null judge
-                    if (t.left === null && t.right === null) {
-                        t = null
-                    }
-                    else if (t.left === null && t.right !== null) {
-                        t = t.right
-                    } else if (t.right === null && t.left !== null) {
-                        t = t.left
-                    } else {
-                        //find minRightNode
-                        var minRight = findMinRight(t.right)
-                        t.key = minRight.key
-                        t.right = deleteNode(t.right, minRight)
-                    }
-                    return node = t
+            } else if (node.key === key) {
+                if (node.left === null && node.right === null) {
+                    node = null
+                    parent = node
+                } else if (node.left === null && node.right !== null) {
+                    node = node.right
+                    parent = node
+                } else if (node.left !== null && node.right === null) {
+                    node = node.left
+                    parent = node
+                } else {
+                    var minRight = minRight(node.right)
+                    node.key = minRight.key
+                    node.right = deleteNode(node.right, minRight.key)
                 }
-                node = t.right
+            }
+            else {
+                node = node.right
             }
         }
-        return node
     }
     this.preOrderTraverse = function (callback) {
         preOrderNoRecursion(this.root, callback, this.size)
