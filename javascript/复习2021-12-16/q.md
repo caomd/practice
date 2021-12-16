@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-16 11:17:08 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 14:30:41
+ * @Last Modified time: 2021-12-16 16:15:30
  */
 ***************tree level traverse uses queue
 ***************binartSearch 
@@ -20,3 +20,4 @@ so
 head.next = newHead
 *****************reverse group (head,group)
 variable and judge group === null and then grp variable = grp.next*****
+*****************binaryTreeMinHeight

@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-16 11:56:31
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 14:29:33
+ * @Last Modified time: 2021-12-16 15:14:25
  */
 //reverse Linked list
 var Linked = function () {
@@ -95,16 +95,17 @@ var reverseListBetween = function (head, m, n) {
 var reverseLinkedGroup = function (head, groups) {
     if (head === null) return null
     //get front group items first group reverse well and then recursion next childNode
-    var firstGrp = head, node = head
+    var firstGrp = head, head
     for (var i = 0; i < groups; i++) {
         //not exist groups length nodes groups = 3 head only has two nodes so third is null 
-        if (firstGrp === null) return node
+        if (firstGrp === null) return head
         //this sentence must place here behind if 
         firstGrp = firstGrp.next
     }
     //firstGrp switch front firstGrp items
-    var newHead = reverseListBetween(head, 1, groups)
-    node.next = reverseLinkedGroup(firstGrp, groups)
+    // var newHead = reverseListBetween(head, 1, groups)
+    var newHead = reverseLinkedFrontK(head, groups)
+    head.next = reverseLinkedGroup(firstGrp, groups)
     return newHead
     // if (node === null) {
     //     return node
