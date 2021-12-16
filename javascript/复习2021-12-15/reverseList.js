@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-15 12:29:56
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-15 15:54:04
+ * @Last Modified time: 2021-12-16 14:25:31
  */
 //linked 
 var Linked = function () {
@@ -126,5 +126,5 @@ linked.print()
 // var btReverse = reverseBetween(linked.head, 2, 4)
 // printNode(btReverse)
 //group
-var reverseGr = reverseListGroup(linked.head, 4)
+var reverseGr = reverseListGroup(linked.head, 3)
 printNode(reverseGr)

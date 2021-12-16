@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-16 11:56:31
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 12:21:46
+ * @Last Modified time: 2021-12-16 14:29:33
  */
 //reverse Linked list
 var Linked = function () {
@@ -79,8 +79,50 @@ var reverseLinkedFrontK = function (head, K) {
     return newHead
 }
 //3.reverse between m and n
+var reverseListBetween = function (head, m, n) {
+    if (head === null) return null
+    if (m === 1) {
+        //it means front n item reverse
+        var node = reverseLinkedFrontK(head, n)
+        return node
+    }
+    var newHead = reverseListBetween(head.next, m - 1, n - 1)
+    // for example 1,2,3,4,5,6  2-4 1->4->3->2->5->6 
+    head.next = newHead
+    return head
+}
 //4.reverse group
-
+var reverseLinkedGroup = function (head, groups) {
+    if (head === null) return null
+    //get front group items first group reverse well and then recursion next childNode
+    var firstGrp = head, node = head
+    for (var i = 0; i < groups; i++) {
+        //not exist groups length nodes groups = 3 head only has two nodes so third is null 
+        if (firstGrp === null) return node
+        //this sentence must place here behind if 
+        firstGrp = firstGrp.next
+    }
+    //firstGrp switch front firstGrp items
+    var newHead = reverseListBetween(head, 1, groups)
+    node.next = reverseLinkedGroup(firstGrp, groups)
+    return newHead
+    // if (node === null) {
+    //     return node
+    // }
+    // var gNode = node, head = node
+    // //find exist gNode
+    // for (var i = 0; i < g; i++) {
+    //     // not exist g item return head
+    //     if (gNode === null) {
+    //         return head
+    //     }
+    //     gNode = gNode.next
+    // }
+    // //reverse front g item
+    // var newHead = reverseListBetween(node, 1, g)
+    // head.next = reverseLinkedGroup(gNode, g)
+    // return newHead
+}
 //test
 var list = new Linked()
 list.insert(1)
@@ -94,4 +136,6 @@ list.print()
 
 //test reverseAllLinked
 // printNode(reverseAllLinked(list.head))
-printNode(reverseLinkedFrontK(list.head, 3))
+// printNode(reverseLinkedFrontK(list.head, 3))
+// printNode(reverseListBetween(list.head, 3, 5))
+printNode(reverseLinkedGroup(list.head, 3))
