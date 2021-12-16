@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-16 17:03:32 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 17:44:30
+ * @Last Modified time: 2021-12-16 20:10:34
  */
 ********
 //interview13_deleteNode O(1)
@@ -13,3 +13,5 @@ next = null
 *******inter_15 kthFromEndNode
 end kth from front index = length-k and uses two poins
 and they always differ k items so if second point === 0 then first point move to k 
+***************interview_16 reverseList
+not recursion understand principle *******
