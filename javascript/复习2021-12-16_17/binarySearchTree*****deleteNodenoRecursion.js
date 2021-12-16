@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-16 20:56:52 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 22:39:13
+ * @Last Modified time: 2021-12-16 23:06:43
  */
 
 //非递归查找
@@ -64,30 +64,40 @@ var BinarySearchTree = function () {
                 if (node.left === null && node.right === null) {
                     node = null
                 } else if (node.left === null && node.right !== null) {
+                    stack.pop()
                     node = node.right
+                    stack.push(node)
+                    break
                 } else if (node.left !== null && node.right === null) {
                     node = node.left
+                    stack.push(node)
+                    break
                 } else {
                     //has left and right
                     //minRightNode
                     var minRightNode = findMinRight(node.right)
                     node.key = minRightNode.key
                     node.right = removeNode(node.right, minRightNode.key)
+                    stack.push(node)
+                    break
                 }
-                // if (parent.key > key) {
-                //     //left
-                //     var node = node.left
-                //     while (node) {
-                //         if (node.key > key) {
-                //             node = node.left
-                //         }
-                //     }
-                // } else {
-                //     //right
-                // }
             }
         }
-        return false
+        while (stack.length) {
+            var node = stack.pop()
+            var size = stack.length
+            for (var i = 0; i < size; i++) {
+                var parent = stack.pop()
+                if (parent.key > node.key) {
+                    parent.left = node
+                    node = parent
+                } else {
+                    parent.right = node
+                    node = parent
+                }
+            }
+        }
+        return node
     }
     var findMinRight = function (node) {
         if (node !== null) {
@@ -142,7 +152,7 @@ tree.insert(40);
 tree.insert(35);
 tree.insert(4);
 tree.insert(6);
-tree.postOrderTraverse(print)
-console.log(tree.find(tree.root, 66))
+// tree.postOrderTraverse(print)
+// console.log(tree.find(tree.root, 66))
 tree.remove(30)
 tree.postOrderTraverse(print)
