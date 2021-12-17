@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-17 17:20:25
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-17 18:23:09
+ * @Last Modified time: 2021-12-17 21:00:37
  */
 //bfs from width to depth
 var Queue = function () {
@@ -58,8 +58,8 @@ var Graph = function () {
         }
         return color
     }
-    this.BFS = function (src) {
-        var dist = {}
+    this.BFS = function (src, callback) {
+        var dist = {}, pre = {}
         //initialize color
         var color = initializeColor()
         color[src] = 'grey'
@@ -75,12 +75,16 @@ var Graph = function () {
                     queue.enqueue(v)
                     color[v] = 'grey'
                     dist[v] = dist[u] + 1
+                    pre[v] = u
                 }
             }
             color[u] = 'black'
+            if (callback) {
+                callback(u)
+            }
             print(u, vertexes.length)
         }
-        return dist
+        return { dist, pre }
     }
     this.bfs = function (src) {
         var visited = []
@@ -116,6 +120,10 @@ var Graph = function () {
             }
         }
     )()
+
+}
+var printVisited = function (v) {
+    console.log('Visited Vertex: ' + v)
 }
 var graph = new Graph()
 var myVertices = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
@@ -134,5 +142,19 @@ graph.addEdge('B', 'F')
 graph.addEdge('E', 'I')
 graph.toString()
 graph.bfs('A')
-var dist = graph.BFS('A')
-console.log(dist)
+var { dist, pre } = graph.BFS('A', printVisited)
+console.log(dist.dist)
+console.log(dist.pre)
+var from = "A", stack = []
+for (var i = 0; i < myVertices.length; i++) {
+    var to = myVertices[i]
+    for (var v = to; v !== from; v = pre[v]) {
+        stack.push(v)
+    }
+    stack.push(from)
+    var path = stack.pop()
+    while (stack.length) {
+        path += '->' + stack.pop()
+    }
+    console.log(path)
+}
