@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>
+            <form id="formData">
+                <div>username:<input type="text" name="username" id="username"></div>
+                <div>password:<input type="text" name="password" id="password"></div>
+                <div>telephone:<input type="text" name="telephone" id="telephone"></div>
+                <button id="btn">submit</button>
+            </form>
+        </div>
+    </body>
+    <script>
+        Function.prototype.before = function (fn) {
+            var self = this
+            return function () {
+                fn.apply(self, arguments)
+                return self.apply(this, arguments)
+            }
+        }
+        var btn = document.getElementById('btn')
+        var formData = document.getElementById('formData')
+        formData.onsubmit = function (e) {
+            e.preventDefault()
+            execute()
+        }
+        function validator(url, type, param) {
+            var username = formData.username.value
+            var password = formData.password.value
+            var telephone = formData.telephone.value
+            strategy.add(formData.username.parentNode, username, 'username not null')
+            strategy.add(formData.password.parentNode, password, 'password not null')
+            strategy.add(formData.telephone.parentNode, telephone, 'telephone not null')
+            var { code, msgArr } = strategy.execute()
+            if (code) {
+                return param.msgArr = msgArr
+            }
+        }
+        var strategy = (function (dom, val, error) {
+            var validatorCache = []
+            return {
+                add: function (dom, val, error) {
+                    //new object or cover same object and 
+                    var domObj = {}
+                    domObj.dom = dom
+                    domObj.val = val
+                    domObj.error = error
+                    validatorCache.push(domObj)
+                },
+                execute: function () {
+                    if (validatorCache.length) {
+                        var msgArr = []
+                        for (var i = 0, validator; validator = validatorCache[i++];) {
+                            var { dom, val, error } = validator
+                            if (val === '') {
+                                msgArr.push({ dom, error })
+                            }
+                        }
+                        return { code: msgArr.length ? 1 : 0, msgArr }
+                    }
+                }
+            }
+        })()
+        var ajax = function (url, type, param) {
+            if (param.msgArr) {
+                createDom(param.msgArr)
+            }
+            console.log(param)
+        }
+        function createDom(msgArr) {
+            for (var i = 0; i < msgArr.length; i++) {
+                var { dom, error } = msgArr[i]
+                var span = document.createElement('span')
+                span.innerHTML = error
+                span.style.color = 'red'
+                dom.appendChild(span)
+            }
+        }
+        var execute = function () {
+            ajax = ajax.before(validator)
+            ajax('http://', 'post', { token: 'Token' })
+        }
+    </script>
+
+</html>

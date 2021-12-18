@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <div>window change</div>
+    </body>
+    <script>
+        /*
+     * @Author: caomd 
+     * @Date: 2021-12-18 10:05:11 
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-18 11:39:16
+     */
+        window.onresize = throttle(function () {
+            var div = document.getElementsByTagName('div')[0]
+            console.log(div)
+            div.innerHTML = 'window change2'
+        }, 1000)
+        function throttle(fn, interval) {
+            var firstTime = true, timer = null, self = this
+            return function () {
+                if (firstTime) {
+                    fn.apply(self, arguments)
+                    return firstTime = false
+                }
+                if (timer) {
+                    //still in progress
+                    return
+                }
+                timer = setTimeout(function () {
+                    timer = null
+                    clearTimeout(timer)
+                    fn.apply(self, arguments)
+                }, interval || 1000)
+                console.log(timer)
+            }
+        }
+
+    </script>
+
+</html>
