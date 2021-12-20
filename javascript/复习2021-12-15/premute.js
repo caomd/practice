@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-15 09:11:50
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-15 11:57:35
+ * @Last Modified time: 2021-12-20 18:51:40
  */
 //permute think three aspect 1.path all select 2.selection list 3.add path and end condition
 var Linked = function () {
@@ -97,7 +97,7 @@ function backTrace(numArr, track) {
         //judge track contains numArr[i]
         if (track.contains(numArr[i])) {
             continue
-        }
+        };
         //not contains
         track.add(numArr[i])
         //other decision tree

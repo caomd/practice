@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-16 15:22:35 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-16 16:14:26
+ * @Last Modified time: 2021-12-20 11:46:20
  */
 
 var BinarySearchTree = function () {
@@ -57,6 +57,7 @@ var BinarySearchTree = function () {
                 for (var i = 0; i < size; i++) {
                     node = queue.shift()
                     if (node.left === null && node.right === null) {
+                        console.log("minHeight: " + height)
                         return height
                     }
                     if (node.left !== null) {
@@ -68,8 +69,8 @@ var BinarySearchTree = function () {
                 }
                 //left and right all push height++
                 height++
-                console.log("minHeight: " + height)
             }
+            console.log("minHeight: " + height)
         }
     }
     // this.minHeight = function () {
@@ -113,7 +114,6 @@ tree1.insert(30);
 tree1.insert(70);
 tree1.insert(40);
 tree1.insert(35);
-tree1.insert(4);
 // tree1.insert(6);
 tree1.inOrderTraverse(print)
 tree1.minHeight()
