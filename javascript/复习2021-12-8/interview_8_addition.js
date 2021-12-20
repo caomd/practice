@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-08 14:31:52
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-09 11:49:56
+ * @Last Modified time: 2021-12-20 21:41:18
  */
 //when arr[i] ===arr[j] and === arr[mid] can not confirm mid in before increase arr or behind part increase so can not use twi divide search and select orderSort arithmetic /algorithm
 //src arr [1,0,1,1,1,1]
@@ -16,6 +16,7 @@ var SortRotationArry = function () {
     var i = 0, j = arr.length - 1, mid = i
     while (arr[i] >= arr[j]) {
         if (j - i === 1) {
+            console.log(j)
             return mid = j
             break
         }

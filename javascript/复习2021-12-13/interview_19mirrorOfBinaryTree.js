@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-13 11:01:36
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-13 14:59:55
+ * @Last Modified time: 2021-12-20 21:09:04
  */
 
 // tree traverse algorithm
@@ -33,6 +33,16 @@ var BinarySearchTree = function () {
             node = newNode
         }
         return node
+    }
+    this.preOrderTraverse = function (callback) {
+        preOrderTraverseNode(this.root, callback, this.size)
+    }
+    var preOrderTraverseNode = function (node, callback, size) {
+        if (node !== null) {
+            callback(node.key, size)
+            preOrderTraverseNode(node.left, callback, size)
+            preOrderTraverseNode(node.right, callback, size)
+        }
     }
     this.postOrderTraver = function (callback) {
         postOrderTraverNode(this.root, callback, this.size)
@@ -112,15 +122,25 @@ var switchMirrorTreeNodeUnRecursivily = function (node) {
 }
 
 var tree = new BinarySearchTree()
-tree.insert(10);
+// tree.insert(10);
+// tree.insert(50);
+// tree.insert(30);
+// tree.insert(70);
+// tree.insert(40);
+// tree.insert(35);
 tree.insert(50);
 tree.insert(30);
 tree.insert(70);
 tree.insert(40);
+tree.insert(10);
 tree.insert(35);
-tree.postOrderTraver(print)
+tree.insert(39);
+tree.insert(9);
+tree.insert(65)
+tree.insert(60)
+tree.preOrderTraverse(print)
 console.log(MirrorOfBinaryTree(tree))
-tree.postOrderTraver(print)
+tree.preOrderTraverse(print)
 
 // var tem = node.left
 // node.left = node.right
