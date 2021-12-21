@@ -7,7 +7,7 @@ var hotPotato = function (names, num) {
         for (var j = 0; j < num; j++) {
             queue.push(queue.shift())
         }
-        queue.shift()
+        console.log(queue.shift())
     }
     console.log(queue.shift() + '是winner')
 }

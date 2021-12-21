@@ -21,4 +21,4 @@ function findNum(matrix, rows, columns, num) {
     }
 }
 
-console.log(findNum(array, 4, 4, 7))
+console.log(findNum(array, 4, 4, 77))

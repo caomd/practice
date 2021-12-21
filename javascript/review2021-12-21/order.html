@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+
+    <body>
+        <button id="menu">Menu</button>
+        <button id="submenu">SubMenu</button>
+        <button id="updateMenu">UpdateMenu</button>
+    </body>
+    <script>
+        /*
+         * @Author: caomd 
+         * @Date: 2021-12-21 18:55:36 
+ * @Last Modified by: caomd
+ * @Last Modified time: 2021-12-21 19:11:02
+         */
+        var menuBtn = document.getElementById('menu')
+        var submenu = document.getElementById('submenu')
+        var updateMenu = document.getElementById('updateMenu')
+        var bindClick = function (btn, command) {
+            btn.onclick = command
+        }
+        var MenuBar = {
+            refresh: function () {
+                console.log('refresh the page')
+            }
+        }
+        var SubBar = {
+            add: function () {
+                console.log('add sub menu')
+            },
+            del: function () {
+                console.log('delete the menu')
+            }
+        }
+        bindClick(menuBtn, MenuBar.refresh)
+        bindClick(submenu, SubBar.add)
+        bindClick(updateMenu, SubBar.del)
+    </script>
+
+</html>

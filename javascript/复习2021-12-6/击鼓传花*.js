@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-06 08:00:19
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-06 08:10:32
+ * @Last Modified time: 2021-12-21 18:33:16
  */
 //击鼓传花利用队列先进先出FIFO
 // var Queue = function () {
@@ -35,7 +35,7 @@ function hotPotato(names, num) {
         for (var i = 0; i < num; i++) {
             queue.enqueue(queue.dequeue())
         }
-        queue.dequeue()
+        console.log(queue.dequeue())
     }
     //获胜者
     console.log('获胜者是' + queue.dequeue())
