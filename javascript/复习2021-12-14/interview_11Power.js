@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-14 20:18:13
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-14 20:59:36
+ * @Last Modified time: 2021-12-21 09:56:29
  */
 //power
 //case 1 power>0 case2 power<0 
