@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-20 10:08:55 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-20 12:28:35
+ * @Last Modified time: 2021-12-21 15:27:29
  */
 var BinarySearchTree = function () {
     var Node = function (key) {
@@ -145,15 +145,7 @@ var judgeValid = function (node, min, max) {
     if (node !== null) {
         if (min !== null && min.key > node.key) return false
         if (max !== null && node.key > max.key) return false
-        if (node.left) {
-            node = node.left
-            judgeValid(node, node.left, max)
-        }
-        if (node.right) {
-            node = node.right
-            judgeValid(node, min, node.right)
-        }
-        return true
+        return judgeValid(node.left, min, node) && judgeValid(node.right, root, max)
     }
 }
 
