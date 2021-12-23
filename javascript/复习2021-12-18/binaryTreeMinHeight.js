@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-20 10:08:55 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-21 15:27:29
+ * @Last Modified time: 2021-12-23 14:35:58
  */
 var BinarySearchTree = function () {
     var Node = function (key) {
@@ -154,7 +154,8 @@ var findMinHeight = function (node, height) {
     if (node !== null) {
         stack.push(node)
         while (stack.length) {
-            for (var i = 0; i < stack.length; i++) {
+            var size = stack.length
+            for (var i = 0; i < size; i++) {
                 var node = stack.shift()
                 if (node.left === null && node.right === null) return height
                 if (node.left !== null) {
@@ -177,6 +178,7 @@ bst.insert(30);
 bst.insert(70);
 bst.insert(40);
 bst.insert(35);
+bst.insert(5);
 bst.preOrderTraverse(print)
 // bst.remove(30)
 bst.preOrderTraverse(print)
