@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-24 10:22:35 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-24 15:19:12
+ * @Last Modified time: 2021-12-24 21:38:46
  */
 var BST = function () {
     var Node = function (key) {
@@ -40,6 +40,22 @@ var BST = function () {
             }
         }
         return node
+    }
+    this.preOrderTraverse = function (callback) {
+        preOrderTraverseNode(this.root, callback, this.size)
+    }
+    var preOrderTraverseNode = function (node, callback, size) {
+        var stack = []
+        while (node !== null || stack.length) {
+            if (node !== null) {
+                stack.push(node)
+                callback(node.key, size)
+                node = node.left
+            } else {
+                var t = stack.pop()
+                node = t.right
+            }
+        }
     }
     this.levelTraver = function (callback) {
         levelTraverseNode(this.root, callback, this.size)
@@ -175,6 +191,37 @@ var countNodesComplete = function (node) {
     //if different ordinate 
     return countNodesComplete(node.left) + countNodesComplete(node.right)
 }
+//make bst to string
+var serialize = function (root) {
+    var str = ''
+    return serializeNode(root, str)
+}
+var serializeNode = function (node, str) {
+    if (node === null) {
+        str += '# -> '
+        return str
+    }
+    str += node.key + ' -> '
+    str = serializeNode(node.left, str)
+    str = serializeNode(node.right, str)
+    return str
+}
+var deserialize = function (str) {
+    var nodes = str.split(',')
+    return deserializeNode(nodes)
+}
+var deserializeNode = function (nodes) {
+    if (nodes.length === 0) return null
+    //preOrderTraverse
+    var first = nodes.shift()
+    if (first === '#') return null
+    var bst = new BST()
+    bst.insert(first)
+    var root = bst.root
+    root.left = deserializeNode(nodes)
+    root.right = deserializeNode(nodes)
+    return root
+}
 var bst = new BST()
 bst.insert(10);
 bst.insert(50);
@@ -183,9 +230,13 @@ bst.insert(70);
 bst.insert(40);
 bst.insert(35);
 bst.insert(5);
-bst.inOrderTraverse(print)
-bst.levelTraver(print)
-console.log(isValidBST(bst.root))
+// bst.inOrderTraverse(print)
+// bst.levelTraver(print)
+// console.log(isValidBST(bst.root))
 bst.remove(30)
-bst.inOrderTraverse(print)
-console.log(countNodes(bst.root))
+// bst.inOrderTraverse(print)
+// console.log(countNodes(bst.root))
+// bst.preOrderTraverse(print)
+console.log(serialize(bst.root))
+var data = '1,2,#,4,#,#,3,#,#'
+console.log(deserialize(data))
