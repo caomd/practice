@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-23 19:12:16 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-23 21:50:34
+ * @Last Modified time: 2021-12-24 10:17:09
  */
 var Queue = function () {
     this.items = [], this.size = 0
@@ -103,7 +103,7 @@ var openLock = function (deadStr, target) {
                 var down = downWay(current, j)
                 if (!visited.contains(down)) {
                     q.enqueue(down)
-                    visited.add(down)
+                    visited.insert(down)
                 }
             }
         }
@@ -115,16 +115,17 @@ var upWay = function (n, j) {
     var num = n.split('')
     if (num[j] === '9') num[j] = '0'
     else {
-        var num = n.split('')
-        return num[j] * 1 + 1
+        num[j] = num[j] * 1 + 1
     }
+    return num.join('')
 }
 var downWay = function (n, j) {
-    if (n[] === '0') return str = '9'
+    var num = n.split('')
+    if (num[j] === '0') num[j] = '9'
     else {
-        var num = n[j] * 1
-        return num--
+        num[j] = num[j] * 1 - 1
     }
+    return num.join('')
 }
 
 console.log(openLock(['1111'], '8000'))
