@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>strategy</title>
+    </head>
+
+    <body>
+        <dir>
+            <form action="http://" id="formData">
+                <div>username:<input type="text" name="username"></div>
+                <div>password:<input type="text" name="password"></div>
+                <div>telephone:<input type="text" name="telephone"></div>
+                <button>submitButton</button>
+            </form>
+        </dir>
+    </body>
+    <script>
+        var strategies = {
+            isNotEmpty: function (val, errMsg, dom) {
+                if (val === '') {
+                    return { dom, errMsg }
+                }
+            },
+            minLength: function (length, minLength, errMsg, dom) {
+                if (length < minLength) {
+                    return { dom, errMsg }
+                }
+            },
+            phoneFormate: function (num, errMsg, dom) {
+                if (!(/^1[3|5|8][0-9]{9}$/).test(num)) {
+                    return { dom, errMsg }
+                }
+            }
+        }
+        var Validator = function () {
+            this.cache = []
+        }
+        Validator.prototype.add = function (dom, rules) {
+            for (var i = 0; i < rules.length; i++) {
+                var args = rules[i].strategy.split(':'),
+                    strategy = args.shift(),
+                    errMsg = rules[i].errMsg
+                args.unshift(dom.value)
+                args.push(errMsg)
+                args.push(dom)
+                this.cache.push(strategies[strategy].apply(this, args))
+            }
+        }
+        Validator.prototype.execute = function () {
+            for (var i = 0; i < this.cache.length; i++) {
+                var fn = this.cache[i]
+                var ret = fn()
+            }
+        }
+        var formData = document.getElementById('formData')
+        formData.onsubmit = function () {
+            var ret = validatorFactory()
+        }
+        var validatorFactory = function () {
+            var validator = new Validator()
+            validator.add(formData.username, [
+                {
+                    strategy: 'isNotEmpty',
+                    errMsg: 'not empty'
+                },
+                {
+                    strategy: 'minLength:6',
+                    errMsg: 'min length not less 6'
+                }
+            ])
+            validator.add(formData.password, [
+                {
+                    strategy: 'minLength:10',
+                    errMsg: 'min Length not less 10'
+                },
+                {
+                    strategy: 'isNotEmpty',
+                    errMsg: 'not empty'
+                }
+            ])
+            validator.add(formData.telephone, [
+                {
+                    strategy: 'phoneFormate',
+                    errMsg: 'not correct phone num'
+                }
+            ])
+            return validator.execute()
+        }
+    </script>
+
+</html>
