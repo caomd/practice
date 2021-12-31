@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-12-31 17:43:22 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-31 21:37:00
+ * @Last Modified time: 2021-12-31 23:03:05
  */
 var Queue = function () {
     var items = [], size = 0
@@ -133,29 +133,25 @@ var bstLevelOrder2 = function (root) {
     var curLevel = new List()
     var ans = new List()
     if (root !== null) curLevel.append(root)
-    if (root.left) {
-        curLevel.append(root.left)
-    }
-    if (root.right) {
-        curLevel.append(root.right)
-    }
     while (!curLevel.isEmpty()) {
         var nextLevel = new List()
         var curResult = new List()
         var cur = curLevel.head
-        while (cur.next) {
-            curResult.append(cur.key)
+        while (cur) {
+            console.log(cur.key.key)
+            curResult.append(cur.key.key)
             if (cur.key.left !== null) {
                 nextLevel.append(cur.key.left)
             }
             if (cur.key.right !== null) {
                 nextLevel.append(cur.key.right)
             }
-            cur = nextLevel
-            ans.append(curResult)
+            cur = cur.next
         }
-        return ans
+        curLevel = nextLevel
+        ans.append(curResult)
     }
+    return ans
 }
 var bst = new bst()
 bst.insert(10);
