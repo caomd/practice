@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2022-01-01 08:12:18 
  * @Last Modified by: caomd
- * @Last Modified time: 2022-01-01 10:53:39
+ * @Last Modified time: 2022-01-01 20:34:41
  */
 var Linked = function () {
     var Node = function (key) {
@@ -120,13 +120,15 @@ var bstOrderLevel = function (root) {
     if (root !== null) s.enqueue(root)
     while (!s.isEmpty()) {
         var size = s.size()
-        var cur = s.dequeue()
-        console.log(cur.key)
-        if (cur.left) {
-            s.enqueue(cur.left)
-        }
-        if (cur.right) {
-            s.enqueue(cur.right)
+        for (var i = 0; i < size; i++) {
+            var cur = s.dequeue()
+            console.log(cur.key)
+            if (cur.left) {
+                s.enqueue(cur.left)
+            }
+            if (cur.right) {
+                s.enqueue(cur.right)
+            }
         }
     }
 }
@@ -179,4 +181,5 @@ list.insert(4)
 list.insert(5)
 list.insert(6)
 list.print()
+console.log('Hi order level')
 bstOrderLevel2(bst.root)
