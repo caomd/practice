@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2022-01-02 12:20:11 
  * @Last Modified by: caomd
- * @Last Modified time: 2022-01-02 13:47:48
+ * @Last Modified time: 2022-01-03 13:33:00
  */
 var Stack = function () {
     var items = [], size = 0
@@ -52,7 +52,7 @@ var isValidBracket2 = function (str) {
     }
     return leftBraceNumber === 0
 }
-// console.log(isValidBracket2('(())()()))'))
+console.log(isValidBracket2('(())()()))'))
 //extend only contains '(',')','{','}','[',']'
 var extendIsValid = function (str) {
     if (str === null || str.length < 0) return 'false not null'
@@ -84,4 +84,4 @@ var extendIsValid = function (str) {
     }
     return leftBracketNum === 0 && leftBraceNum === 0 && squareBrackets === 0
 }
-console.log(extendIsValid('((()[]){[[}]'))
+// console.log(extendIsValid('((()[]){[[}]'))
