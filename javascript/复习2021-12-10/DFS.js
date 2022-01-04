@@ -2,7 +2,7 @@
  * @Author: caomd
  * @Date: 2021-12-10 21:03:36
  * @Last Modified by: caomd
- * @Last Modified time: 2021-12-10 22:07:29
+ * @Last Modified time: 2022-01-04 15:07:08
  */
 //DFS from deep to width recursion
 var Stack = function () {
@@ -32,7 +32,9 @@ var Stack = function () {
                 current = current.next
             }
             size--
-            return current.key
+            var key = current.key
+            current = null
+            return key
         }
     }
     this.isEmpty = function () {
@@ -82,8 +84,10 @@ var Graph = function () {
     this.dfs = function (callback) {
         var color = initalizeColor()
         for (var i = 0; i < vertexes.length; i++) {
-            // dfsRecursion(vertexes[i], color, callback)
-            dfsStack(vertexes[i], color, callback)
+            if (color[vertexes[i]] === 'white') {
+                // dfsRecursion(vertexes[i], color, callback)
+                dfsStack(vertexes[i], color, callback)
+            }
         }
     }
     var dfsRecursion = function (src, color, callback) {
@@ -106,15 +110,15 @@ var Graph = function () {
         while (!stack.isEmpty()) {
             var u = stack.pop(),
                 neighbours = adjList.get(u)
-            color[u] = 'grey'
-            if (callback) {
-                callback(u)
-            }
             for (var j = 0; j < neighbours.length; j++) {
                 var v = neighbours[j]
                 if (color[v] === 'white') {
                     stack.push(v)
+                    color[v] = 'grey'
                 }
+            }
+            if (callback) {
+                callback(u)
             }
             color[u] = 'black'
         }
