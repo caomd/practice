@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 22:53:12 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-29 15:31:18
+ * @Last Modified time: 2022-01-05 14:16:08
  */
 var arr = [3, 5, 1, 6, 4, 7, 2]
 //分治思想 mid划分左部分和右部分 借用中间result返回值
