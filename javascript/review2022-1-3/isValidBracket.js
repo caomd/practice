@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2022-01-03 13:20:50 
  * @Last Modified by: caomd
- * @Last Modified time: 2022-01-03 13:33:33
+ * @Last Modified time: 2022-01-06 17:22:10
  */
 var Stack = function () {
     var items = [], size = 0
@@ -36,7 +36,7 @@ var isValidBracket = function (str) {
     }
     return s.isEmpty()
 }
-// console.log(isValidBracket('(())()()()'))
+console.log(isValidBracket('(())()()()'))
 // optimizing variable leftBracketCount
 var isValidBracketOptimizing = function (str) {
     if (str === null || str.length < 0) return false
