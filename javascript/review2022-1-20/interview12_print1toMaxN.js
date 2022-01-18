@@ -1,8 +1,8 @@
 /*
  * @Author: caomd 
- * @Date: 2022-01-18 21:39:20 
+ * @Date: 2022-01-20 09:48:45 
  * @Last Modified by: caomd
- * @Last Modified time: 2022-01-18 21:55:26
+ * @Last Modified time: 2022-01-20 10:02:52
  */
 
 var print1ToMaxN = function (n) {
@@ -18,25 +18,25 @@ var print1ToMaxN = function (n) {
     }
 }
 var Increament = function (num) {
-    var length = num.length, isOverflow = false, nTakeOver = 0
+    var isOverFlow = false, nTakeOver = 0, length = num.length
     for (var i = length - 1; i >= 0; i--) {
-        var numSum = num[i] - 0 + nTakeOver
+        var nSum = num[i] - 0 + nTakeOver
         if (i === length - 1) {
-            numSum += 1
+            nSum++
         }
-        if (numSum >= 10) {
+        if (nSum >= 10) {
             if (i === 0) {
-                isOverflow = true
-                break
+                isOverFlow = true
+            } else {
+                nSum -= 10
+                nTakeOver = 1
+                num[i] = nSum
             }
-            numSum -= 10
-            nTakeOver = 1
-            num[i] = numSum
         } else {
-            num[i] = numSum
+            num[i] = nSum
             break
         }
     }
-    return isOverflow
+    return isOverFlow
 }
 print1ToMaxN(2)
