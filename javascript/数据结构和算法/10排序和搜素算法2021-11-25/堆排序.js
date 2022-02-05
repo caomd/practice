@@ -2,7 +2,7 @@
  * @Author: caomd 
  * @Date: 2021-11-28 12:07:23 
  * @Last Modified by: caomd
- * @Last Modified time: 2021-11-28 15:22:20
+ * @Last Modified time: 2022-01-25 10:10:19
  */
 var heapSort = function (arr) {
     var heapSize = arr.length
@@ -16,7 +16,6 @@ var heapSort = function (arr) {
         //比较根节点和左右子节点 最后一位变成根节点打破堆结构重新构造
         heapify(arr, heapSize, 0)
     }
-
     console.log(arr)
 }
 var buildHeap = function (arr, size) {
@@ -49,4 +48,4 @@ var swap = function (arr, i, j) {
     arr[i] = arr[j]
     arr[j] = temp
 }
-heapSort([3, 5, 1, 6, 4, 7, 2])
+heapSort([72, 28, 51, 96, 62, 87, 33, 45, 24])
